@@ -1,12 +1,11 @@
-import './App.css';
-import SolarSystem from './components/SolarSystem';
-
-function App() {
+import React from 'react'
+import './App.css'
+const App = () => {
   return (
-    <div className="App">
-       <SolarSystem />
+    <div>
+      
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
