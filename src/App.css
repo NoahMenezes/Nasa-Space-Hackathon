@@ -1,67 +1,19 @@
-/* Reset default styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Base styles */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
-
-/* App container */
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Remove default button styles */
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-/* Remove default list styles */
-ul, ol {
-  list-style: none;
-}
-
-/* Responsive images */
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
 .App {
   text-align: center;
-  background: #000;
-  min-height: 100vh;
-  color: #fff;
+  /* Make the main app container fill the screen and allow positioning of children */
+  width: 100vw; 
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  /* The body's background-color from the original CSS is already in Background.css */
 }
 
-.image-gallery {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.main-image {
-  width: 350px;
-  height: 220px;
-  object-fit: cover;
-  border: 4px solid #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.7);
-  background: #222;
+/* Example styles for foreground content to be visible over the background */
+.App-header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20; /* Higher than the info-overlay (10) */
+    color: white;
 }

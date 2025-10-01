@@ -1,0 +1,36 @@
+/* Custom CSS for a full-screen, immersive experience */
+body {
+    margin: 0;
+    /* The body background color is set in index.css or the main global stylesheet */
+    background-color: #000000;
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+    /* Ensure the body doesn't scroll/overflow */
+    overflow: hidden;
+}
+
+#info-overlay {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+}
+
+#info-overlay p {
+    margin: 5px 0;
+}
+
+/* Ensure the Three.js canvas container is full screen if placed inside a div */
+#threejs-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
