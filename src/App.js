@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import { SolarSystem } from './components/SolarSystem';
+import SolarSystem from './components/SolarSystem';
 
 function App() {
   return (

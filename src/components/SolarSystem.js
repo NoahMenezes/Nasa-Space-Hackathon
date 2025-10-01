@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Stars } from '@react-three/drei';
 
 const SolarSystem = () => {
   const mountRef = useRef(null);
@@ -14,13 +12,41 @@ const SolarSystem = () => {
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true, 
+      alpha: true,
+      powerPreference: 'high-performance',
+      stencil: false,
+      depth: true
+    });
     
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for better performance
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
-    mountRef.current.appendChild(renderer.domElement);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.autoClear = true;
+    
+    // Append renderer to DOM
+    const container = mountRef.current;
+    container.innerHTML = ''; // Clear any existing content
+    container.appendChild(renderer.domElement);
+    
+    // Handle window resize
+    const handleResize = () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    };
+    
+    // Initial size
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
 
     // Camera position
     camera.position.set(0, 80, 200);
@@ -555,37 +581,59 @@ const SolarSystem = () => {
     window.addEventListener('click', onClick);
     window.addEventListener('wheel', onWheel);
 
+    // Initial renderer size setup
+    updateRendererSize();
+    
     // Resize handler
     const onResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      updateRendererSize();
     };
-    window.addEventListener('resize', onResize);
+    
+    // Use ResizeObserver for better performance with CSS transforms
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.contentBoxSize) {
+          updateRendererSize();
+        }
+      }
+    });
+    
+    resizeObserver.observe(container);
 
-    // Animation
-    let animationId;
-    let time = 0;
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-      time += 0.01;
-
+    // Animation setup
+    let animationFrameId;
+    let lastTime = 0;
+    let sunMaterial = sunData?.material; // Get sunMaterial from sunData
+    
+    const animate = (time) => {
+      animationFrameId = requestAnimationFrame(animate);
+      
+      // Calculate delta time for smooth animation
+      const deltaTime = time - lastTime;
+      lastTime = time;
+      
       // Update sun shader time
-      sunData.material.uniforms.time.value = time;
-      sunData.coronaMaterial.uniforms.time.value = time;
-
-      // Rotate sun
-      sunData.group.rotation.y += 0.002;
-
-      // Orbit planets
-      planets.forEach((planet) => {
-        planet.angle += planet.speed * 0.01;
+      if (sunMaterial) {
+        sunMaterial.uniforms.time.value += deltaTime * 0.001;
+      }
+      
+      // Rotate the scene
+      scene.rotation.y += 0.0005 * deltaTime;
+      
+      // Update planet positions
+      planets.forEach(planet => {
+        planet.angle += planet.speed * deltaTime * 0.001;
         const x = Math.cos(planet.angle) * planet.distance;
         const z = Math.sin(planet.angle) * planet.distance;
-        planet.group.position.set(x, 0, z);
-        planet.mesh.rotation.y += 0.01;
+        
+        // Smooth movement with lerp
+        planet.group.position.lerp(new THREE.Vector3(x, 0, z), 0.1);
+        
+        // Smooth rotation
+        planet.mesh.rotation.y += 0.001 * deltaTime;
       });
-
+      
+      // Render scene
       renderer.render(scene, camera);
     };
 
@@ -593,16 +641,59 @@ const SolarSystem = () => {
     setIsLoading(false);
     animate();
 
-    // Cleanup
+    // Cleanup function
     return () => {
+      // Cancel animation frame
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      // Remove event listeners
       window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mouseup', onMouseUp);
-      window.removeEventListener('click', onClick);
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(animationId);
-      mountRef.current?.removeChild(renderer.domElement);
+      window.removeEventListener('resize', handleResize);
+      
+      // Dispose of renderer
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+        if (renderer.domElement && renderer.domElement.parentNode) {
+          renderer.domElement.parentNode.removeChild(renderer.domElement);
+        }
+      }
+      
+      // Dispose of geometries and materials
+      scene.traverse(object => {
+        if (object.geometry) object.geometry.dispose();
+        if (object.material) {
+          if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+          } else {
+            object.material.dispose();
+          }
+        }
+      });
+      
+      // Clear the scene
+      while(scene.children.length > 0) { 
+        scene.remove(scene.children[0]); 
+      }
+      // Remove mouse event listeners if they exist
+      if (onMouseDown) window.removeEventListener('mousedown', onMouseDown);
+      if (onMouseUp) window.removeEventListener('mouseup', onMouseUp);
+      if (onClick) window.removeEventListener('click', onClick);
+      if (onWheel) window.removeEventListener('wheel', onWheel);
+      
+      // Clean up ResizeObserver
+      if (resizeObserver && container) {
+        resizeObserver.unobserve(container);
+        resizeObserver.disconnect();
+      }
+      
+      // Clean up any remaining resources
+      if (mountRef.current) {
+        // Clear the container
+        mountRef.current.innerHTML = '';
+      }
     };
   }, []);
 
@@ -612,21 +703,21 @@ const SolarSystem = () => {
       
       {/* UI Overlay */}
       <div className="ui-overlay">
-        <h1 className="ui-overlay-title">SOLAR SYSTEM</h1>
-        <p className="ui-overlay-subtitle">PHOTOREALISTIC EXPLORER</p>
+        <h1>SOLAR SYSTEM</h1>
+        <p>PHOTOREALISTIC EXPLORER</p>
       </div>
 
       {/* Controls */}
       <div className="controls">
         <div className="controls-inner">
-          <p className="control">
-            <span className="control-icon">🖱️</span> Drag to rotate view
+          <p>
+            <span>🖱️</span> Drag to rotate view
           </p>
-          <p className="control">
-            <span className="control-icon">🔍</span> Scroll to zoom in/out
+          <p>
+            <span>🔍</span> Scroll to zoom in/out
           </p>
-          <p className="control">
-            <span className="control-icon">👆</span> Click planets for details
+          <p>
+            <span>👆</span> Click planets for details
           </p>
         </div>
       </div>
