@@ -142,7 +142,7 @@ curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "astronaut",
-    "email": "user@space.com", 
+    "email": "user@example.com",
     "password": "password123"
   }'
 ```
@@ -289,7 +289,7 @@ Your friend's ML API should implement these endpoints:
 # Expected ML API structure
 GET  /models              # List available models
 POST /classify            # Data classification
-POST /detect             # Image object detection  
+POST /detect             # Image object detection
 POST /predict            # Predictive analysis
 POST /anomaly-detection  # Anomaly detection
 POST /time-series        # Time series analysis
@@ -354,7 +354,7 @@ curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",
-    "email": "test@example.com",
+    "email": "testuser@example.com",
     "password": "testpass123"
   }'
 ```
