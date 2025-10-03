@@ -1,0 +1,19 @@
+.placeholder-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 6rem auto 0;
+    padding: 1rem;
+    text-align: center;
+    color: white;
+}
+
+.placeholder-title {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.placeholder-description {
+    font-size: 1.25rem; /* 20px */
+    color: #d1d5db; /* gray-300 */
+}

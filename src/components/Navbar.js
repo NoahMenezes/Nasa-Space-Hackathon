@@ -1,46 +1,51 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
-// Navbar receives the routing function (setCurrentPage) as a prop from App.js
-const Navbar = ({ setCurrentPage }) => {
+const Navbar = () => {
     const navLinks = [
-        // Clicking 'Home' resets the page state to 'home'
-        { name: 'Home', action: () => setCurrentPage('home') },
-        // Placeholder actions for other links
-        { name: 'Data Sources', action: () => console.log('Go to Data Sources') },
-        { name: 'Model', action: () => console.log('Go to Model') },
-        { name: 'Team', action: () => console.log('Go to Team') },
+        { name: 'Home', path: '/' },
+        { name: 'Data Sources', path: '/data-sources' },
+        { name: 'Model', path: '/model' },
+        { name: 'Team', path: '/team' },
     ];
+    
+    const location = useLocation();
 
     return (
         <nav className="navbar">
-            <div className="navbar-logo">
-                🚀 NASA Space Apps
-            </div>
-            <ul className="navbar-links">
-                {navLinks.map((link) => (
-                    <li key={link.name}>
-                        {/* Using <button> to trigger React state changes */}
-                        <button onClick={link.action} className="nav-link-item">
-                            {link.name}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            
-            <div className="navbar-auth">
-                <button 
-                    className="auth-button login-button" 
-                    onClick={() => setCurrentPage('login')} // Changes App state to display LoginPage
-                >
-                    Login
-                </button>
-                <button 
-                    className="auth-button signup-button" 
-                    onClick={() => setCurrentPage('signup')} // Changes App state to display SignupPage
-                >
-                    Sign Up
-                </button>
+            <div className="navbar-container">
+                <div className="navbar-content">
+                    {/* Logo/Home Link */}
+                    <Link to="/" className="logo">
+                        🚀 NASA Space Apps
+                    </Link>
+
+                    {/* Main Nav Links */}
+                    <div className="nav-links">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                to={link.path}
+                                className={`nav-link ${
+                                    location.pathname === link.path ? 'active' : ''
+                                }`}
+                            >
+                                {link.name}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Auth Buttons */}
+                    <div className="auth-buttons">
+                        <Link to="/login" className="btn btn-login">
+                            Login
+                        </Link>
+                        <Link to="/signup" className="btn btn-signup">
+                            Sign Up
+                        </Link>
+                    </div>
+                </div>
             </div>
         </nav>
     );
