@@ -139,40 +139,54 @@ const HomePage = () => {
       {/* --- Hero Header --- */}
       <header className="cosmic-header">
         <h1 className="cosmic-title">
-          DEEP SPACE EXPLORATION
+          SPACE BIOLOGY KNOWLEDGE ENGINE
         </h1>
         <p className="cosmic-subtitle">
-          Navigate the cosmos with our advanced data models,<br />
-          powered by NASA's frontier research.
+          Unlocking decades of NASA space biology research to enable<br />
+          the next era of human exploration beyond Earth
         </p>
         <div className="cosmic-cta">
           <a
             href="#/data-sources"
             className="mission-btn"
           >
-            Start Mission Briefing
+            Access Research Database
           </a>
         </div>
       </header>
 
-      {/* --- Mission Objectives Cards --- */}
       <section className="mission-section">
-        <h2 className="objectives-title">MISSION OBJECTIVES</h2>
+        <h2 className="objectives-title">MISSION CAPABILITIES</h2>
         <div className="cards-grid-cosmic">
           <MissionCard
-            icon="🛰️"
-            title="Real-time Telemetry"
-            description="Access live and historical data feeds from planetary probes and orbital missions across the solar system."
+            icon="🧬"
+            title="Biological Data Integration"
+            description="Consolidate and organize decades of NASA space biology experiments into a unified, searchable knowledge base for lunar and deep space missions."
           />
           <MissionCard
-            icon="🔭"
-            title="Planetary Analysis"
-            description="Deep-dive into geological and atmospheric compositions using simulated remote sensing data."
+            icon="🔍"
+            title="Advanced Research Search"
+            description="Quickly find relevant biological studies across plant growth, microbial behavior, and human physiology in space environments using intelligent search algorithms."
           />
           <MissionCard
-            icon="☄️"
-            title="Near-Earth Object Tracking"
-            description="Predict orbits and assess collision risk for asteroids and comets using advanced modeling techniques."
+            icon="📊"
+            title="Experiment Visualization"
+            description="Transform complex biological data into interactive visualizations, showing plant growth patterns, microbial changes, and physiological adaptations in space."
+          />
+          <MissionCard
+            icon="🤖"
+            title="AI-Powered Insights"
+            description="Leverage machine learning to identify patterns and predict biological responses to space conditions, accelerating research for future missions."
+          />
+          <MissionCard
+            title="Mission Planning Support"
+            icon="🚀"
+            description="Provide critical biological research data to inform mission design, life support systems, and astronaut health protocols for lunar settlements."
+          />
+          <MissionCard
+            icon="🌱"
+            title="Flora & Fauna Database"
+            description="Comprehensive catalog of space-grown plants and biological organisms with their adaptation data, growth requirements, and research findings."
           />
         </div>
       </section>
@@ -296,6 +310,7 @@ const HomePage = () => {
       </style>
       {/* Orbitron font for more futuristic feel; can be replaced if needed */}
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" />
+      
     </div>
   );
 }

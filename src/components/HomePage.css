@@ -1,0 +1,324 @@
+/* --- Global Styles for HomePage Wrapper --- */
+.home-cosmic-page {
+    /* Ensures the component sits on top of the background */
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    min-height: 100vh;
+    z-index: 3;
+    box-sizing: border-box;
+    pointer-events: none; /* Allows clicks to pass through empty areas */
+    overflow-x: hidden;
+    /* Added padding at the top to clear the fixed Navbar */
+    padding-top: 4rem; 
+}
+
+/* --- Cosmic Particle Animation --- */
+.cosmic-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #67e8f9 0%, #0891b2 100%);
+    opacity: 0.25;
+    animation: floatCosmic 20s linear infinite;
+}
+
+/* Note: Particle styles (width, height, left, top, delay) are generated inline in the JS for randomness. */
+
+@keyframes floatCosmic {
+    0% { transform: translateY(0) scale(1); opacity: 0.27; }
+    60% { transform: translateY(-20px) scale(1.05); opacity: 0.22;}
+    100% { transform: translateY(10px) scale(0.95); opacity: 0.19;}
+}
+
+/* --- Hero Header --- */
+.cosmic-header {
+    position: relative;
+    text-align: center;
+    width: 100vw;
+    padding: 1.5rem 2vw 2.2rem; /* Adjusted top padding since we added it to .home-cosmic-page */
+    margin: 0 auto;
+    max-width: 1080px;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.cosmic-title {
+    font-family: 'Orbitron', 'Montserrat', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4.8rem);
+    font-weight: 900;
+    color: #67e8f9;
+    letter-spacing: 0.18em;
+    margin-bottom: 1rem;
+    /* Enhanced glow effect */
+    text-shadow: 0 0 40px rgba(67, 232, 249, 0.75), 0 0 30px #0891b2;
+    animation: cosmicGlow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes cosmicGlow {
+    0% {text-shadow: 0 0 40px #67e8f9, 0 0 10px #0891b2;}
+    100% {text-shadow: 0 0 70px #67e8f9, 0 0 30px #0891b2;}
+}
+
+.cosmic-subtitle {
+    font-size: clamp(1.1rem, 2.8vw, 1.55rem);
+    color: #e0f2fe;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    text-shadow: 0 0 8px #000, 0 2px 15px #0ea5e9;
+    margin-bottom: 0.8rem;
+}
+
+.cosmic-cta {
+    margin-top: 2.8rem;
+}
+
+/* --- Mission Button Styling --- */
+.mission-btn {
+    display: inline-block;
+    padding: 1rem 2.2rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 0.8rem;
+    background: linear-gradient(90deg, #0ea5e9 0%, #67e8f9 100%);
+    color: #fff;
+    box-shadow: 0 6px #0891b2, 0 0 18px #67e8f9;
+    text-decoration: none;
+    transition: background-position 0.22s, box-shadow 0.23s, transform 0.22s;
+    pointer-events: auto;
+    background-size: 200% 100%;
+    background-position: left;
+    border: none;
+    outline: none;
+}
+
+.mission-btn:hover, .mission-btn:focus {
+    background-position: right;
+    box-shadow: 0 0 24px #67e8f9, 0 6px #0891b2;
+    transform: scale(1.04);
+    animation: pulseCosmic 1.8s cubic-bezier(.45,.27,.38,.85) infinite;
+}
+
+@keyframes pulseCosmic {
+    0%,100% { filter: brightness(1);}
+    50% { filter: brightness(1.12);}
+}
+
+/* --- Mission Cards Section --- */
+.mission-section {
+    width: 100vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    pointer-events: auto;
+    z-index: 14;
+}
+
+.objectives-title {
+    text-align: center;
+    font-size: 2.08rem;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 2.2rem;
+    margin-bottom: 2.6rem;
+    letter-spacing: 0.08em;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 13px #0891b2, 0 2px 21px #67e8f9;
+}
+
+.cards-grid-cosmic {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.7rem;
+    padding: 2rem 1.5vw 5.5rem 1.5vw;
+}
+
+/* --- Mission Card Individual Styles (Referenced by MissionCard component) --- */
+.mission-card {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1.5rem;
+    background: rgba(17, 24, 39, 0.6);
+    border: 2.5px solid rgba(103, 232, 249, 0.12);
+    box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(11px);
+    color: white;
+    text-align: center;
+    transition: all 0.32s cubic-bezier(.17, .67, .83, .67);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.mission-card:before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 1.7rem;
+    padding: 0.5rem;
+    background: linear-gradient(120deg, #06b6d4 0%, #67e8f9 50%, #0ea5e9 100%);
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.32s;
+}
+
+.mission-card.hovered:before {
+    opacity: 0.17;
+    animation: borderSweep 1.6s linear infinite;
+}
+
+@keyframes borderSweep {
+    0% { filter: blur(0.5px); }
+    50% { filter: blur(3px)}
+    100% { filter: blur(0.5px);}
+}
+
+.mission-card.hovered {
+    border: 2.5px solid #67e8f9;
+    box-shadow: 0 0 38px 0 rgba(67, 232, 249, 0.21), 0 6px 24px 0 rgba(0, 0, 0, 0.85);
+    transform: translateY(-9px) scale(1.032);
+}
+
+.card-icon {
+    font-size: 3.2rem;
+    margin-bottom: 1.2rem;
+    filter: drop-shadow(0 0 7px #4adeea);
+    transition: color 0.36s, transform 0.36s;
+}
+/* Note: Dynamic color and transform for .card-icon are still handled inline via the JS component state */
+
+
+.card-title {
+    font-size: 1.52rem;
+    font-weight: 800;
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.08em;
+    font-family: 'Orbitron', sans-serif;
+    color: #67e8f9;
+    text-shadow: 0 2px 14px rgba(103, 232, 249, 0.25);
+}
+
+.card-desc {
+    color: #e0f2fe;
+    font-size: 1.08rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.6;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 2px 10px rgba(17, 24, 39, 0.45);
+    margin-top: 0.3rem;
+}
+
+/* --- Footer Styles --- */
+.cosmic-footer {
+    background: linear-gradient(180deg, rgba(3, 7, 18, 0.85) 0%, rgba(17, 24, 39, 0.92) 100%);
+    backdrop-filter: blur(10px);
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+    border-top: 2px solid rgba(103, 232, 249, 0.25);
+    color: #e0f2fe;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.cosmic-footer:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #0ea5e9, #67e8f9, #0ea5e9);
+    animation: footerGlow 6s linear infinite;
+}
+
+@keyframes footerGlow {
+    0% { filter: blur(0); opacity: 0.7; }
+    50% { filter: blur(3px); opacity: 1; }
+    100% { filter: blur(0); opacity: 0.7; }
+}
+
+.footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: #67e8f9;
+    text-shadow: 0 0 14px rgba(103, 232, 249, 0.7), 0 0 22px #0ea5e9;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.08em;
+}
+
+.footer-tagline {
+    font-size: 1rem;
+    margin-bottom: 1.6rem;
+    color: #bae6fd;
+    opacity: 0.85;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+
+.footer-links {
+    margin-bottom: 1.6rem;
+}
+
+.footer-links a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #67e8f9;
+    font-weight: 600;
+    transition: color 0.3s, text-shadow 0.3s;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.footer-links a:hover {
+    color: #22d3ee;
+    text-shadow: 0 0 10px #67e8f9, 0 0 18px #0891b2;
+}
+
+.footer-socials a {
+    margin: 0 0.6rem;
+    font-size: 1.7rem;
+    transition: transform 0.3s, filter 0.3s;
+    color: #67e8f9;
+}
+
+.footer-socials a:hover {
+    transform: scale(1.25) rotate(8deg);
+    filter: drop-shadow(0 0 8px #22d3ee);
+    color: #22d3ee;
+}
+
+.footer-copy {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    letter-spacing: 0.04em;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+    .cards-grid-cosmic {
+        gap: 2rem;
+        padding-bottom: 2.5rem;
+    }
+    .mission-card { min-width: 240px; max-width: 340px;}
+}
+@media (max-width: 650px) {
+    .cosmic-header { padding: 1.5rem 1vw 1rem;}
+    .cosmic-title { font-size: 2.1rem;}
+    .objectives-title { font-size: 1.45rem;}
+    .cards-grid-cosmic { flex-direction: column; gap: 1.7rem;}
+}
