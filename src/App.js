@@ -1,10 +1,12 @@
 import React from 'react';
 import './App.css';
 import Background from './components/Background'; // Import the new component
+import Navbar from './components/Navbar';
 
 function App() {
   return (
     <div className="App">
+      <Navbar />
       {/* The Background component, which contains the Three.js scene, will take up the full screen */}
       <Background />
       

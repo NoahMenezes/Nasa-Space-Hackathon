@@ -368,10 +368,7 @@ const Background = () => {
     return (
         <div className="background-wrapper">
             {/* Info Overlay from original HTML */}
-            <div id="info-overlay">
-                <p><strong>Deep Space Explorer - Full Solar System</strong></p>
-                <p>Use mouse to rotate and scroll to zoom. The entire solar system is rendered in 3D!</p>
-            </div>
+            
             
             {/* Three.js canvas will be injected here */}
             <div id="threejs-container" ref={containerRef}>
