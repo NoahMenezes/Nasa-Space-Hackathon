@@ -17,13 +17,25 @@
     "react-scripts": "5.0.1",
     "three": "^0.180.0",
     "three-stdlib": "^2.28.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "axios": "^1.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "cd backend && npm start",
+    "dev-server": "cd backend && npm run dev",
+    "install-backend": "cd backend && npm install",
+    "migrate": "cd backend && npm run migrate",
+    "dev": "concurrently \"npm start\" \"npm run dev-server\"",
+    "setup": "npm install && npm run install-backend",
+    "setup-db": "npm run install-backend && npm run migrate",
+    "full-setup": "npm install && npm run install-backend && npm run migrate"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   },
   "eslintConfig": {
     "extends": [

@@ -1,0 +1,199 @@
+/* --- Base Page Container --- */
+.page-container.model-page-wrapper {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    /* Uses the global padding set in .content-container in App.css */
+    padding-top: 0; 
+    padding-bottom: 5rem;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- Main Content Card Wrapper --- */
+.model-wrapper {
+    max-width: 1080px;
+    margin: 2rem 2vw; /* Added margin for mobile spacing */
+    padding: 3.2rem 2.5rem 2.2rem 2.5rem;
+    color: #e0f7fa;
+    
+    /* Translucent Dark Space Aesthetic */
+    background: rgba(12, 16, 36, 0.88);
+    border-radius: 2rem;
+    box-shadow: 0 16px 48px rgba(67, 232, 249, 0.25);
+    border: 1px solid rgba(103, 232, 249, 0.3);
+    position: relative;
+    backdrop-filter: blur(8px);
+    width: 100%;
+}
+
+/* --- Header Section --- */
+.model-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.animated-title {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: #67e8f9;
+    letter-spacing: .09em;
+    margin-bottom: .6rem;
+    text-shadow: 0 0 24px #67e8f9cc;
+    animation: pulse-shine 2.5s ease-in-out infinite alternate;
+}
+
+.animated-desc {
+    font-size: clamp(1rem, 2.5vw, 1.27rem);
+    color: #e0f2fe;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 15px rgba(34, 34, 34, 0.7);
+}
+
+@keyframes pulse-shine {
+    0% { opacity: 0.85; text-shadow: 0 0 15px #67e8f9aa; }
+    100% { opacity: 1; text-shadow: 0 0 35px #67e8f9ff; }
+}
+
+/* --- Feature Grid --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.feature-card {
+    background: rgba(30, 41, 59, 0.75);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+    border-color: #67e8f9; /* Highlight border on hover */
+}
+
+.feature-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 5px #67e8f9);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: rotateY(15deg);
+}
+
+.feature-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #67e8f9;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.feature-desc {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* --- Model Stats Section --- */
+.model-stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(103, 232, 249, 0.2);
+    border-bottom: 1px solid rgba(103, 232, 249, 0.2);
+    margin-bottom: 3rem;
+}
+
+.stat-item {
+    text-align: center;
+    min-width: 120px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #06b6d4; /* Teal color */
+    text-shadow: 0 0 15px #06b6d4aa;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+/* --- Methodology Section --- */
+.methodology-title {
+    font-size: 2.2rem;
+    color: #60a5fa;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: center;
+}
+
+.methodology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.methodology-step {
+    background: rgba(30, 41, 59, 0.6);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-left: 5px solid #0ea5e9;
+    text-align: left;
+    transition: background 0.3s;
+}
+
+.methodology-step:hover {
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.step-icon {
+    font-size: 2rem;
+    float: right;
+    color: #67e8f9;
+}
+
+.step-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #67e8f9;
+    margin-bottom: 0.5rem;
+}
+
+.step-desc {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .model-wrapper {
+        padding: 2rem 1rem;
+        margin: 1.5rem 1vw;
+    }
+    .features-grid, .methodology-grid {
+        gap: 1.5rem;
+    }
+    .animated-title {
+        font-size: 2.2rem;
+    }
+}

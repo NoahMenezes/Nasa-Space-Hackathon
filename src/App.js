@@ -2,56 +2,60 @@ import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 
-// Import components
+// Import all components
 import Background from './components/Background';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import PlaceholderPage from './components/PlaceholderPage';
+import Team from './components/Team'; 
 
 const App = () => {
     return (
         <HashRouter>
-            <div style={{ position: 'relative', minHeight: '100vh', width: '100vw', overflow: 'auto' }}>
-                {/* Background should be first and have pointer-events: none on overlay areas */}
+            {/* The main .App div is now set to handle scrolling (via App.css) */}
+            <div className="App">
+                {/* Z-index 1: Background is fixed at the bottom */}
                 <Background />
-                
-                {/* Navbar must be above background */}
+
+                {/* Z-index 50: Navbar is fixed at the top */}
                 <Navbar />
 
-                {/* Routes define which component renders based on the URL path */}
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
-                    
-                    <Route path="/data-sources" element={
-                        <PlaceholderPage 
-                            title="Data Acquisition Dashboard" 
-                            description="This section will detail the NASA APIs and data sets used for the project." 
-                        />
-                    } />
-                    <Route path="/model" element={
-                        <PlaceholderPage 
-                            title="Predictive Modeling Engine" 
-                            description="Explore the algorithms and analysis tools driving our space solutions." 
-                        />
-                    } />
-                    <Route path="/team" element={
-                        <PlaceholderPage 
-                            title="Mission Control Team" 
-                            description="Meet the brilliant minds behind this hackathon entry." 
-                        />
-                    } />
-                    
-                    <Route path="*" element={
-                        <PlaceholderPage 
-                            title="404: Cosmic Anomaly Detected" 
-                            description="The page you are looking for has been swallowed by a black hole. Check your navigation." 
-                        />
-                    } />
-                </Routes>
+                {/* This container manages the content area. 
+                    It pushes content down past the fixed Navbar and is the scrollable layer. */}
+                <div className="content-container">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
+                        
+                        {/* Placeholder routes */}
+                        <Route path="/data-sources" element={
+                            <PlaceholderPage 
+                                title="Data Acquisition Dashboard" 
+                                description="This section monitors live feeds and historical data from various NASA APIs, ensuring our models have the most accurate cosmic context." 
+                            />
+                        } />
+                        <Route path="/model" element={
+                            <PlaceholderPage 
+                                title="Predictive Modeling Engine" 
+                                description="Explore the proprietary algorithms driving our space solutions, specializing in orbital mechanics and long-term risk assessment." 
+                            />
+                        } />
+                        
+                        {/* Team component */}
+                        <Route path="/team" element={<Team />} />
+
+                        {/* 404/Catch-all Route */}
+                        <Route path="*" element={
+                            <PlaceholderPage 
+                                title="404: Cosmic Anomaly Detected" 
+                                description="The page you are looking for has been swallowed by a black hole. Check your navigation." 
+                            />
+                        } />
+                    </Routes>
+                </div>
             </div>
         </HashRouter>
     );

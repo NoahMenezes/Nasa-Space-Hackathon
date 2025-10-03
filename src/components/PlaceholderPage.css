@@ -1,19 +1,59 @@
-.placeholder-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 6rem auto 0;
-    padding: 1rem;
+/* PlaceholderPage.css */
+
+/* --- Shared Content Page Container (Inherited from App.css, but included here for context) --- */
+/*
+.content-page-container {
+  // Styles defined in App.css for centering and z-index:
+  // position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 60;
+}
+.page-card {
+  // Styles defined in App.css for the translucent card:
+  // background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(8px); ...
+}
+*/
+
+/* --- Placeholder Page Specific Styles --- */
+
+.page-title {
+    /* Defined in App.css */
     text-align: center;
-    color: white;
 }
 
-.placeholder-title {
-    font-size: 2.25rem; /* 36px */
-    font-weight: 700;
-    margin-bottom: 1rem;
+.page-description {
+    /* Defined in App.css */
+    text-align: center;
 }
 
-.placeholder-description {
-    font-size: 1.25rem; /* 20px */
-    color: #d1d5db; /* gray-300 */
+.data-display-block {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px dashed rgba(103, 232, 249, 0.4);
+    border-radius: 0.75rem;
+    background: rgba(31, 41, 55, 0.5);
+    text-align: left;
+}
+
+.data-status {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-bottom: 0.5rem;
+}
+
+.status-ready {
+    color: #4ade80; /* Green/Success color */
+    font-weight: 600;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 2rem;
+    color: #67e8f9;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #06b6d4;
+    text-decoration: underline;
 }

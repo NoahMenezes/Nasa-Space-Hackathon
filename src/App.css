@@ -1,11 +1,14 @@
+/* --- Global App Container --- */
 .App {
-  text-align: center;
-  /* Make the main app container fill the screen and allow positioning of children */
-  width: 100vw; 
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  /* The body's background-color from the original CSS is already in Background.css */
+    /* Make the main app container fill the screen and allow positioning of children */
+    width: 100vw; 
+    height: 100vh;
+    position: relative;
+    
+    /* CRUCIAL FIX: Enable vertical scrolling for the whole application viewport */
+    overflow-y: auto; 
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
 }
 
 /* Example styles for foreground content to be visible over the background */
@@ -16,4 +19,16 @@
     transform: translate(-50%, -50%);
     z-index: 20; /* Higher than the info-overlay (10) */
     color: white;
+}
+
+/* * The content-container style (defined in App.js via className) is essential
+ * to push the content down past the fixed Navbar and ensure correct z-indexing.
+ * If this class isn't defined globally (e.g., in App.css or a global style),
+ * your content will sit behind or under the navbar.
+ */
+.content-container {
+    padding-top: 4rem; /* Match Navbar height */
+    position: relative; 
+    z-index: 2; /* Puts content above the fixed background (z-index 1) */
+    min-height: calc(100vh - 4rem); /* Ensures content fills remaining space for shorter pages */
 }
