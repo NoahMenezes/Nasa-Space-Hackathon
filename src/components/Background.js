@@ -308,7 +308,15 @@ const Background = () => {
     }, []);
 
     return (
-        <div id="threejs-container" ref={containerRef}>
+        <div id="threejs-container" ref={containerRef} style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 0,
+            pointerEvents: 'none'  // This allows clicks to pass through to elements above
+        }}>
             {/* The canvas is injected into this div by the Three.js script */}
         </div>
     );
