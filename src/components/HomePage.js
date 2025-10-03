@@ -145,14 +145,7 @@ const HomePage = () => {
           Unlocking decades of NASA space biology research to enable<br />
           the next era of human exploration beyond Earth
         </p>
-        <div className="cosmic-cta">
-          <a
-            href="#/data-sources"
-            className="mission-btn"
-          >
-            Access Research Database
-          </a>
-        </div>
+        
       </header>
 
       <section className="mission-section">

@@ -40,16 +40,7 @@ const SearchEngine = () => {
             </div>
           </form>
           
-          <div className="search-suggestions">
-            <h3>Popular Searches:</h3>
-            <div className="suggestion-tags">
-              <span className="suggestion-tag">Mars Rover</span>
-              <span className="suggestion-tag">International Space Station</span>
-              <span className="suggestion-tag">Black Holes</span>
-              <span className="suggestion-tag">James Webb Telescope</span>
-              <span className="suggestion-tag">Solar System</span>
-            </div>
-          </div>
+          
         </div>
 
         <div className="search-results">

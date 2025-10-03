@@ -32,3 +32,36 @@
     z-index: 2; /* Puts content above the fixed background (z-index 1) */
     min-height: calc(100vh - 4rem); /* Ensures content fills remaining space for shorter pages */
 }
+/* Global Cosmic Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #000000;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #ffffff;
+  overflow-x: hidden;
+  background: radial-gradient(ellipse at center, #0a0e23 0%, #000000 70%);
+}
+
+/* Three.js canvas container */
+#threejs-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Content container that sits above the background */
+.content-container {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+}

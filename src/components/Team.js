@@ -48,7 +48,7 @@ const Team = () => {
         <div className="page-container team-page-wrapper">
             <div className="team-wrapper">
                 <header className="team-header">
-                    <h1 className="animated-title">Our Team</h1>
+                    <h1 className="animated-title">Scientist</h1>
                     <p className="animated-desc">
                         The brilliant minds behind this cosmic journey
                     </p>

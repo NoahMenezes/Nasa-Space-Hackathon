@@ -24,20 +24,32 @@ const Bookmarks = () => {
     }
   ];
 
-  const handleDelete = (bookmarkId) => {
-    // Add your delete functionality here
-    console.log('Deleting bookmark:', bookmarkId);
-    // You can implement the actual delete logic here
+  const handleDeleteAll = () => {
+    // Add your delete all functionality here
+    console.log('Deleting all bookmarks');
+    // You can implement the actual delete all logic here
   };
 
   return (
     <div className="bookmarks-page">
       <div className="bookmarks-wrapper">
         <div className="bookmarks-header">
-          <h1 className="animated-title">My Bookmarks</h1>
-          <p className="animated-desc">
-            Your saved space discoveries and favorite NASA resources
-          </p>
+          <div className="header-content">
+            <h1 className="animated-title">My Bookmarks</h1>
+            {/* Dustbin button replacing the description */}
+            <button 
+              onClick={handleDeleteAll} 
+              className="delete-all-btn"
+              aria-label="Delete all bookmarks"
+            >
+              <img 
+                src="delete.png" 
+                alt="Delete All" 
+                className="delete-all-icon"
+              />
+              <span className="delete-all-text">Clear All Bookmarks</span>
+            </button>
+          </div>
         </div>
         
         <div className="bookmarks-grid">
@@ -48,20 +60,6 @@ const Bookmarks = () => {
                   <h3 className="bookmark-title">{bookmark.title}</h3>
                 </div>
                 <p className="bookmark-desc">{bookmark.description}</p>
-                <div className="bookmark-actions">
-                  {/* Delete button in bottom right corner */}
-                  <button 
-                    onClick={() => handleDelete(bookmark.id)} 
-                    className="bookmark-delete-btn"
-                    aria-label="Delete bookmark"
-                  >
-                    <img 
-                      src="/src/images/delete.png" 
-                      alt="Delete" 
-                      className="delete-icon"
-                    />
-                  </button>
-                </div>
               </div>
             ))
           ) : (
