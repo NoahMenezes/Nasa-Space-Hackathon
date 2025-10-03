@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import mlRoutes from "./routes/nasa.js";
 import userRoutes from "./routes/users.js";
+import experimentsRoutes from "./routes/experiments.js";
 import { initializeDatabase } from "./config/database.js";
 
 dotenv.config();
@@ -54,6 +55,7 @@ try {
 app.use("/api/auth", authRoutes);
 app.use("/api/ml", mlRoutes); // Changed from /api/nasa to /api/ml
 app.use("/api/users", userRoutes);
+app.use("/api/experiments", experimentsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

@@ -98,6 +98,29 @@ const initializeDatabase = async () => {
       )
     `);
 
+    // Create experiments table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS experiments (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        authors TEXT NOT NULL,
+        link TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create experiment analyses table for caching Gemini results
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS experiment_analyses (
+        id SERIAL PRIMARY KEY,
+        experiment_id INTEGER UNIQUE NOT NULL REFERENCES experiments(id) ON DELETE CASCADE,
+        analysis_data JSONB NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Create indexes for better performance
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -107,6 +130,10 @@ const initializeDatabase = async () => {
       CREATE INDEX IF NOT EXISTS idx_ml_predictions_user_id ON ml_predictions(user_id);
       CREATE INDEX IF NOT EXISTS idx_ml_predictions_model_type ON ml_predictions(model_type);
       CREATE INDEX IF NOT EXISTS idx_model_usage_stats_endpoint ON model_usage_stats(model_endpoint);
+      CREATE INDEX IF NOT EXISTS idx_experiments_title ON experiments USING gin(to_tsvector('english', title));
+      CREATE INDEX IF NOT EXISTS idx_experiments_authors ON experiments USING gin(to_tsvector('english', authors));
+      CREATE INDEX IF NOT EXISTS idx_experiments_link ON experiments(link);
+      CREATE INDEX IF NOT EXISTS idx_experiment_analyses_experiment_id ON experiment_analyses(experiment_id);
     `);
 
     // Create trigger to update updated_at timestamp
@@ -124,6 +151,18 @@ const initializeDatabase = async () => {
       DROP TRIGGER IF EXISTS update_users_updated_at ON users;
       CREATE TRIGGER update_users_updated_at
           BEFORE UPDATE ON users
+          FOR EACH ROW
+          EXECUTE FUNCTION update_updated_at_column();
+
+      DROP TRIGGER IF EXISTS update_experiments_updated_at ON experiments;
+      CREATE TRIGGER update_experiments_updated_at
+          BEFORE UPDATE ON experiments
+          FOR EACH ROW
+          EXECUTE FUNCTION update_updated_at_column();
+
+      DROP TRIGGER IF EXISTS update_experiment_analyses_updated_at ON experiment_analyses;
+      CREATE TRIGGER update_experiment_analyses_updated_at
+          BEFORE UPDATE ON experiment_analyses
           FOR EACH ROW
           EXECUTE FUNCTION update_updated_at_column();
     `);
