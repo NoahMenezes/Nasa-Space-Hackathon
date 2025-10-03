@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './SignupPage.css'; // Make sure to create this CSS file
+import './SignupPage.css'; 
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -20,18 +20,20 @@ const SignupPage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle signup logic here
         if (formData.password !== formData.confirmPassword) {
-            alert("Passwords don't match!");
+            // Using console.error instead of alert()
+            console.error("Password mismatch: Passwords don't match!");
             return;
         }
-        console.log('Signup with:', formData);
+        console.log('Signup attempted with:', formData);
+        // NOTE: Successful signup logic would go here
     };
 
     return (
-        <div className="signup-container">
+        // Added pt-20 for spacing beneath the fixed Navbar
+        <div className="signup-container pt-20" style={{zIndex: 20}}>
             <div className="form-card">
-                <h2 className="form-title">Create Your Account</h2>
+                <h2 className="form-title">Create Your Cosmic Account</h2>
                 <form onSubmit={handleSubmit} className="signup-form">
                     <div className="form-group">
                         <label htmlFor="name">Full Name</label>
@@ -43,6 +45,7 @@ const SignupPage = () => {
                             onChange={handleChange}
                             required
                             className="form-input"
+                            placeholder="Your name"
                         />
                     </div>
                     <div className="form-group">
@@ -55,6 +58,7 @@ const SignupPage = () => {
                             onChange={handleChange}
                             required
                             className="form-input"
+                            placeholder="mission@nasa.gov"
                         />
                     </div>
                     <div className="form-group">

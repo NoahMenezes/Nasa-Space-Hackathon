@@ -13,11 +13,11 @@ import PlaceholderPage from './components/PlaceholderPage';
 const App = () => {
     return (
         <HashRouter>
-            <div className="relative min-h-screen font-sans">
-                {/* Background is always rendered */}
+            <div style={{ position: 'relative', minHeight: '100vh', width: '100vw', overflow: 'auto' }}>
+                {/* Background should be first and have pointer-events: none on overlay areas */}
                 <Background />
-
-                {/* Navbar is always rendered and provides routing links */}
+                
+                {/* Navbar must be above background */}
                 <Navbar />
 
                 {/* Routes define which component renders based on the URL path */}
@@ -26,7 +26,6 @@ const App = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />
                     
-                    {/* Placeholder routes for the other navbar links */}
                     <Route path="/data-sources" element={
                         <PlaceholderPage 
                             title="Data Acquisition Dashboard" 
@@ -46,7 +45,6 @@ const App = () => {
                         />
                     } />
                     
-                    {/* 404/Catch-all Route */}
                     <Route path="*" element={
                         <PlaceholderPage 
                             title="404: Cosmic Anomaly Detected" 
