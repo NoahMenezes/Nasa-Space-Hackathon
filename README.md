@@ -2,6 +2,23 @@
 
 A full-stack web application for the NASA Space Apps Hackathon, featuring a React frontend with Three.js visualizations and a Node.js backend integrated with AI/ML models for NASA data analysis.
 
+## 👥 First Time Setup (For Team Members)
+
+**If you're cloning this repository for the first time**, please follow the detailed setup guide:
+
+📖 **[TEAM SETUP GUIDE](TEAM_SETUP_GUIDE.md)** - Complete step-by-step instructions for setting up PostgreSQL, creating the database, and running the project.
+
+**Quick Summary:**
+1. Install PostgreSQL
+2. Create database: `nasa_hackathon`
+3. Configure `backend/.env` with database credentials
+4. Run `npm install` (root and backend)
+5. Start backend: `npm run dev` in backend folder
+6. Load experiments: `npm run migrate-experiments` in backend folder
+7. Start frontend: `npm start` in root folder
+
+For the **Experiments Search Engine** feature, see: [QUICK_START_EXPERIMENTS.md](QUICK_START_EXPERIMENTS.md)
+
 ## 🌟 Features
 
 ### Frontend

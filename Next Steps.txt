@@ -1,0 +1,46 @@
+also implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
+
+in the bookmarks page, user should be able to remove any bookmarked experiment
+
+don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
+
+also theme of the experiments page doesn't match the rest of the app (use neon dark mode instead of the purple)
+
+fix the knowledge graph -> display proper graph, should display the data properly (in a user readable format)
+
+remove the "Powered by Gemini 2.0" from the ai generated analysis section
+basically remove mention of gemini from the ui 👍
+
+also update the readme.md, it should better reflect the features and the tech stack used
+
+upload the screenshot of the tables created in the database and ask which tables can be safely deleted.
+
+//old prompts
+
+ok a major chunk of the project is left
+<csv file here>
+all the experiments, its authors and links are mentioned in this csv file
+save this csv file in a data postgreSQL table,
+
+i have already created a database as mentioned in the readme.md, tell me if i have to create another database or a new table in the same database in postgreSQL
+
+so there is a search engine section in the website.
+
+the user will enter either experiment name (complete or incomplete) or the scietists involved (atleast one scientist
+
+the data will be received by the backend, and the experiment/scientist will be  searched in the database.
+
+all the relevant experiments will be displayed as search results in the search page only
+
+the user can click on any of the experiment
+
+and the link corresponding to the experiment will be sent to the gemini via its API.
+
+gemini will then return summary, knowledge graphs, and/or other tools to summarize a set of NASA bioscience publications and enables users to explore the impacts and results of the experiments these publications describe.
+
+and these results will be displayed on the page. also there will be a back button on the top left corner which can take you back to the experiments search results page.
+
+create all the necessary files, make the necessary changes, tell me database changes if any.
+
+Gemini API Key: AIzaSyDjxUzJ6sod7d9QvOoJ8WcQn4r9YF5Iyws
+the above key is for the gemini 2.0 flash
