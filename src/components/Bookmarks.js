@@ -8,24 +8,27 @@ const Bookmarks = () => {
       id: 1,
       title: "Mars Curiosity Rover",
       description: "Latest images and data from the Curiosity rover on Mars",
-      category: "Missions",
       url: "#"
     },
     {
       id: 2,
       title: "James Webb Space Telescope",
       description: "Stunning deep space images from NASA's newest telescope",
-      category: "Telescopes",
       url: "#"
     },
     {
       id: 3,
       title: "International Space Station",
       description: "Live tracking and information about the ISS",
-      category: "Space Stations",
       url: "#"
     }
   ];
+
+  const handleDelete = (bookmarkId) => {
+    // Add your delete functionality here
+    console.log('Deleting bookmark:', bookmarkId);
+    // You can implement the actual delete logic here
+  };
 
   return (
     <div className="bookmarks-page">
@@ -43,12 +46,21 @@ const Bookmarks = () => {
               <div key={bookmark.id} className="bookmark-card">
                 <div className="bookmark-header">
                   <h3 className="bookmark-title">{bookmark.title}</h3>
-                  <span className="bookmark-category">{bookmark.category}</span>
                 </div>
                 <p className="bookmark-desc">{bookmark.description}</p>
                 <div className="bookmark-actions">
-                  <a href={bookmark.url} className="bookmark-link">Visit</a>
-                  <button className="bookmark-remove">Remove</button>
+                  {/* Delete button in bottom right corner */}
+                  <button 
+                    onClick={() => handleDelete(bookmark.id)} 
+                    className="bookmark-delete-btn"
+                    aria-label="Delete bookmark"
+                  >
+                    <img 
+                      src="/src/images/delete.png" 
+                      alt="Delete" 
+                      className="delete-icon"
+                    />
+                  </button>
                 </div>
               </div>
             ))
