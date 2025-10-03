@@ -10,6 +10,8 @@ import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import PlaceholderPage from './components/PlaceholderPage';
 import Team from './components/Team'; 
+import SearchEngine from './components/SearchEngine'; // Add this import
+import Bookmarks from './components/Bookmarks'; // Add this import
 
 const App = () => {
     return (
@@ -30,19 +32,9 @@ const App = () => {
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/signup" element={<SignupPage />} />
                         
-                        {/* Placeholder routes */}
-                        <Route path="/data-sources" element={
-                            <PlaceholderPage 
-                                title="Data Acquisition Dashboard" 
-                                description="This section monitors live feeds and historical data from various NASA APIs, ensuring our models have the most accurate cosmic context." 
-                            />
-                        } />
-                        <Route path="/model" element={
-                            <PlaceholderPage 
-                                title="Predictive Modeling Engine" 
-                                description="Explore the proprietary algorithms driving our space solutions, specializing in orbital mechanics and long-term risk assessment." 
-                            />
-                        } />
+                        {/* New Routes for Search Engine and Bookmarks */}
+                        <Route path="/search" element={<SearchEngine />} />
+                        <Route path="/bookmarks" element={<Bookmarks />} />
                         
                         {/* Team component */}
                         <Route path="/team" element={<Team />} />
