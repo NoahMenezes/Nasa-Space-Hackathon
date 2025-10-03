@@ -1,0 +1,158 @@
+/* --- Global Page Wrapper for Z-index and centering --- */
+.page-container {
+    /* Inherits from App.css z-index properties */
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+    pointer-events: auto;
+    /* Ensure content centers if page is shorter than viewport */
+    display: flex;
+    justify-content: center;
+}
+
+/* --- Team Wrapper (Translucent Card) --- */
+.team-wrapper {
+    max-width: 1080px;
+    width: 95%;
+    margin: 0 1rem;
+    padding: 3.2rem 2vw 2.2rem;
+    color: #e0f7fa;
+    /* Translucent dark background */
+    background: rgba(12, 16, 36, 0.9);
+    backdrop-filter: blur(8px);
+    border-radius: 2rem;
+    box-shadow: 0 12px 42px rgba(67, 232, 249, 0.15);
+    border: 1px solid rgba(103, 232, 249, 0.2);
+    position: relative;
+}
+
+/* --- Header and Typography --- */
+.team-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.animated-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 4.5vw, 2.8rem);
+    font-weight: 900;
+    color: #67e8f9;
+    letter-spacing: .09em;
+    margin-bottom: .6rem;
+    text-shadow: 0 0 24px #67e8f9cc;
+    animation: shine-text 2.1s linear infinite alternate;
+}
+
+@keyframes shine-text {
+    0% { text-shadow: 0 0 24px #67e8f9cc; }
+    100% { text-shadow: 0 0 50px #67e8f9ee; }
+}
+
+.animated-desc {
+    font-size: clamp(1.1rem, 2.5vw, 1.27rem);
+    color: #e0f2fe;
+    margin-bottom: .8rem;
+    text-shadow: 0 2px 15px #222b;
+}
+
+/* --- Team Member Grid --- */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.team-card {
+    background: rgba(30, 41, 59, 0.8);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* Hover Effect for Team Card */
+.team-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3), 0 0 20px rgba(103, 232, 249, 0.3);
+    border-color: rgba(103, 232, 249, 0.5);
+}
+
+.team-avatar {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.team-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #67e8f9;
+    margin-bottom: 0.5rem;
+}
+
+.team-role {
+    color: #60a5fa;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.team-bio {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* --- Mission Statement Block --- */
+.team-mission {
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 1rem;
+    padding: 2.5rem;
+    border: 1px solid rgba(103, 232, 249, 0.2);
+    text-align: center;
+}
+
+.team-mission h2 {
+    font-size: 1.8rem;
+    color: #67e8f9;
+    margin-bottom: 1rem;
+}
+
+.team-mission p {
+    color: #e0f2fe;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+    .page-container {
+        padding-top: 4.5rem;
+        align-items: flex-start; /* Align content to top for better small screen flow */
+    }
+    
+    .team-wrapper {
+        padding: 2rem 1rem;
+        margin: 0 0.5rem;
+    }
+    
+    .animated-title {
+        font-size: 2.2rem;
+    }
+    
+    .team-avatar {
+        font-size: 3rem;
+    }
+    
+    .team-mission {
+        padding: 1.5rem;
+    }
+}
