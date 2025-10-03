@@ -1,0 +1,79 @@
+/* --- Signup Form Container Styles --- */
+.signup-container {
+  /* Position fixed relative to the viewport, centered */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50; /* Above background, below navbar */
+  width: 90%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 15px;
+max-width: 400px;
+padding: 30px;
+border-radius: 15px;
+
+/* Futuristic Glass/Dark Theme */
+background-color: rgba(10, 10, 30, 0.85);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(0, 229, 255, 0.3); /* Cyan border glow */
+box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); /* Soft outer glow */
+text-align: center;
+
+}
+
+.signup-container h2 {
+color: #00e5ff;
+margin-bottom: 25px;
+text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+}
+
+.form-group {
+margin-bottom: 20px;
+text-align: left;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 8px;
+font-weight: 500;
+color: #e0e0e0;
+}
+
+.form-group input {
+width: 100%;
+padding: 12px;
+border: 1px solid rgba(0, 229, 255, 0.5);
+border-radius: 8px;
+background-color: rgba(255, 255, 255, 0.05); /* Very dark input field */
+color: #ffffff;
+transition: border-color 0.3s ease, box-shadow 0.3s ease;
+box-sizing: border-box;
+}
+
+.form-group input:focus {
+outline: none;
+border-color: #00e5ff;
+box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+}
+
+.signup-submit-button {
+width: 100%;
+padding: 12px;
+margin-top: 10px;
+font-size: 1.1rem;
+font-weight: 700;
+background-color: #00e5ff; /* Primary CTA color */
+color: #0a0a14;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.signup-submit-button:hover {
+background-color: #ffffff;
+transform: translateY(-2px);
+}

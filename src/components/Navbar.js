@@ -1,94 +1,49 @@
-import React, { useState } from 'react';
-// Note: In a real project using separate CSS, you would import the CSS file here:
+import React from 'react';
 import './Navbar.css';
-import { Menu, X, Rocket, Map, Database, Info, Mail, LogIn, UserPlus } from 'lucide-react';
 
-/**
- * Navbar Component
- * A dark-themed, responsive navigation bar using custom CSS classes.
- */
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+// Navbar receives the routing function (setCurrentPage) as a prop from App.js
+const Navbar = ({ setCurrentPage }) => {
+    const navLinks = [
+        // Clicking 'Home' resets the page state to 'home'
+        { name: 'Home', action: () => setCurrentPage('home') },
+        // Placeholder actions for other links
+        { name: 'Data Sources', action: () => console.log('Go to Data Sources') },
+        { name: 'Model', action: () => console.log('Go to Model') },
+        { name: 'Team', action: () => console.log('Go to Team') },
+    ];
 
-  // Define navigation links and their associated icons
-  const navLinks = [
-    { name: "Home", href: "#home", icon: Rocket },
-    { name: "Missions", href: "#missions", icon: Map },
-    { name: "Data Hub", href: "#data", icon: Database },
-    { name: "About Us", href: "#about", icon: Info },
-    { name: "Contact", href: "#contact", icon: Mail },
-    { name: "Login", href: "#login", icon: LogIn },
-    { name: "Sign In", href: "#signup", icon: UserPlus },
-  ];
-
-  return (
-    <nav className="navbar-base">
-      <div className="navbar-container">
-        <div className="navbar-content">
-          
-          {/* Logo/Brand Section */}
-          <div className="flex items-center">
+    return (
+        <nav className="navbar">
             <div className="navbar-logo">
-              SPACE APPS
+                🚀 NASA Space Apps
             </div>
-          </div>
-
-          {/* Desktop Navigation Links */}
-          <div className="desktop-links">
-            <div className="nav-links">
-              {navLinks.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="nav-link-desktop"
+            <ul className="navbar-links">
+                {navLinks.map((link) => (
+                    <li key={link.name}>
+                        {/* Using <button> to trigger React state changes */}
+                        <button onClick={link.action} className="nav-link-item">
+                            {link.name}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+            
+            <div className="navbar-auth">
+                <button 
+                    className="auth-button login-button" 
+                    onClick={() => setCurrentPage('login')} // Changes App state to display LoginPage
                 >
-                  <item.icon className="nav-link-icon" />
-                  {item.name}
-                </a>
-              ))}
+                    Login
+                </button>
+                <button 
+                    className="auth-button signup-button" 
+                    onClick={() => setCurrentPage('signup')} // Changes App state to display SignupPage
+                >
+                    Sign Up
+                </button>
             </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="mobile-menu-wrapper">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              type="button"
-              className="mobile-menu-button"
-              aria-controls="mobile-menu"
-              aria-expanded="false"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Panel */}
-      {isOpen && (
-        <div className="mobile-menu-panel" id="mobile-menu">
-          <div className="mobile-links-container">
-            {navLinks.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                onClick={() => setIsOpen(false)} // Close menu on link click
-                className="nav-link-mobile"
-              >
-                <item.icon className="h-5 w-5 mr-3 text-cyan-400" />
-                {item.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </nav>
-  );
+        </nav>
+    );
 };
 
 export default Navbar;
