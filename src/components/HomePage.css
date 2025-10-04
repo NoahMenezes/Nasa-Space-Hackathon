@@ -1,209 +1,669 @@
-/* HomePage.css - COSMIC REDESIGN */
-.home-cosmic-page {
-  position: absolute;
-  inset: 0;
-  width: 100vw;
-  min-height: 100vh;
-  z-index: 3;
-  box-sizing: border-box;
-  pointer-events: none;
-  overflow-x: hidden;
-  padding-top: 4rem;
+/* HomePage.css - Modern Cosmic Design System */
+
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;800;900&display=swap");
+
+/* HomePage Container */
+.home-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Enhanced Cosmic Particles */
+.home-page.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Enhanced Cosmic Particles System */
 .cosmic-particles {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
 }
 
 .particle {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, #67e8f9 0%, #0891b2 100%);
-  opacity: 0.3;
-  animation: floatCosmic 25s linear infinite;
-  filter: drop-shadow(0 0 8px rgba(103, 232, 249, 0.6));
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: floatCosmic 15s ease-in-out infinite;
+    filter: blur(0.5px);
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
 }
 
 @keyframes floatCosmic {
-  0% { 
-    transform: translateY(0) scale(1) rotate(0deg); 
-    opacity: 0.3;
-  }
-  25% { 
-    transform: translateY(-25px) scale(1.1) rotate(90deg);
-    opacity: 0.4;
-  }
-  50% { 
-    transform: translateY(-40px) scale(1.05) rotate(180deg);
-    opacity: 0.5;
-  }
-  75% { 
-    transform: translateY(-15px) scale(0.95) rotate(270deg);
-    opacity: 0.35;
-  }
-  100% { 
-    transform: translateY(0) scale(1) rotate(360deg);
-    opacity: 0.3;
-  }
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+        opacity: 0.6;
+    }
+    25% {
+        transform: translateY(-30px) translateX(20px) scale(1.1) rotate(90deg);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-60px) translateX(0px) scale(0.9) rotate(180deg);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateY(-30px) translateX(-20px) scale(1.05)
+            rotate(270deg);
+        opacity: 0.7;
+    }
 }
 
-/* Enhanced Hero Section */
-.cosmic-header {
-  position: relative;
-  text-align: center;
-  width: 100vw;
-  padding: 4rem 2vw 3rem;
-  margin: 0 auto;
-  max-width: 1200px;
-  pointer-events: auto;
-  z-index: 10;
+/* Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 var(--space-md);
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(17, 24, 39, 0.05) 50%,
+        rgba(0, 0, 0, 0.1) 100%
+    );
+    z-index: 10;
 }
 
-.cosmic-title {
-  font-family: 'Orbitron', 'Montserrat', sans-serif;
-  font-size: clamp(3rem, 10vw, 6rem);
-  font-weight: 900;
-  color: #67e8f9;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
-  text-shadow: 
-    0 0 60px rgba(67, 232, 249, 0.8),
-    0 0 120px rgba(59, 130, 246, 0.6),
-    0 0 180px rgba(168, 85, 247, 0.4);
-  animation: cosmicTitleGlow 3s ease-in-out infinite alternate;
-  background: linear-gradient(135deg, #67e8f9 0%, #3b82f6 30%, #a855f7 60%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  background-size: 300% 300%;
-  animation: cosmicTitleGlow 3s ease-in-out infinite alternate, 
-             titleGradient 8s ease infinite;
+.hero-content {
+    max-width: 1200px;
+    width: 100%;
+    position: relative;
+    z-index: 20;
 }
 
-@keyframes cosmicTitleGlow {
-  0% {
-    text-shadow: 
-      0 0 60px rgba(67, 232, 249, 0.8),
-      0 0 120px rgba(59, 130, 246, 0.6),
-      0 0 180px rgba(168, 85, 247, 0.4);
-  }
-  100% {
-    text-shadow: 
-      0 0 80px rgba(67, 232, 249, 1),
-      0 0 160px rgba(59, 130, 246, 0.8),
-      0 0 240px rgba(168, 85, 247, 0.6),
-      0 0 300px rgba(236, 72, 153, 0.4);
-  }
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-primary);
+    border-radius: 50px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-accent);
+    margin-bottom: var(--space-xl);
+    backdrop-filter: blur(20px);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-@keyframes titleGradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.badge-icon {
+    font-size: var(--text-lg);
+    animation: pulse 2s ease-in-out infinite;
 }
 
-.cosmic-subtitle {
-  font-size: clamp(1.3rem, 3.5vw, 2rem);
-  color: #e0f2fe;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-  text-shadow: 
-    0 0 15px rgba(14, 165, 233, 0.8),
-    0 2px 25px rgba(103, 232, 249, 0.6);
-  margin-bottom: 1rem;
-  letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: var(--space-xl);
+    letter-spacing: -0.02em;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
-.cosmic-cta {
-  margin-top: 3.5rem;
+.hero-highlight {
+    background: linear-gradient(
+        135deg,
+        var(--primary-cyan) 0%,
+        var(--secondary-purple) 50%,
+        var(--secondary-pink) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease-in-out infinite;
+    position: relative;
 }
 
-/* Enhanced Mission Button */
-.mission-btn {
-  display: inline-block;
-  padding: 1.3rem 3rem;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 800;
-  border-radius: 1.2rem;
-  background: linear-gradient(135deg, 
-    #0ea5e9 0%, 
-    #3b82f6 25%, 
-    #a855f7 50%, 
-    #ec4899 75%, 
-    #f59e0b 100%);
-  background-size: 300% 300%;
-  color: #fff;
-  box-shadow: 
-    0 8px #0891b2, 
-    0 0 30px rgba(103, 232, 249, 0.6),
-    0 0 60px rgba(59, 130, 246, 0.4);
-  text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: auto;
-  border: none;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-  animation: missionBtnGlow 4s ease-in-out infinite;
+.cursor {
+    color: var(--primary-cyan);
+    animation: blink 1s step-end infinite;
 }
 
-@keyframes missionBtnGlow {
-  0%, 100% {
-    box-shadow: 
-      0 8px #0891b2, 
-      0 0 30px rgba(103, 232, 249, 0.6),
-      0 0 60px rgba(59, 130, 246, 0.4);
-  }
-  50% {
-    box-shadow: 
-      0 8px #0891b2, 
-      0 0 45px rgba(103, 232, 249, 0.8),
-      0 0 90px rgba(59, 130, 246, 0.6),
-      0 0 120px rgba(168, 85, 247, 0.4);
-  }
+@keyframes blink {
+    0%,
+    50% {
+        opacity: 1;
+    }
+    51%,
+    100% {
+        opacity: 0;
+    }
 }
 
-.mission-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.3), 
-    transparent);
-  transition: left 0.6s ease;
+@keyframes gradientShift {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
-.mission-btn:hover, .mission-btn:focus {
-  background-position: 100% 100%;
-  transform: translateY(-4px) scale(1.08);
-  animation: pulseCosmicEnhanced 2s cubic-bezier(.45,.27,.38,.85) infinite;
+.hero-subtitle {
+    font-size: clamp(var(--text-lg), 2vw, var(--text-xl));
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto var(--space-2xl);
+    line-height: 1.6;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 
-.mission-btn:hover::before {
-  left: 100%;
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    justify-content: center;
+    margin-bottom: var(--space-3xl);
+    animation: fadeInUp 0.8s ease-out 0.8s both;
 }
 
-@keyframes pulseCosmicEnhanced {
-  0%, 100% { 
-    filter: brightness(1) hue-rotate(0deg);
-  }
-  50% { 
-    filter: brightness(1.2) hue-rotate(20deg);
-  }
+.hero-cta {
+    position: relative;
+    overflow: hidden;
 }
 
-/* Rest of the HomePage.css remains the same but with enhanced colors and animations */
-/* ... (mission cards, footer, etc. with similar enhancements) ... */
+.hero-cta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.hero-cta:hover::before {
+    left: 100%;
+}
+
+.btn-icon {
+    font-size: var(--text-lg);
+    transition: transform 0.3s ease;
+}
+
+.hero-cta:hover .btn-icon {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Hero Statistics */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-xl);
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out 1s both;
+}
+
+.stat-counter {
+    text-align: center;
+    padding: var(--space-lg);
+    background: var(--bg-glass-light);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.stat-counter:hover {
+    transform: translateY(-5px);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+}
+
+.stat-number {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    color: var(--primary-cyan);
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 0 20px currentColor;
+}
+
+.stat-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Features Section */
+.features-section {
+    padding: var(--space-3xl) var(--space-md);
+    position: relative;
+    z-index: 10;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto var(--space-3xl);
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+    font-weight: 800;
+    color: var(--text-accent);
+    margin-bottom: var(--space-lg);
+    position: relative;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(
+        90deg,
+        var(--primary-blue),
+        var(--primary-cyan)
+    );
+    border-radius: 2px;
+    animation: expandUnderline 1s ease-out;
+}
+
+@keyframes expandUnderline {
+    from {
+        width: 0;
+    }
+    to {
+        width: 80px;
+    }
+}
+
+.section-subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--space-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Mission Cards */
+.mission-card {
+    position: relative;
+    padding: var(--space-2xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-large);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.mission-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mission-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--primary-cyan),
+        transparent
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mission-card:hover::before {
+    opacity: 1;
+}
+
+.mission-card.hovered {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-large), var(--shadow-glow-strong);
+}
+
+.card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(103, 232, 249, 0.05) 0%,
+        rgba(139, 92, 246, 0.05) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: var(--radius-2xl);
+}
+
+.mission-card.hovered .card-background {
+    opacity: 1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.card-icon {
+    font-size: var(--text-5xl);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.mission-card.hovered .card-icon {
+    transform: rotate(-10deg) scale(1.1);
+    filter: drop-shadow(0 0 20px currentColor);
+}
+
+.card-category {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    background: var(--bg-glass-light);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-primary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-accent);
+    margin-bottom: var(--space-md);
+    line-height: 1.3;
+}
+
+.card-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-lg);
+}
+
+.card-features {
+    list-style: none;
+    margin-bottom: var(--space-lg);
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs) 0;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.feature-check {
+    color: var(--primary-cyan);
+    font-weight: bold;
+    width: 16px;
+    text-align: center;
+}
+
+.card-action {
+    margin-top: auto;
+}
+
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--primary-cyan);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.card-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-cyan);
+    transition: width 0.3s ease;
+}
+
+.card-link:hover::after {
+    width: 100%;
+}
+
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+.card-link:hover .arrow {
+    transform: translateX(4px);
+}
+
+.card-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle,
+        rgba(103, 232, 249, 0.1) 0%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.mission-card.hovered .card-glow {
+    opacity: 1;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: var(--space-3xl) var(--space-md);
+    text-align: center;
+    background: linear-gradient(
+        135deg,
+        rgba(17, 24, 39, 0.5) 0%,
+        rgba(0, 0, 0, 0.3) 100%
+    );
+    border-top: 1px solid var(--border-primary);
+    position: relative;
+    z-index: 10;
+}
+
+.cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cta-icon {
+    font-size: var(--text-6xl);
+    margin-bottom: var(--space-lg);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.cta-title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+}
+
+.cta-description {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-2xl);
+}
+
+.cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    justify-content: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.cta-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.feature-icon {
+    color: var(--primary-cyan);
+    font-weight: bold;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: var(--space-xl) var(--space-sm);
+        min-height: 90vh;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg);
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    .mission-card {
+        padding: var(--space-lg);
+    }
+
+    .cta-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cta-features {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: clamp(2rem, 10vw, 3rem);
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-counter {
+        padding: var(--space-md);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .cosmic-particles,
+    .fab {
+        display: none;
+    }
+
+    .home-page {
+        background: white;
+        color: black;
+    }
+}

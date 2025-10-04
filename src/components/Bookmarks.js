@@ -11,7 +11,16 @@ const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
   const navigate = useNavigate();
+
+  // Page loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Load bookmarks on component mount
   useEffect(() => {
@@ -71,7 +80,7 @@ const Bookmarks = () => {
 
   if (loading) {
     return (
-      <div className="bookmarks-page">
+      <div className={`bookmarks-page ${pageLoaded ? "loaded" : ""}`}>
         <div className="bookmarks-wrapper">
           <div className="loading-container">
             <div className="loading-spinner"></div>
@@ -83,7 +92,7 @@ const Bookmarks = () => {
   }
 
   return (
-    <div className="bookmarks-page">
+    <div className={`bookmarks-page ${pageLoaded ? "loaded" : ""}`}>
       <div className="bookmarks-wrapper">
         <div className="bookmarks-header">
           <div className="header-content">

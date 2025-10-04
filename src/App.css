@@ -1,67 +1,443 @@
-/* --- Global App Container --- */
+/* Enhanced App Container with Modern Layout System */
 .App {
-    /* Make the main app container fill the screen and allow positioning of children */
-    width: 100vw; 
+    /* Main application viewport */
+    width: 100vw;
     height: 100vh;
     position: relative;
-    
-    /* CRUCIAL FIX: Enable vertical scrolling for the whole application viewport */
-    overflow-y: auto; 
-    /* Prevent horizontal scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
+
+    /* Enhanced background with cosmic atmosphere */
+    background:
+        radial-gradient(
+            ellipse at top,
+            rgba(139, 92, 246, 0.1) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            ellipse at bottom right,
+            rgba(103, 232, 249, 0.08) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            ellipse at bottom left,
+            rgba(236, 72, 153, 0.06) 0%,
+            transparent 50%
+        ),
+        linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
 }
 
-/* Example styles for foreground content to be visible over the background */
-.App-header {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 20; /* Higher than the info-overlay (10) */
-    color: white;
-}
-
-/* * The content-container style (defined in App.js via className) is essential
- * to push the content down past the fixed Navbar and ensure correct z-indexing.
- * If this class isn't defined globally (e.g., in App.css or a global style),
- * your content will sit behind or under the navbar.
- */
+/* Content container with improved spacing and layout */
 .content-container {
-    padding-top: 4rem; /* Match Navbar height */
-    position: relative; 
-    z-index: 2; /* Puts content above the fixed background (z-index 1) */
-    min-height: calc(100vh - 4rem); /* Ensures content fills remaining space for shorter pages */
-}
-/* Global Cosmic Theme */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+    min-height: calc(100vh - 4rem);
+    padding-top: 4rem; /* Account for fixed navbar */
+
+    /* Enhanced container styling */
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(17, 24, 39, 0.05) 50%,
+        rgba(0, 0, 0, 0) 100%
+    );
+
+    /* Backdrop blur for glass effect when scrolling */
+    backdrop-filter: blur(0.5px);
+    -webkit-backdrop-filter: blur(0.5px);
 }
 
-body {
-  margin: 0;
-  background-color: #000000;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  color: #ffffff;
-  overflow-x: hidden;
-  background: radial-gradient(ellipse at center, #0a0e23 0%, #000000 70%);
-}
-
-/* Three.js canvas container */
+/* Enhanced Three.js container with better integration */
 #threejs-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
+
+    /* Subtle overlay to enhance readability */
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(17, 24, 39, 0.05) 50%,
+        rgba(0, 0, 0, 0.1) 100%
+    );
 }
 
-/* Content container that sits above the background */
-.content-container {
-  position: relative;
-  z-index: 10;
-  min-height: 100vh;
+/* Enhanced App header with modern styling */
+.App-header {
+    position: relative;
+    z-index: 20;
+    color: var(--text-primary);
+    text-align: center;
+    padding: var(--space-3xl) var(--space-md);
+
+    /* Glass morphism effect */
+    background: rgba(17, 24, 39, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-primary);
+
+    /* Subtle animations */
+    animation: fadeInHeader 1s ease-out;
+}
+
+@keyframes fadeInHeader {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Page transition effects */
+.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+/* Enhanced container for different page types */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-md);
+    position: relative;
+    z-index: 10;
+}
+
+.page-container-narrow {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+}
+
+.page-container-wide {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--space-md);
+}
+
+/* Section styling for consistent layout */
+.section {
+    margin-bottom: var(--space-3xl);
+    position: relative;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+    font-weight: 800;
+    color: var(--text-accent);
+    margin-bottom: var(--space-md);
+    letter-spacing: 0.05em;
+
+    /* Text glow effect */
+    text-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
+
+    /* Animated underline */
+    position: relative;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        var(--primary-blue),
+        var(--primary-cyan)
+    );
+    border-radius: 2px;
+    animation: expandUnderline 0.8s ease-out;
+}
+
+@keyframes expandUnderline {
+    from {
+        width: 0;
+    }
+    to {
+        width: 60px;
+    }
+}
+
+.section-subtitle {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Grid layouts for different content types */
+.grid {
+    display: grid;
+    gap: var(--space-xl);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+}
+
+/* Enhanced loading states */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.loading-content {
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--primary-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--space-md);
+}
+
+.loading-text {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--text-accent);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Error states */
+.error-container {
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.error-icon {
+    font-size: var(--text-6xl);
+    color: #ef4444;
+    margin-bottom: var(--space-lg);
+}
+
+.error-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: var(--text-primary);
+}
+
+.error-message {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Floating action button */
+.fab {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue),
+        var(--primary-cyan)
+    );
+    border: none;
+    color: var(--text-primary);
+    font-size: var(--text-xl);
+    cursor: pointer;
+    box-shadow: var(--shadow-large), var(--shadow-glow);
+    transition: var(--transition-smooth);
+    z-index: 50;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-large), var(--shadow-glow-strong);
+}
+
+/* Breadcrumb navigation */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.breadcrumb-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.breadcrumb-link:hover {
+    color: var(--primary-cyan);
+}
+
+.breadcrumb-separator {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --border-primary: rgba(255, 255, 255, 0.8);
+        --text-muted: #cccccc;
+    }
+}
+
+/* Print styles */
+@media print {
+    .App {
+        background: white !important;
+        color: black !important;
+    }
+
+    #threejs-container,
+    .fab {
+        display: none !important;
+    }
+
+    .content-container {
+        padding-top: 0;
+    }
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 480px) {
+    .App {
+        font-size: 14px;
+    }
+
+    .content-container {
+        padding-top: 3.5rem; /* Smaller navbar on mobile */
+    }
+
+    .page-container,
+    .page-container-narrow,
+    .page-container-wide {
+        padding: var(--space-sm);
+    }
+
+    .section {
+        margin-bottom: var(--space-2xl);
+    }
+
+    .fab {
+        bottom: var(--space-lg);
+        right: var(--space-lg);
+        width: 48px;
+        height: 48px;
+        font-size: var(--text-lg);
+    }
+}
+
+/* Tablet-specific adjustments */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .page-container {
+        padding: var(--space-lg);
+    }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1400px) {
+    .section-title {
+        font-size: var(--text-5xl);
+    }
+
+    .section-subtitle {
+        font-size: var(--text-xl);
+    }
 }

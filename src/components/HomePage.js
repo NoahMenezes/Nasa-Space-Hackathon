@@ -1,311 +1,441 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import "./HomePage.css";
 
-// --- Cosmic Particle Overlay (for extra immersion) ---
-const CosmicParticles = () => (
-  <div className="cosmic-particles">
-    {[...Array(40)].map((_, i) => (
-      <span key={i} className={`particle particle-${i}`} />
-    ))}
-    <style>
-      {`
-        .cosmic-particles {
-          position: fixed;
-          inset: 0;
-          z-index: 2;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        .particle {
-          position: absolute;
-          border-radius: 50%;
-          background: radial-gradient(circle, #67e8f9 0%, #0891b2 100%);
-          opacity: 0.25;
-          animation: floatCosmic 20s linear infinite;
-        }
-        ${[...Array(40)].map((_, i) => `
-          .particle-${i} {
-            width: ${5 + Math.random() * 10}px;
-            height: ${5 + Math.random() * 10}px;
-            left: ${Math.random() * 100}vw;
-            top: ${Math.random() * 100}vh;
-            animation-delay: ${Math.random() * 20}s;
-          }
-        `).join("")}
-        @keyframes floatCosmic {
-          0% { transform: translateY(0) scale(1); opacity: 0.27; }
-          60% { transform: translateY(-20px) scale(1.05); opacity: 0.22;}
-          100% { transform: translateY(10px) scale(0.95); opacity: 0.19;}
-        }
-      `}
-    </style>
-  </div>
-);
+// Enhanced Cosmic Particle System
+const CosmicParticles = () => {
+  const [particles, setParticles] = useState([]);
+  const containerRef = useRef(null);
 
-// --- Mission Card UI ---
-const MissionCard = ({ title, description, icon }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    const generateParticles = () => {
+      const newParticles = Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 4 + 1,
+        speed: Math.random() * 0.5 + 0.1,
+        opacity: Math.random() * 0.6 + 0.2,
+        color: ["#67e8f9", "#8b5cf6", "#ec4899", "#fbbf24"][
+          Math.floor(Math.random() * 4)
+        ],
+      }));
+      setParticles(newParticles);
+    };
+
+    generateParticles();
+  }, []);
+
   return (
-    <div
-      className={`mission-card${isHovered ? " hovered" : ""}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="card-icon">{icon}</div>
-      <h3 className="card-title">{title}</h3>
-      <p className="card-desc">{description}</p>
-      <style>
-        {`
-          .mission-card {
-            position: relative;
-            flex: 1;
-            min-width: 280px;
-            max-width: 380px;
-            padding: 2.5rem 2rem 2rem 2rem;
-            margin-bottom: 0.5rem;
-            border-radius: 1.5rem;
-            background: rgba(17,24,39,0.6);
-            border: 2.5px solid rgba(103,232,249,0.12);
-            box-shadow: 0 6px 24px 0 rgba(0,0,0,0.75), 0 0 0 0 #67e8f9;
-            backdrop-filter: blur(11px);
-            color: white;
-            text-align: center;
-            transition: all 0.32s cubic-bezier(.17,.67,.83,.67);
-            cursor: pointer;
-            overflow: hidden;
-          }
-          .mission-card:before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 1.7rem;
-            padding: 0.5rem;
-            background: linear-gradient(120deg, #06b6d4 0%, #67e8f9 50%, #0ea5e9 100%);
-            opacity: 0;
-            z-index: 1;
-            transition: opacity 0.32s;
-          }
-          .mission-card.hovered:before {
-            opacity: 0.17;
-            animation: borderSweep 1.6s linear infinite;
-          }
-          @keyframes borderSweep {
-            0% { filter: blur(0.5px); }
-            50% { filter: blur(3px)}
-            100% { filter: blur(0.5px);}
-          }
-          .mission-card.hovered {
-            border: 2.5px solid #67e8f9;
-            box-shadow: 0 0 38px 0 rgba(67,232,249,0.21), 0 6px 24px 0 rgba(0,0,0,0.85);
-            transform: translateY(-9px) scale(1.032);
-          }
-          .card-icon {
-            font-size: 3.2rem;
-            color: ${isHovered ? "#67e8f9" : "#0ea5e9"};
-            margin-bottom: 1.2rem;
-            filter: drop-shadow(0 0 7px #4adeea);
-            transition: color 0.36s, transform 0.36s;
-            transform: ${isHovered ? "rotate(-12deg) scale(1.12)" : "rotate(0deg)"};
-          }
-          .card-title {
-            font-size: 1.52rem;
-            font-weight: 800;
-            margin-bottom: 0.7rem;
-            letter-spacing: 0.08em;
-            font-family: 'Orbitron', 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            color: #67e8f9;
-            text-shadow: 0 2px 14px rgba(103,232,249,0.25);
-          }
-          .card-desc {
-            color: #e0f2fe;
-            font-size: 1.08rem;
-            font-weight: 500;
-            letter-spacing: 0.01em;
-            line-height: 1.6;
-            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            text-shadow: 0 2px 10px rgba(17,24,39,0.45);
-            margin-top: 0.3rem;
-          }
-        `}
-      </style>
+    <div className="cosmic-particles" ref={containerRef}>
+      {particles.map((particle) => (
+        <div
+          key={particle.id}
+          className="particle"
+          style={{
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            backgroundColor: particle.color,
+            opacity: particle.opacity,
+            animationDuration: `${20 / particle.speed}s`,
+            animationDelay: `${Math.random() * 20}s`,
+          }}
+        />
+      ))}
     </div>
   );
 };
 
-// --- Main Page UI ---
-const HomePage = () => {
+// Enhanced Mission Card with Advanced Interactions
+const MissionCard = ({
+  title,
+  description,
+  icon,
+  delay = 0,
+  category,
+  features = [],
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsVisible(true), delay);
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [delay]);
+
   return (
-    <div className="home-cosmic-page">
-      <CosmicParticles />
-      {/* --- Hero Header --- */}
-      <header className="cosmic-header">
-        <h1 className="cosmic-title">
-          SPACE BIOLOGY KNOWLEDGE ENGINE
-        </h1>
-        <p className="cosmic-subtitle">
-          Unlocking decades of NASA space biology research to enable<br />
-          the next era of human exploration beyond Earth
-        </p>
-        
-      </header>
-
-      <section className="mission-section">
-        <h2 className="objectives-title">MISSION CAPABILITIES</h2>
-        <div className="cards-grid-cosmic">
-          <MissionCard
-            icon="🧬"
-            title="Biological Data Integration"
-            description="Consolidate and organize decades of NASA space biology experiments into a unified, searchable knowledge base for lunar and deep space missions."
-          />
-          <MissionCard
-            icon="🔍"
-            title="Advanced Research Search"
-            description="Quickly find relevant biological studies across plant growth, microbial behavior, and human physiology in space environments using intelligent search algorithms."
-          />
-          <MissionCard
-            icon="📊"
-            title="Experiment Visualization"
-            description="Transform complex biological data into interactive visualizations, showing plant growth patterns, microbial changes, and physiological adaptations in space."
-          />
-          <MissionCard
-            icon="🤖"
-            title="AI-Powered Insights"
-            description="Leverage machine learning to identify patterns and predict biological responses to space conditions, accelerating research for future missions."
-          />
-          <MissionCard
-            title="Mission Planning Support"
-            icon="🚀"
-            description="Provide critical biological research data to inform mission design, life support systems, and astronaut health protocols for lunar settlements."
-          />
-          <MissionCard
-            icon="🌱"
-            title="Flora & Fauna Database"
-            description="Comprehensive catalog of space-grown plants and biological organisms with their adaptation data, growth requirements, and research findings."
-          />
+    <div
+      ref={cardRef}
+      className={`mission-card ${isVisible ? "visible" : ""} ${isHovered ? "hovered" : ""}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      data-category={category}
+    >
+      <div className="card-background"></div>
+      <div className="card-content">
+        <div className="card-header">
+          <div className="card-icon">{icon}</div>
+          <div className="card-category">{category}</div>
         </div>
-      </section>
 
-      {/* --- UI & Font Styles --- */}
-      <style>
-        {`
-          .home-cosmic-page {
-            position: absolute;
-            inset: 0;
-            width: 100vw;
-            min-height: 100vh;
-            z-index: 3;
-            box-sizing: border-box;
-            pointer-events: none;
-            overflow-x: hidden;
-          }
-          .cosmic-header {
-            position: relative;
-            text-align: center;
-            width: 100vw;
-            padding: 4.5rem 2vw 2.2rem;
-            margin: 0 auto;
-            max-width: 1080px;
-            pointer-events: auto;
-            z-index: 10;
-          }
-          .cosmic-title {
-            font-family: 'Orbitron', 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4.8rem);
-            font-weight: 900;
-            color: #67e8f9;
-            letter-spacing: 0.18em;
-            text-shadow: 0 0 40px rgba(67,232,249,0.64), 0 0 22px #0891b2;
-            margin-bottom: 1rem;
-            animation: cosmicGlow 2.5s ease-in-out infinite alternate;
-          }
-          @keyframes cosmicGlow {
-            0% {text-shadow: 0 0 40px #67e8f9;}
-            100% {text-shadow: 0 0 70px #67e8f9;}
-          }
-          .cosmic-subtitle {
-            font-size: clamp(1.1rem, 2.8vw, 1.55rem);
-            color: #e0f2fe;
-            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            font-weight: 500;
-            text-shadow: 0 0 8px #000, 0 2px 15px #0ea5e9;
-            margin-bottom: 0.8rem;
-          }
-          .cosmic-cta {
-            margin-top: 2.8rem;
-          }
-          .mission-btn {
-            display: inline-block;
-            padding: 1rem 2.2rem;
-            font-family: 'Orbitron', Arial, sans-serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            border-radius: 0.8rem;
-            background: linear-gradient(90deg, #0ea5e9 0%, #67e8f9 100%);
-            color: #fff;
-            box-shadow: 0 6px #0891b2, 0 0 18px #67e8f9;
-            text-decoration: none;
-            transition: background-position 0.22s, box-shadow 0.23s, transform 0.22s;
-            pointer-events: auto;
-            background-size: 200% 100%;
-            background-position: left;
-            border: none;
-            outline: none;
-          }
-          .mission-btn:hover, .mission-btn:focus {
-            background-position: right;
-            box-shadow: 0 0 24px #67e8f9, 0 6px #0891b2;
-            transform: scale(1.04);
-            animation: pulseCosmic 1.8s cubic-bezier(.45,.27,.38,.85) infinite;
-          }
-          @keyframes pulseCosmic {
-            0%,100% { filter: brightness(1);}
-            50% { filter: brightness(1.12);}
-          }
+        <h3 className="card-title">{title}</h3>
+        <p className="card-description">{description}</p>
 
-          .mission-section {
-            width: 100vw;
-            max-width: 1200px;
-            margin: 0 auto;
-            pointer-events: auto;
-            z-index: 14;
-          }
-          .objectives-title {
-            text-align: center;
-            font-size: 2.08rem;
-            font-weight: 800;
-            color: #fff;
-            margin-top: 2.2rem;
-            margin-bottom: 2.6rem;
-            letter-spacing: 0.08em;
-            font-family: 'Orbitron', 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            text-shadow: 0 0 13px #0891b2, 0 2px 21px #67e8f9;
-          }
-          .cards-grid-cosmic {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2.7rem;
-            padding: 2rem 1.5vw 5.5rem 1.5vw;
-          }
-          @media (max-width: 900px) {
-            .cards-grid-cosmic {
-              gap: 2rem;
-              padding-bottom: 2.5rem;
-            }
-            .mission-card { min-width: 240px; max-width: 340px;}
-          }
-          @media (max-width: 650px) {
-            .cosmic-header { padding: 2.2rem 1vw 1rem;}
-            .cosmic-title { font-size: 2.1rem;}
-            .objectives-title { font-size: 1.45rem;}
-            .cards-grid-cosmic { flex-direction: column; gap: 1.7rem;}
-          }
-        `}
-      </style>
-      {/* Orbitron font for more futuristic feel; can be replaced if needed */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" />
-      
+        {features.length > 0 && (
+          <ul className="card-features">
+            {features.map((feature, index) => (
+              <li key={index} className="feature-item">
+                <span className="feature-check">✓</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="card-action">
+          <Link to="/search" className="card-link">
+            Explore <span className="arrow">→</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="card-glow"></div>
     </div>
   );
-}
+};
+
+// Interactive Statistics Counter
+const StatCounter = ({ value, label, suffix = "", duration = 2000 }) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const counterRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    if (counterRef.current) {
+      observer.observe(counterRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let startTime = null;
+    const startValue = 0;
+    const endValue = parseInt(value);
+
+    const animate = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(
+        easeOutQuart * (endValue - startValue) + startValue,
+      );
+
+      setCount(currentCount);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [isVisible, value, duration]);
+
+  return (
+    <div ref={counterRef} className="stat-counter">
+      <div className="stat-number">
+        {count.toLocaleString()}
+        {suffix}
+      </div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+};
+
+// Enhanced Hero Section with Typing Effect
+const HeroSection = () => {
+  const [typedText, setTypedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const phrases = [
+      "Space Biology Research",
+      "Lunar Mission Planning",
+      "Biological Data Analysis",
+      "Scientific Discovery",
+    ];
+
+    const currentPhrase = phrases[currentIndex];
+    const timeout = setTimeout(
+      () => {
+        if (!isDeleting) {
+          if (typedText.length < currentPhrase.length) {
+            setTypedText(currentPhrase.slice(0, typedText.length + 1));
+          } else {
+            setTimeout(() => setIsDeleting(true), 2000);
+          }
+        } else {
+          if (typedText.length > 0) {
+            setTypedText(typedText.slice(0, -1));
+          } else {
+            setIsDeleting(false);
+            setCurrentIndex((prev) => (prev + 1) % phrases.length);
+          }
+        }
+      },
+      isDeleting ? 50 : 100,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [typedText, currentIndex, isDeleting]);
+
+  return (
+    <section className="hero-section">
+      <div className="hero-content">
+        <div className="hero-badge">
+          <span className="badge-icon">🚀</span>
+          NASA Space Biology Knowledge Engine
+        </div>
+
+        <h1 className="hero-title">
+          Advancing Human
+          <br />
+          <span className="hero-highlight">
+            {typedText}
+            <span className="cursor">|</span>
+          </span>
+        </h1>
+
+        <p className="hero-subtitle">
+          Unlock decades of NASA space biology research to enable the next era
+          of human exploration beyond Earth. From microgravity experiments to
+          deep space missions.
+        </p>
+
+        <div className="hero-actions">
+          <Link to="/search" className="btn btn-primary btn-lg hero-cta">
+            <span className="btn-icon">🔍</span>
+            Start Exploring
+          </Link>
+          <Link to="/bookmarks" className="btn btn-outline btn-lg">
+            View Bookmarks
+          </Link>
+        </div>
+
+        <div className="hero-stats">
+          <StatCounter value="15000" label="Research Papers" suffix="+" />
+          <StatCounter value="500" label="Experiments" suffix="+" />
+          <StatCounter value="50" label="Years of Data" suffix="+" />
+          <StatCounter value="99" label="Success Rate" suffix="%" />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Feature Showcase Section
+const FeaturesSection = () => {
+  const features = [
+    {
+      icon: "🧬",
+      title: "Biological Data Integration",
+      description:
+        "Consolidate decades of NASA space biology experiments into a unified, searchable knowledge base.",
+      category: "Data Management",
+      features: [
+        "Unified Database",
+        "Smart Categorization",
+        "Real-time Updates",
+      ],
+    },
+    {
+      icon: "🔍",
+      title: "Advanced Research Search",
+      description:
+        "Find relevant studies using AI-powered search across plant growth, microbial behavior, and human physiology.",
+      category: "Search & Discovery",
+      features: [
+        "AI-Powered Search",
+        "Natural Language Queries",
+        "Smart Filtering",
+      ],
+    },
+    {
+      icon: "📊",
+      title: "Interactive Visualizations",
+      description:
+        "Transform complex biological data into interactive charts showing patterns and adaptations in space.",
+      category: "Data Visualization",
+      features: [
+        "3D Visualizations",
+        "Interactive Charts",
+        "Real-time Analytics",
+      ],
+    },
+    {
+      icon: "🤖",
+      title: "Machine Learning Insights",
+      description:
+        "Leverage AI to identify patterns and predict biological responses to space conditions.",
+      category: "AI & Analytics",
+      features: [
+        "Predictive Models",
+        "Pattern Recognition",
+        "Automated Analysis",
+      ],
+    },
+    {
+      icon: "🚀",
+      title: "Mission Planning Support",
+      description:
+        "Critical biological research data to inform mission design and astronaut health protocols.",
+      category: "Mission Planning",
+      features: ["Mission Templates", "Risk Assessment", "Protocol Generation"],
+    },
+    {
+      icon: "🌱",
+      title: "Flora & Fauna Database",
+      description:
+        "Comprehensive catalog of space-grown organisms with adaptation data and research findings.",
+      category: "Biological Database",
+      features: ["Species Catalog", "Growth Tracking", "Adaptation Studies"],
+    },
+  ];
+
+  return (
+    <section className="features-section">
+      <div className="section-header">
+        <h2 className="section-title">Mission Capabilities</h2>
+        <p className="section-subtitle">
+          Discover how our platform accelerates space biology research and
+          mission planning
+        </p>
+      </div>
+
+      <div className="features-grid">
+        {features.map((feature, index) => (
+          <MissionCard key={index} {...feature} delay={index * 100} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+// Call-to-Action Section
+const CTASection = () => {
+  return (
+    <section className="cta-section">
+      <div className="cta-content">
+        <div className="cta-icon">🌌</div>
+        <h2 className="cta-title">Ready to Explore Space Biology?</h2>
+        <p className="cta-description">
+          Join thousands of researchers, scientists, and mission planners who
+          rely on our comprehensive database for their space biology research.
+        </p>
+
+        <div className="cta-actions">
+          <Link to="/search" className="btn btn-primary btn-lg">
+            <span className="btn-icon">🚀</span>
+            Begin Your Journey
+          </Link>
+          <Link to="/signup" className="btn btn-secondary btn-lg">
+            Create Account
+          </Link>
+        </div>
+
+        <div className="cta-features">
+          <div className="cta-feature">
+            <span className="feature-icon">✅</span>
+            Free Access to Research Data
+          </div>
+          <div className="cta-feature">
+            <span className="feature-icon">✅</span>
+            Advanced Search Capabilities
+          </div>
+          <div className="cta-feature">
+            <span className="feature-icon">✅</span>
+            Collaborative Tools
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Main HomePage Component
+const HomePage = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Trigger entrance animations after component mounts
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Add scroll event listener for navbar styling
+    const handleScroll = () => {
+      const navbar = document.querySelector(".navbar");
+      if (navbar) {
+        if (window.scrollY > 50) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div className={`home-page ${isLoaded ? "loaded" : ""}`}>
+      <CosmicParticles />
+
+      <HeroSection />
+      <FeaturesSection />
+      <CTASection />
+
+      {/* Floating Action Button */}
+      <button
+        className="fab"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Scroll to top"
+      >
+        ↑
+      </button>
+    </div>
+  );
+};
 
 export default HomePage;
