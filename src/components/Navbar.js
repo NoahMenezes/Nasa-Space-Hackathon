@@ -7,6 +7,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [pillStyle, setPillStyle] = useState({});
 
   const navLinks = [
     { name: "Home", path: "/", icon: "🏠" },
@@ -15,6 +16,38 @@ const Navbar = () => {
   ];
 
   const location = useLocation();
+
+  // Update pill position based on active link
+  useEffect(() => {
+    const updatePillPosition = () => {
+      const activeLink = document.querySelector('.nav-link.active');
+      const navLinksContainer = document.querySelector('.nav-links');
+      
+      if (activeLink && navLinksContainer) {
+        const containerRect = navLinksContainer.getBoundingClientRect();
+        const linkRect = activeLink.getBoundingClientRect();
+        
+        setPillStyle({
+          width: `${linkRect.width}px`,
+          transform: `translateX(${linkRect.left - containerRect.left - 6}px)`,
+        });
+      }
+    };
+
+    // Update on mount and when location changes
+    updatePillPosition();
+    
+    // Update on window resize
+    window.addEventListener('resize', updatePillPosition);
+    
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(updatePillPosition, 50);
+
+    return () => {
+      window.removeEventListener('resize', updatePillPosition);
+      clearTimeout(timer);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,6 +94,10 @@ const Navbar = () => {
 
             {/* Main Nav Links */}
             <div className="nav-links">
+              <div 
+                className="nav-pill" 
+                style={pillStyle}
+              />
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -78,7 +115,7 @@ const Navbar = () => {
             {/* Auth Buttons */}
             <div className="auth-buttons">
               <Link to="/login" className="btn btn-login">
-                <span className="btn-icon">🔐</span>
+                <span className="btn-icon">🔓</span>
                 <span>Login</span>
               </Link>
               <Link to="/signup" className="btn btn-signup">
@@ -125,7 +162,7 @@ const Navbar = () => {
                 className="btn btn-login"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <span className="btn-icon">🔐</span>
+                <span className="btn-icon">🔓</span>
                 <span>Login</span>
               </Link>
               <Link
