@@ -9,116 +9,336 @@ import {
 
 // --- START: KnowledgeGraph Component (Self-Contained for integration) ---
 // 💡 IMPORTANT: You must install the dependency: npm install react-force-graph-2d
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D from "react-force-graph-2d";
 
 const KnowledgeGraph = ({ graphData }) => {
-  const isEmpty = !graphData || !graphData.nodes || graphData.nodes.length === 0;
+  const [showLegend, setShowLegend] = useState(true);
 
-  // Use a fixed height/width for the graph container to ensure it renders properly
+  const isEmpty =
+    !graphData || !graphData.nodes || graphData.nodes.length === 0;
+
+  // Enhanced container style with improved visual design
   const containerStyle = {
-    height: '500px', 
-    width: '100%', 
-    background: '#1a202c', // Use a dark background to match the theme
-    borderRadius: '1rem',
-    overflow: 'hidden',
-    border: '1px solid rgba(103, 232, 249, 0.2)',
+    height: "600px", // Increased height for better visibility
+    width: "100%",
+    background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", // Gradient background
+    borderRadius: "1rem",
+    overflow: "hidden",
+    border: "2px solid rgba(103, 232, 249, 0.3)",
+    boxShadow:
+      "0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(103, 232, 249, 0.1)",
+    position: "relative",
   };
 
   const placeholderStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    color: '#94a3b8',
-    fontSize: '1.2rem',
-    textAlign: 'center',
-    padding: '2rem'
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    color: "#94a3b8",
+    fontSize: "1.2rem",
+    textAlign: "center",
+    padding: "3rem",
+    gap: "1rem",
+  };
+
+  // Enhanced node color scheme
+  const getNodeColor = (node) => {
+    const colorMap = {
+      biological: "#10b981", // Emerald green
+      condition: "#3b82f6", // Blue
+      gene: "#8b5cf6", // Purple
+      protein: "#f59e0b", // Amber
+      pathway: "#ef4444", // Red
+      cell: "#06b6d4", // Cyan
+      organism: "#84cc16", // Lime
+      environment: "#f97316", // Orange
+      default: "#64748b", // Slate
+    };
+
+    const nodeType = node.type?.toLowerCase() || "default";
+    return colorMap[nodeType] || colorMap.default;
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="knowledge-graph-container" style={containerStyle}>
+      {/* Interactive Controls */}
+      {!isEmpty && (
+        <div className="knowledge-graph-controls">
+          <button
+            className="graph-control-btn"
+            onClick={() => setShowLegend(!showLegend)}
+            title="Toggle Legend"
+          >
+            {showLegend ? "Hide Legend" : "Show Legend"}
+          </button>
+          <button
+            className="graph-control-btn"
+            onClick={() => {
+              // Reset node positions
+              if (graphData?.nodes) {
+                graphData.nodes.forEach((node) => {
+                  delete node.fx;
+                  delete node.fy;
+                });
+              }
+            }}
+            title="Reset Layout"
+          >
+            Reset
+          </button>
+        </div>
+      )}
+
+      {/* Knowledge Graph Header */}
+      {!isEmpty && (
+        <div className="knowledge-graph-header">
+          <h3 className="knowledge-graph-title">🕸️ Knowledge Graph</h3>
+          <p className="knowledge-graph-subtitle">
+            Interactive visualization of experiment relationships and concepts
+          </p>
+        </div>
+      )}
+
       {isEmpty ? (
         <div style={placeholderStyle}>
-          No structured data available to generate a graph.
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🕸️</div>
+          <div>No structured data available to generate a knowledge graph.</div>
+          <div
+            style={{
+              fontSize: "0.9rem",
+              color: "#64748b",
+              marginTop: "0.5rem",
+            }}
+          >
+            The AI analysis may not have generated graph data for this
+            experiment.
+          </div>
         </div>
       ) : (
         <ForceGraph2D
           graphData={{
             nodes: graphData.nodes,
-            links: graphData.edges.map(e => ({ 
-              source: e.source, 
-              target: e.target, 
-              label: e.relationship || '' // Use relationship as link label
+            links: graphData.edges.map((e) => ({
+              source: e.source,
+              target: e.target,
+              label: e.relationship || "",
+              type: e.type || "default",
             })),
           }}
-          // Set to match the overall dark theme and prevent graph overlap
-          backgroundColor="#1a202c" 
-          nodeLabel="label"
-          // Link particle to indicate direction
-          linkDirectionalParticles={1} 
-          linkDirectionalParticleColor={() => '#67e8f9'}
-          linkDirectionalParticleWidth={1.5}
-          linkDirectionalArrowLength={8}
-          linkDirectionalArrowRelPos={1}
+          // Enhanced visual settings
+          backgroundColor="transparent"
+          nodeLabel={(node) =>
+            `${node.label}${node.type ? ` (${node.type})` : ""}`
+          }
+          linkLabel="label"
+          // Enhanced directional indicators with white color
+          linkDirectionalParticles={2}
+          linkDirectionalParticleColor={() => "#ffffff"}
+          linkDirectionalParticleWidth={2}
+          linkDirectionalParticleSpeed={0.006}
+          // White arrows for better contrast
+          linkDirectionalArrowLength={10}
+          linkDirectionalArrowRelPos={0.9}
+          linkDirectionalArrowColor={() => "#ffffff"}
+          // Link styling
+          linkColor={() => "rgba(255, 255, 255, 0.6)"}
+          linkWidth={2}
+          linkHoverColor={() => "#67e8f9"}
+          // Node interactions
           linkHoverDuringDrag={false}
-          
+          nodeRelSize={10}
+          // Enhanced node rendering
           nodeCanvasObject={(node, ctx, globalScale) => {
             const label = node.label;
-            // Scale font based on zoom level for readability
-            const fontSize = 12 / globalScale; 
-            ctx.font = `${fontSize}px Inter, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Define color based on type (assuming the backend provides a 'type' property)
-            const color = node.type === 'Condition' || node.type === 'Gene' ? '#3b82f6' : '#10b981'; 
+            const fontSize = Math.max(10, 14 / globalScale);
+            const nodeRadius = Math.max(8, 12 / globalScale);
 
-            // Draw node with custom glow
+            ctx.font = `${fontSize}px 'Inter', -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            const color = getNodeColor(node);
+
+            // Enhanced node with double ring effect
             ctx.beginPath();
-            ctx.arc(node.x, node.y, 8, 0, 2 * Math.PI, false);
+            ctx.arc(node.x, node.y, nodeRadius + 2, 0, 2 * Math.PI, false);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.fill();
+
+            // Main node
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, nodeRadius, 0, 2 * Math.PI, false);
             ctx.fillStyle = color;
             ctx.shadowColor = color;
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = 15;
             ctx.fill();
-            ctx.shadowBlur = 0; // Reset shadow for text
+            ctx.shadowBlur = 0;
 
-            // Draw label
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(label, node.x, node.y - 14);
+            // Node border
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, nodeRadius, 0, 2 * Math.PI, false);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Enhanced label with background
+            const labelY = node.y - nodeRadius - 8;
+            const textMetrics = ctx.measureText(label);
+            const textWidth = textMetrics.width;
+            const padding = 6;
+
+            // Label background
+            ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+            ctx.fillRect(
+              node.x - textWidth / 2 - padding,
+              labelY - fontSize / 2 - padding / 2,
+              textWidth + padding * 2,
+              fontSize + padding,
+            );
+
+            // Label border
+            ctx.strokeStyle = "rgba(103, 232, 249, 0.3)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(
+              node.x - textWidth / 2 - padding,
+              labelY - fontSize / 2 - padding / 2,
+              textWidth + padding * 2,
+              fontSize + padding,
+            );
+
+            // Label text
+            ctx.fillStyle = "#ffffff";
+            ctx.font = `bold ${fontSize}px 'Inter', -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.fillText(label, node.x, labelY);
           }}
-          // Render the link label 
+          // Enhanced link label rendering
           linkCanvasObject={(link, ctx, globalScale) => {
             const label = link.label;
             const start = link.source;
             const end = link.target;
 
-            if (typeof start !== 'object' || typeof end !== 'object' || !label) return;
+            if (typeof start !== "object" || typeof end !== "object" || !label)
+              return;
 
             const textPos = {
               x: (start.x + end.x) / 2,
               y: (start.y + end.y) / 2,
             };
-            
-            const fontSize = 8 / globalScale;
-            ctx.font = `${fontSize}px Inter, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#94a3b8'; // Muted link color
 
-            ctx.fillText(label, textPos.x, textPos.y - 2);
+            const fontSize = Math.max(8, 10 / globalScale);
+            ctx.font = `${fontSize}px 'Inter', -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Enhanced label background
+            const textMetrics = ctx.measureText(label);
+            const textWidth = textMetrics.width;
+            const padding = 4;
+
+            ctx.fillStyle = "rgba(15, 23, 42, 0.8)";
+            ctx.fillRect(
+              textPos.x - textWidth / 2 - padding,
+              textPos.y - fontSize / 2 - padding / 2,
+              textWidth + padding * 2,
+              fontSize + padding,
+            );
+
+            // Label border
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(
+              textPos.x - textWidth / 2 - padding,
+              textPos.y - fontSize / 2 - padding / 2,
+              textWidth + padding * 2,
+              fontSize + padding,
+            );
+
+            // Enhanced label text
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(label, textPos.x, textPos.y);
           }}
-          // Enable dragging nodes
-          onNodeDragEnd={node => {
+          // Enhanced node interactions
+          onNodeDragEnd={(node) => {
             node.fx = node.x;
             node.fy = node.y;
           }}
+          onNodeHover={(node) => {
+            document.body.style.cursor = node ? "pointer" : "default";
+          }}
+          // Enhanced physics simulation
+          d3AlphaDecay={0.02}
+          d3VelocityDecay={0.3}
+          warmupTicks={100}
+          cooldownTicks={200}
         />
+      )}
+
+      {/* Enhanced Legend */}
+      {!isEmpty && showLegend && (
+        <div className="knowledge-graph-legend">
+          <div className="legend-title">Node Types</div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#10b981" }}
+            ></div>
+            <span>Biological</span>
+          </div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#3b82f6" }}
+            ></div>
+            <span>Condition</span>
+          </div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#8b5cf6" }}
+            ></div>
+            <span>Gene</span>
+          </div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#f59e0b" }}
+            ></div>
+            <span>Protein</span>
+          </div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#ef4444" }}
+            ></div>
+            <span>Pathway</span>
+          </div>
+          <div className="legend-item">
+            <div
+              className="legend-color"
+              style={{ backgroundColor: "#06b6d4" }}
+            ></div>
+            <span>Cell</span>
+          </div>
+          <div
+            style={{
+              marginTop: "0.75rem",
+              fontSize: "0.75rem",
+              color: "#64748b",
+            }}
+          >
+            • White arrows show relationships
+            <br />
+            • Drag nodes to rearrange
+            <br />• Hover for details
+          </div>
+        </div>
       )}
     </div>
   );
 };
 // --- END: KnowledgeGraph Component ---
-
 
 const ExperimentDetails = () => {
   const { id } = useParams();
@@ -127,6 +347,7 @@ const ExperimentDetails = () => {
   const [experiment, setExperiment] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("all");
@@ -140,7 +361,6 @@ const ExperimentDetails = () => {
     "knowledgeGraph",
     "practicalApplications",
     "researchConnections",
-    "visualInsights",
     "futureResearch",
   ];
   const [availableSections, setAvailableSections] = useState(initialSections);
@@ -148,7 +368,19 @@ const ExperimentDetails = () => {
   useEffect(() => {
     const fetchExperiment = async () => {
       setIsLoading(true);
+      setLoadingProgress(0);
       setError(null);
+
+      // Simulate loading progress
+      const progressInterval = setInterval(() => {
+        setLoadingProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 200);
 
       try {
         const response = await fetch(
@@ -161,13 +393,16 @@ const ExperimentDetails = () => {
 
         const data = await response.json();
         setExperiment(data.experiment);
+        setLoadingProgress(100);
 
         // Automatically trigger analysis after experiment is loaded
         await analyzeExperimentAuto(data.experiment);
       } catch (err) {
         console.error("Error fetching experiment:", err);
         setError(err.message);
+        clearInterval(progressInterval);
       } finally {
+        clearInterval(progressInterval);
         setIsLoading(false);
       }
     };
@@ -193,9 +428,9 @@ const ExperimentDetails = () => {
 
       const data = await response.json();
       console.log("Analysis received:", data.analysis);
-      
+
       setAnalysis(data.analysis);
-      
+
       // *** MODIFICATION 1: SIMPLY ENSURE ALL SECTIONS ARE 'AVAILABLE' IF THE ANALYSIS OBJECT EXISTS ***
       // This forces the navigation buttons to appear for all sections.
       if (data.analysis.sections) {
@@ -207,7 +442,6 @@ const ExperimentDetails = () => {
         // If no sections object, ensure the default list is used
         setAvailableSections(initialSections);
       }
-      
     } catch (err) {
       console.error("Error analyzing experiment:", err);
       setError(err.message);
@@ -243,9 +477,9 @@ const ExperimentDetails = () => {
 
       const data = await response.json();
       console.log("Analysis received:", data.analysis);
-      
+
       setAnalysis(data.analysis);
-      
+
       // *** MODIFICATION 1 APPLIED HERE TOO ***
       if (data.analysis.sections) {
         setAvailableSections(Object.keys(data.analysis.sections));
@@ -570,29 +804,33 @@ const ExperimentDetails = () => {
 
     // *** MODIFICATION FOR KNOWLEDGE GRAPH RENDERING ***
     if (sectionKey === "knowledgeGraph") {
-        // Check if the content is a structured object (successfully parsed JSON)
-        if (typeof sectionContent === 'object' && sectionContent !== null && sectionContent.nodes) {
-            return (
-                <div className="analysis-section" id={sectionKey}>
-                    <h2 className="md-h2">
-                        <span className="header-icon">🕸️</span>
-                        Knowledge Graph
-                    </h2>
-                    <div className="section-content">
-                        {/* 💡 RENDER THE KnowledgeGraph COMPONENT (using react-force-graph-2d) 💡 */}
-                        <KnowledgeGraph graphData={sectionContent} />
-                        
-                        {/* Render the summary text using standard markdown renderer */}
-                        {sectionContent.summary && renderMarkdown(sectionContent.summary)}
-                    </div>
-                </div>
-            );
-        }
-        
-        // Fall through to standard markdown rendering for the textual schematic (fallback)
-        // If content is a string (failed JSON parse) or empty.
+      // Check if the content is a structured object (successfully parsed JSON)
+      if (
+        typeof sectionContent === "object" &&
+        sectionContent !== null &&
+        sectionContent.nodes
+      ) {
+        return (
+          <div className="analysis-section" id={sectionKey}>
+            <h2 className="md-h2">
+              <span className="header-icon">🕸️</span>
+              Knowledge Graph
+            </h2>
+            <div className="section-content">
+              {/* 💡 RENDER THE KnowledgeGraph COMPONENT (using react-force-graph-2d) 💡 */}
+              <KnowledgeGraph graphData={sectionContent} />
+
+              {/* Render the summary text using standard markdown renderer */}
+              {sectionContent.summary && renderMarkdown(sectionContent.summary)}
+            </div>
+          </div>
+        );
+      }
+
+      // Fall through to standard markdown rendering for the textual schematic (fallback)
+      // If content is a string (failed JSON parse) or empty.
     }
-    
+
     // *** END KNOWLEDGE GRAPH MODIFICATION ***
 
     if (sectionContent && sectionContent.length > 0) {
@@ -608,7 +846,7 @@ const ExperimentDetails = () => {
       // Content is missing or empty, render a fallback/placeholder
       let placeholderText = `The AI did not generate content for the ${sectionTitle} section. This may be due to limitations in the source data or the analysis model's response.`;
       let specialTitle = sectionTitle;
-      
+
       if (sectionKey === "knowledgeGraph") {
         specialTitle = "Knowledge Graph (Textual Representation)";
         placeholderText = `The Gemini API did not provide the necessary data structure for a graphical Knowledge Graph visualization. Instead, here is a detailed textual description of the experiment's core entities and their relationships.
@@ -656,20 +894,25 @@ Based on this experiment, the following visualizations would be highly beneficia
 ***
 Please attempt to re-analyze the data or seek the raw analysis output for visualization data recommendations.`;
       } else if (!availableSections.includes(sectionKey)) {
-          // If a section key is in the navigation list but wasn't even returned in the analysis.sections object, 
-          // we treat it as truly unavailable, even with the relaxed check.
-          return null; 
+        // If a section key is in the navigation list but wasn't even returned in the analysis.sections object,
+        // we treat it as truly unavailable, even with the relaxed check.
+        return null;
       }
 
       // Default title if not provided by sectionNavigation
-      const defaultTitle = sectionNavigation.find(s => s.key === sectionKey)?.title || sectionKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-
+      const defaultTitle =
+        sectionNavigation.find((s) => s.key === sectionKey)?.title ||
+        sectionKey
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
 
       return (
         <div className="analysis-section" id={sectionKey}>
           <h2 className="md-h2">
-              <span className="header-icon">{getHeaderIcon(defaultTitle, 2) || '📌'}</span>
-              {specialTitle}
+            <span className="header-icon">
+              {getHeaderIcon(defaultTitle, 2) || "📌"}
+            </span>
+            {specialTitle}
           </h2>
           <div className="section-content">
             <div className="info-box">
@@ -678,14 +921,16 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
               </p>
             </div>
             {/* If the original content was an empty string but the key was present, this is a more accurate message */}
-            {sectionKey !== "knowledgeGraph" && sectionKey !== "visualInsights" && (
+            {sectionKey !== "knowledgeGraph" &&
+              sectionKey !== "visualInsights" && (
                 <div className="md-p">
-                    <p>
-                        *Note: If this section consistently remains empty, the underlying AI model may not be producing output for it, 
-                        or the content did not pass minimum length/quality thresholds.*
-                    </p>
+                  <p>
+                    *Note: If this section consistently remains empty, the
+                    underlying AI model may not be producing output for it, or
+                    the content did not pass minimum length/quality thresholds.*
+                  </p>
                 </div>
-            )}
+              )}
           </div>
         </div>
       );
@@ -701,16 +946,48 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
     { key: "knowledgeGraph", title: "Knowledge Graph", icon: "🕸️" },
     { key: "practicalApplications", title: "Applications", icon: "🚀" },
     { key: "researchConnections", title: "Research Connections", icon: "🔗" },
-    { key: "visualInsights", title: "Visual Insights", icon: "📊" },
     { key: "futureResearch", title: "Future Research", icon: "🔮" },
   ];
 
   if (isLoading) {
     return (
       <div className="experiment-details-page">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading experiment...</p>
+        <div className="loading-container modern">
+          <div className="loading-content">
+            <div className="loading-icon-wrapper">
+              <div className="orbit-spinner">
+                <div className="orbit"></div>
+                <div className="orbit"></div>
+                <div className="orbit"></div>
+              </div>
+              <div className="center-icon">🚀</div>
+            </div>
+
+            <h2 className="loading-title">Loading Experiment</h2>
+            <p className="loading-subtitle">
+              Fetching data from NASA archives...
+            </p>
+
+            <div className="progress-bar-container">
+              <div className="progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${loadingProgress}%` }}
+                >
+                  <div className="progress-glow"></div>
+                </div>
+              </div>
+              <span className="progress-percentage">
+                {Math.round(loadingProgress)}%
+              </span>
+            </div>
+
+            <div className="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -848,13 +1125,17 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
           <div className="analysis-loading">
             <div className="loading-spinner-large"></div>
             <h3>Analyzing Experiment with AI...</h3>
-            <p>
-              Generating comprehensive analysis including all 9 sections...
-            </p>
-            <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: '1rem' }}>
-              This includes: Executive Summary, Experiment Details, Key Findings, 
-              Biological Impacts, Knowledge Graph, Applications, Research Connections, 
-              Visual Insights, and Future Research
+            <p>Generating comprehensive analysis including all 8 sections...</p>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                color: "#94a3b8",
+                marginTop: "1rem",
+              }}
+            >
+              This includes: Executive Summary, Experiment Details, Key
+              Findings, Biological Impacts, Knowledge Graph, Applications,
+              Research Connections, and Future Research
             </p>
           </div>
         )}
@@ -884,15 +1165,19 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
 
         {/* Debug Info - Remove in production */}
         {analysis && availableSections.length > 0 && (
-          <div style={{ 
-            padding: '1rem', 
-            background: 'rgba(103, 232, 249, 0.1)', 
-            borderRadius: '8px', 
-            marginBottom: '1rem',
-            fontSize: '0.875rem',
-            color: '#67e8f9'
-          }}>
-            <strong>Debug: Sections Available ({availableSections.length}):</strong>
+          <div
+            style={{
+              padding: "1rem",
+              background: "rgba(103, 232, 249, 0.1)",
+              borderRadius: "8px",
+              marginBottom: "1rem",
+              fontSize: "0.875rem",
+              color: "#67e8f9",
+            }}
+          >
+            <strong>
+              Debug: Sections Available ({availableSections.length}):
+            </strong>
             <br />
             {availableSections.join(", ")}
           </div>
@@ -924,9 +1209,10 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
             {/* Section Navigation */}
             <div className="section-navigation">
               {sectionNavigation.map((section) => {
-                const isAvailable = section.key === 'all' || 
+                const isAvailable =
+                  section.key === "all" ||
                   availableSections.includes(section.key);
-                
+
                 return (
                   <button
                     key={section.key}
@@ -934,7 +1220,9 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
                     onClick={() => isAvailable && setActiveSection(section.key)}
                     disabled={!isAvailable}
                     // Removed the "disabled" class logic as we want all to show
-                    title={!isAvailable ? "Section not available in analysis" : ""}
+                    title={
+                      !isAvailable ? "Section not available in analysis" : ""
+                    }
                   >
                     <span className="nav-icon">{section.icon}</span>
                     {section.title}
@@ -967,13 +1255,15 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
                         "researchConnections",
                         "Research Connections",
                       )}
-                      {renderSection("visualInsights", "Visual Insights")}
                       {renderSection("futureResearch", "Future Research")}
                     </>
                   )}
                 </div>
               ) : (
-                renderSection(activeSection, sectionNavigation.find(s => s.key === activeSection)?.title)
+                renderSection(
+                  activeSection,
+                  sectionNavigation.find((s) => s.key === activeSection)?.title,
+                )
               )}
             </div>
           </div>

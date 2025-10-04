@@ -18,7 +18,6 @@ import biologicalImpactsRoute from "./routes/biologicalImpacts.js";
 import knowledgeGraphRoute from "./routes/knowledgeGraph.js";
 import practicalApplicationsRoute from "./routes/practicalApplications.js";
 import researchConnectionsRoute from "./routes/researchConnections.js";
-import visualInsightsRoute from "./routes/visualInsights.js";
 import futureResearchRoute from "./routes/futureResearch.js";
 
 import { initializeDatabase } from "./config/database.js";
@@ -80,7 +79,6 @@ app.use("/biological-impacts", biologicalImpactsRoute);
 app.use("/knowledge-graph", knowledgeGraphRoute);
 app.use("/practical-applications", practicalApplicationsRoute);
 app.use("/research-connections", researchConnectionsRoute);
-app.use("/visual-insights", visualInsightsRoute);
 app.use("/future-research", futureResearchRoute);
 
 // Default route
@@ -136,7 +134,6 @@ app.get("/api/info", (req, res) => {
         "/knowledge-graph",
         "/practical-applications",
         "/research-connections",
-        "/visual-insights",
         "/future-research",
       ],
     },
@@ -170,36 +167,28 @@ app.use((err, req, res, next) => {
       .json({ error: "Unexpected field", message: err.message });
   }
   if (err.name === "JsonWebTokenError") {
-    return res
-      .status(401)
-      .json({
-        error: "Invalid token",
-        message: "The provided token is malformed or invalid",
-      });
+    return res.status(401).json({
+      error: "Invalid token",
+      message: "The provided token is malformed or invalid",
+    });
   }
   if (err.name === "TokenExpiredError") {
-    return res
-      .status(401)
-      .json({
-        error: "Token expired",
-        message: "The provided token has expired",
-      });
+    return res.status(401).json({
+      error: "Token expired",
+      message: "The provided token has expired",
+    });
   }
   if (err.code === "23505") {
-    return res
-      .status(400)
-      .json({
-        error: "Duplicate entry",
-        message: "The requested resource already exists",
-      });
+    return res.status(400).json({
+      error: "Duplicate entry",
+      message: "The requested resource already exists",
+    });
   }
   if (err.code === "23503") {
-    return res
-      .status(400)
-      .json({
-        error: "Foreign key violation",
-        message: "Referenced resource does not exist",
-      });
+    return res.status(400).json({
+      error: "Foreign key violation",
+      message: "Referenced resource does not exist",
+    });
   }
 
   res.status(500).json({

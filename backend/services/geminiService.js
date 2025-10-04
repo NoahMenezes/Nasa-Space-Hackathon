@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
 
 // --- Configuration Change: Using standard Google AI URL and latest production model ---
-const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY ;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 // Updated URL for the standard Gemini API endpoint
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+const GEMINI_API_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 /**
  * Analyze a NASA experiment publication using Gemini API
@@ -107,20 +107,51 @@ Present in table format:
 ---
 
 ## KNOWLEDGE GRAPH
-**You must output the content for this section as a single JSON code block.** Do NOT use markdown outside of the JSON block. This data will be used to generate a graph.
+**CRITICAL: This section must contain a complete JSON knowledge graph with nodes and relationships from the experiment.**
+
+Generate a comprehensive knowledge graph with 5-15 nodes representing key entities from the experiment. Use these node types:
+- **biological**: genes, proteins, cells, organisms, tissues
+- **condition**: experimental conditions, environments, treatments
+- **pathway**: biological pathways, processes, mechanisms
+- **protein**: specific proteins, enzymes, molecules
+- **cell**: cell types, cellular structures
+- **environment**: space, microgravity, ISS, lab conditions
+- **organism**: species, model organisms
+- **gene**: specific genes, genetic elements
+
+**REQUIREMENTS:**
+- Include 8-15 nodes minimum
+- Create meaningful relationships between nodes
+- Use descriptive relationship labels
+- Base everything on the actual experiment content
+- Include diverse node types from the categories above
 
 \`\`\`json
 {
   "nodes": [
-    {"id": "gene_x", "label": "Gene X (FOXP2)", "type": "Gene"},
-    {"id": "microg", "label": "Microgravity", "type": "Condition"},
-    {"id": "iss", "label": "ISS (Habitat)", "type": "Location"}
+    {"id": "microgravity", "label": "Microgravity Environment", "type": "environment"},
+    {"id": "protein_crystal", "label": "Protein Crystallization", "type": "biological"},
+    {"id": "iss_lab", "label": "ISS Laboratory", "type": "environment"},
+    {"id": "crystal_quality", "label": "Crystal Quality", "type": "condition"},
+    {"id": "growth_rate", "label": "Growth Rate", "type": "condition"},
+    {"id": "molecular_structure", "label": "Molecular Structure", "type": "biological"},
+    {"id": "pharmaceutical", "label": "Drug Development", "type": "pathway"},
+    {"id": "diffraction_pattern", "label": "X-ray Diffraction", "type": "condition"},
+    {"id": "nucleation", "label": "Crystal Nucleation", "type": "pathway"},
+    {"id": "convection", "label": "Convection Effects", "type": "condition"}
   ],
   "edges": [
-    {"source": "microg", "target": "gene_x", "relationship": "CAUSES_UPREGULATION"},
-    {"source": "gene_x", "target": "iss", "relationship": "OBSERVED_IN"}
+    {"source": "microgravity", "target": "protein_crystal", "relationship": "ENHANCES"},
+    {"source": "microgravity", "target": "convection", "relationship": "REDUCES"},
+    {"source": "iss_lab", "target": "microgravity", "relationship": "PROVIDES"},
+    {"source": "protein_crystal", "target": "crystal_quality", "relationship": "IMPROVES"},
+    {"source": "protein_crystal", "target": "molecular_structure", "relationship": "FORMS"},
+    {"source": "crystal_quality", "target": "diffraction_pattern", "relationship": "ENHANCES"},
+    {"source": "molecular_structure", "target": "pharmaceutical", "relationship": "ENABLES"},
+    {"source": "microgravity", "target": "nucleation", "relationship": "AFFECTS"},
+    {"source": "nucleation", "target": "growth_rate", "relationship": "CONTROLS"}
   ],
-  "summary": "Brief textual summary of the relationships extracted."
+  "summary": "Knowledge graph showing relationships between microgravity conditions, protein crystallization processes, and their impacts on crystal quality and pharmaceutical applications."
 }
 \`\`\`
 
@@ -169,58 +200,39 @@ Present in table format:
 
 ---
 
-## VISUAL INSIGHTS
-
-Suggest **5 specific, different visualizations** (Graphs & Charts) with details. Each entry must be uniquely numbered 1 through 5.
-
-1. **Chart 1 Name** - Description of what this chart shows.
-   - X-axis: [Variable]
-   - Y-axis: [Variable]
-   - Key comparison: [What to highlight]
-
-2. **Chart 2 Name** - Description of what this chart shows.
-   - X-axis: [Variable]
-   - Y-axis: [Variable]
-   - Key comparison: [What to highlight]
-
-3. **Chart 3 Name** - Description of what this chart shows.
-   - X-axis: [Variable]
-   - Y-axis: [Variable]
-   - Key comparison: [What to highlight]
-
-4. **Chart 4 Name** - Description of what this chart shows.
-   - X-axis: [Variable]
-   - Y-axis: [Variable]
-   - Key comparison: [What to highlight]
-
-5. **Chart 5 Name** - Description of what this chart shows.
-   - X-axis: [Variable]
-   - Y-axis: [Variable]
-   - Key comparison: [What to highlight]
-
----
-
 ## FUTURE RESEARCH RECOMMENDATIONS
 
+**MANDATORY SECTION - ALWAYS PROVIDE DETAILED CONTENT**
+
+This section must contain specific, actionable research directions derived from the experiment. Do not leave this section empty or with placeholder text.
+
 ### Open Questions
-1. [Specific question requiring further investigation]
-2. [Specific question about mechanisms]
-3. Continue for key unknowns...
+Based on this specific experiment, identify 3-5 critical research questions:
+1. What underlying mechanisms explain the observed results?
+2. How would different environmental parameters affect outcomes?
+3. What are the long-term implications for space exploration?
+4. How can these findings be applied to operational space missions?
+5. What optimization opportunities exist for future studies?
 
 ### Suggested Follow-Up Studies
 | Study Type | Focus Area | Priority | Resources Needed |
 |------------|------------|----------|------------------|
-| [Type] | [Area] | High/Medium/Low | [Resources] |
+| Validation | Mechanism confirmation | High | Lab equipment, samples |
+| Extension | Parameter optimization | Medium | Extended timeline |
+| Application | Practical implementation | High | Field testing resources |
 
 ### Research Gaps to Address
-- **Gap 1**: [Description and why it matters]
-- **Gap 2**: [Description and potential impact]
-- **Gap 3**: [Description and connection to broader goals]
+- **Mechanistic Understanding**: Detail what biological/physical processes need clarification
+- **Scalability**: How findings apply to different scales or environments
+- **Long-term Effects**: Investigation of extended duration impacts
+- **Practical Applications**: Translation to real-world space missions
 
 ### Next Steps Roadmap
-1. **Immediate** (0-2 years): [Studies]
-2. **Near-term** (2-5 years): [Studies]
-3. **Long-term** (5+ years): [Studies]
+1. **Immediate** (0-2 years): Validation studies and mechanism research
+2. **Near-term** (2-5 years): Extended parameter studies and optimization
+3. **Long-term** (5+ years): Integration into operational space systems
+
+**REQUIREMENT: This section must be completed with experiment-specific content. Generic placeholders are not acceptable. Base all recommendations on the actual experiment data and findings.**
 
 ---
 
@@ -300,7 +312,7 @@ Suggest **5 specific, different visualizations** (Graphs & Charts) with details.
       analysis: analysisText,
       sections: parseAnalysisSections(analysisText),
       generatedAt: new Date().toISOString(),
-      model: "gemini-2.5-flash", 
+      model: "gemini-2.5-flash",
     };
 
     return result;
@@ -326,40 +338,43 @@ const parseAnalysisSections = (analysisText) => {
   const sectionPatterns = [
     {
       key: "executiveSummary",
-      pattern: /#{1,3}\s*EXECUTIVE SUMMARY[\s\S]*?(?=#{1,3}\s*EXPERIMENT DETAILS|$)/i,
+      pattern:
+        /#{1,3}\s*EXECUTIVE SUMMARY[\s\S]*?(?=#{1,3}\s*EXPERIMENT DETAILS|$)/i,
     },
     {
       key: "experimentDetails",
-      pattern: /#{1,3}\s*EXPERIMENT DETAILS[\s\S]*?(?=#{1,3}\s*KEY FINDINGS|$)/i,
+      pattern:
+        /#{1,3}\s*EXPERIMENT DETAILS[\s\S]*?(?=#{1,3}\s*KEY FINDINGS|$)/i,
     },
     {
       key: "keyFindings",
-      pattern: /#{1,3}\s*KEY FINDINGS[\s\S]*?(?=#{1,3}\s*BIOLOGICAL IMPACTS|$)/i,
+      pattern:
+        /#{1,3}\s*KEY FINDINGS[\s\S]*?(?=#{1,3}\s*BIOLOGICAL IMPACTS|$)/i,
     },
     {
       key: "biologicalImpacts",
-      pattern: /#{1,3}\s*BIOLOGICAL IMPACTS[\s\S]*?(?=#{1,3}\s*KNOWLEDGE GRAPH|$)/i,
+      pattern:
+        /#{1,3}\s*BIOLOGICAL IMPACTS[\s\S]*?(?=#{1,3}\s*KNOWLEDGE GRAPH|$)/i,
     },
     {
       key: "knowledgeGraph",
-      pattern: /#{1,3}\s*KNOWLEDGE GRAPH[\s\S]*?(?=#{1,3}\s*PRACTICAL APPLICATIONS|$)/i,
+      pattern:
+        /#{1,3}\s*KNOWLEDGE GRAPH[\s\S]*?(?=#{1,3}\s*PRACTICAL APPLICATIONS|$)/i,
     },
     {
       key: "practicalApplications",
-      pattern: /#{1,3}\s*PRACTICAL APPLICATIONS[\s\S]*?(?=#{1,3}\s*RESEARCH CONNECTIONS|$)/i,
+      pattern:
+        /#{1,3}\s*PRACTICAL APPLICATIONS[\s\S]*?(?=#{1,3}\s*RESEARCH CONNECTIONS|$)/i,
     },
     {
       key: "researchConnections",
-      pattern: /#{1,3}\s*RESEARCH CONNECTIONS[\s\S]*?(?=#{1,3}\s*VISUAL INSIGHTS|$)/i,
-    },
-    {
-      key: "visualInsights",
-      pattern: /#{1,3}\s*VISUAL INSIGHTS[\s\S]*?(?=#{1,3}\s*FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?|$)/i,
+      pattern:
+        /#{1,3}\s*RESEARCH CONNECTIONS[\s\S]*?(?=#{1,3}\s*FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?|$)/i,
     },
     {
       key: "futureResearch",
       pattern:
-        /#{1,3}\s*FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?[\s\S]*?(?=#{1,3}|$)/i,
+        /#{1,3}\s*FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?[\s\S]*?(?=#{1,3}(?!\s*FUTURE)|$)/i,
     },
   ];
 
@@ -373,27 +388,27 @@ const parseAnalysisSections = (analysisText) => {
           "",
         )
         .trim();
-      
+
       content = content.replace(/---\s*$/, "").trim();
-      
+
       // *** NEW LOGIC FOR KNOWLEDGE GRAPH JSON EXTRACTION ***
-      if (key === 'knowledgeGraph') {
-          const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
-          if (jsonMatch && jsonMatch[1]) {
-              try {
-                  // If we successfully extract and parse JSON, store the parsed object
-                  sections[key] = JSON.parse(jsonMatch[1]);
-              } catch (e) {
-                  // If parsing fails, fall back to storing the raw JSON/content block
-                  sections[key] = content;
-                  console.warn("Failed to parse Knowledge Graph JSON:", e.message);
-              }
-          } else {
-              // If JSON block is not found, store the raw content (which is expected to be empty or markdown)
-              sections[key] = content;
+      if (key === "knowledgeGraph") {
+        const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
+        if (jsonMatch && jsonMatch[1]) {
+          try {
+            // If we successfully extract and parse JSON, store the parsed object
+            sections[key] = JSON.parse(jsonMatch[1]);
+          } catch (e) {
+            // If parsing fails, fall back to storing the raw JSON/content block
+            sections[key] = content;
+            console.warn("Failed to parse Knowledge Graph JSON:", e.message);
           }
-      } else {
+        } else {
+          // If JSON block is not found, store the raw content (which is expected to be empty or markdown)
           sections[key] = content;
+        }
+      } else {
+        sections[key] = content;
       }
     }
   });
@@ -403,7 +418,231 @@ const parseAnalysisSections = (analysisText) => {
     sections.fullAnalysis = analysisText;
   }
 
+  // Ensure Future Research section always exists with meaningful content
+  if (!sections.futureResearch || sections.futureResearch.trim().length < 50) {
+    sections.futureResearch = generateFallbackFutureResearch(analysisText);
+  }
+
+  // Ensure Knowledge Graph section has proper structure
+  if (
+    !sections.knowledgeGraph ||
+    typeof sections.knowledgeGraph !== "object" ||
+    !sections.knowledgeGraph.nodes
+  ) {
+    sections.knowledgeGraph = generateFallbackKnowledgeGraph(analysisText);
+  }
+
   return sections;
+};
+
+/**
+ * Generate fallback Future Research content when AI doesn't produce it
+ * @param {string} analysisText - The full analysis text to extract context from
+ * @returns {string} Default future research recommendations
+ */
+const generateFallbackFutureResearch = (analysisText) => {
+  // Extract experiment context from the analysis
+  const hasSpaceEnvironment = /space|microgravity|zero.?g|ISS|orbital/i.test(
+    analysisText,
+  );
+  const hasBiological =
+    /biological|cell|organism|plant|animal|human|tissue/i.test(analysisText);
+  const hasMaterial = /material|crystal|protein|chemical|physical/i.test(
+    analysisText,
+  );
+
+  let content = `### Open Questions
+1. What are the underlying mechanisms driving the observed effects in this experiment?
+2. How would results vary under different environmental parameters or durations?
+3. What are the implications for long-term space missions and crew health?`;
+
+  if (hasSpaceEnvironment) {
+    content += `
+4. How do these findings translate to other space environments (lunar, Martian)?
+5. What countermeasures could be developed based on these results?`;
+  }
+
+  content += `
+
+### Suggested Follow-Up Studies
+| Study Type | Focus Area | Priority | Resources Needed |
+|------------|------------|----------|------------------|
+| Validation | Mechanism confirmation | High | Extended experiment duration |
+| Parameter | Variable optimization | Medium | Multiple test conditions |`;
+
+  if (hasBiological) {
+    content += `
+| Biological | Long-term effects | High | Extended timeline, biomarkers |`;
+  }
+
+  if (hasMaterial) {
+    content += `
+| Material | Scale-up testing | Medium | Larger sample sizes |`;
+  }
+
+  content += `
+| Application | Practical implementation | High | Flight-ready hardware |
+
+### Research Gaps to Address
+- **Mechanistic Understanding**: Need deeper investigation into the fundamental processes
+- **Duration Effects**: Long-term impacts require extended study periods`;
+
+  if (hasSpaceEnvironment) {
+    content += `
+- **Environmental Variables**: Effects of different gravitational and radiation conditions`;
+  }
+
+  content += `
+- **Scalability**: Translation from laboratory to operational space environments
+- **Practical Applications**: Development of actionable protocols for space missions
+
+### Next Steps Roadmap
+1. **Immediate** (0-2 years): Validation studies with refined experimental parameters
+2. **Near-term** (2-5 years): Extended duration studies and mechanism investigation
+3. **Long-term** (5+ years): Integration into operational space mission protocols
+
+*Note: This section was generated as fallback content. For more specific recommendations, the experiment analysis should be enhanced with detailed future research planning.*`;
+
+  return content;
+};
+
+/**
+ * Generate fallback Knowledge Graph when AI doesn't produce proper graph data
+ * @param {string} analysisText - The full analysis text to extract context from
+ * @returns {Object} Default knowledge graph structure
+ */
+const generateFallbackKnowledgeGraph = (analysisText) => {
+  // Extract key terms and context from the analysis
+  const hasSpaceEnvironment = /space|microgravity|zero.?g|ISS|orbital/i.test(
+    analysisText,
+  );
+  const hasBiological =
+    /biological|cell|organism|plant|animal|human|tissue|protein|gene/i.test(
+      analysisText,
+    );
+  const hasMaterial = /material|crystal|chemical|physical|structure/i.test(
+    analysisText,
+  );
+  const hasExperiment = /experiment|study|research|test|analysis/i.test(
+    analysisText,
+  );
+
+  const nodes = [];
+  const edges = [];
+  let nodeId = 1;
+
+  // Core experiment node
+  nodes.push({
+    id: `node_${nodeId++}`,
+    label: "Experiment",
+    type: "condition",
+  });
+
+  // Add space-related nodes
+  if (hasSpaceEnvironment) {
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Microgravity",
+      type: "environment",
+    });
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Space Environment",
+      type: "environment",
+    });
+
+    // Create relationships
+    edges.push({
+      source: "node_2",
+      target: "node_1",
+      relationship: "AFFECTS",
+    });
+    edges.push({
+      source: "node_3",
+      target: "node_2",
+      relationship: "PROVIDES",
+    });
+  }
+
+  // Add biological nodes
+  if (hasBiological) {
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Biological System",
+      type: "biological",
+    });
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Cellular Response",
+      type: "cell",
+    });
+
+    edges.push({
+      source: "node_1",
+      target: `node_${nodeId - 2}`,
+      relationship: "STUDIES",
+    });
+    edges.push({
+      source: `node_${nodeId - 2}`,
+      target: `node_${nodeId - 1}`,
+      relationship: "PRODUCES",
+    });
+  }
+
+  // Add material science nodes
+  if (hasMaterial) {
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Material Properties",
+      type: "condition",
+    });
+    nodes.push({
+      id: `node_${nodeId++}`,
+      label: "Structural Changes",
+      type: "pathway",
+    });
+
+    edges.push({
+      source: "node_1",
+      target: `node_${nodeId - 2}`,
+      relationship: "MEASURES",
+    });
+    edges.push({
+      source: `node_${nodeId - 2}`,
+      target: `node_${nodeId - 1}`,
+      relationship: "CAUSES",
+    });
+  }
+
+  // Add research outcome nodes
+  nodes.push({
+    id: `node_${nodeId++}`,
+    label: "Research Findings",
+    type: "condition",
+  });
+  nodes.push({
+    id: `node_${nodeId++}`,
+    label: "Future Applications",
+    type: "pathway",
+  });
+
+  edges.push({
+    source: "node_1",
+    target: `node_${nodeId - 2}`,
+    relationship: "GENERATES",
+  });
+  edges.push({
+    source: `node_${nodeId - 2}`,
+    target: `node_${nodeId - 1}`,
+    relationship: "ENABLES",
+  });
+
+  return {
+    nodes: nodes,
+    edges: edges,
+    summary:
+      "Generated knowledge graph showing key relationships and concepts from the experiment analysis. This fallback graph provides a basic structure when detailed graph data is not available from the AI analysis.",
+  };
 };
 
 /**
@@ -471,4 +710,11 @@ Focus on: What was studied, why it matters for space exploration, and the genera
       summary: "Summary generation failed",
     };
   }
+};
+
+// Export parsing functions for testing
+export {
+  parseAnalysisSections,
+  generateFallbackFutureResearch,
+  generateFallbackKnowledgeGraph,
 };

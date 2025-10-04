@@ -226,6 +226,277 @@
     color: #cbd5e1;
 }
 
+/* Modern Loading Screen */
+.loading-container.modern {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+    max-width: 500px;
+    padding: 3rem;
+    background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.9) 0%,
+        rgba(30, 41, 59, 0.8) 100%
+    );
+    border-radius: 2rem;
+    border: 2px solid rgba(103, 232, 249, 0.3);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(103, 232, 249, 0.2);
+    backdrop-filter: blur(20px);
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Orbital Spinner */
+.loading-icon-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orbit-spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.orbit:nth-child(1) {
+    border-top-color: #67e8f9;
+    animation: orbitRotate 1.5s linear infinite;
+}
+
+.orbit:nth-child(2) {
+    width: 80%;
+    height: 80%;
+    border-right-color: #3b82f6;
+    animation: orbitRotate 2s linear infinite reverse;
+}
+
+.orbit:nth-child(3) {
+    width: 60%;
+    height: 60%;
+    border-bottom-color: #a855f7;
+    animation: orbitRotate 2.5s linear infinite;
+}
+
+@keyframes orbitRotate {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.center-icon {
+    font-size: 3rem;
+    z-index: 10;
+    animation:
+        float 3s ease-in-out infinite,
+        pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(103, 232, 249, 0.8));
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Loading Text */
+.loading-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #67e8f9 0%, #3b82f6 50%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    animation: shimmer 3s ease-in-out infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes shimmer {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.loading-subtitle {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin: 0;
+    animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeIn 0.8s ease-out 0.5s both;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 100px;
+    border: 2px solid rgba(103, 232, 249, 0.3);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #67e8f9 0%, #3b82f6 50%, #a855f7 100%);
+    border-radius: 100px;
+    transition: width 0.3s ease-out;
+    position: relative;
+    box-shadow: 0 0 20px rgba(103, 232, 249, 0.6);
+    animation: gradientShift 2s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%,
+    100% {
+        filter: hue-rotate(0deg);
+    }
+    50% {
+        filter: hue-rotate(10deg);
+    }
+}
+
+.progress-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+    animation: progressGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.progress-percentage {
+    min-width: 45px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #67e8f9;
+    text-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+    display: flex;
+    gap: 0.5rem;
+    animation: fadeIn 0.8s ease-out 0.7s both;
+}
+
+.loading-dots span {
+    width: 10px;
+    height: 10px;
+    background: #67e8f9;
+    border-radius: 50%;
+    animation: dotBounce 1.4s infinite ease-in-out both;
+    box-shadow: 0 0 10px rgba(103, 232, 249, 0.6);
+}
+
+.loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes dotBounce {
+    0%,
+    80%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Legacy Loading Spinners */
 .loading-spinner {
     width: 50px;
     height: 50px;
@@ -712,8 +983,8 @@
     font-size: 1.1rem;
 }
 
-/* Progress Bars */
-.progress-bar-container {
+/* Progress Bars for Data Visualization */
+.data-progress-bar-container {
     margin: 1rem 0;
     background: rgba(15, 23, 42, 0.6);
     border-radius: 0.5rem;
@@ -721,7 +992,7 @@
     overflow: hidden;
 }
 
-.progress-bar-fill {
+.data-progress-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, #67e8f9, #3b82f6);
     border-radius: 0.5rem;
@@ -758,6 +1029,106 @@
 }
 
 /* Network/Graph Visualization Styling */
+/* Enhanced Knowledge Graph Styles */
+.knowledge-graph-container {
+    position: relative;
+    margin: 2rem 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 1rem;
+    border: 2px solid rgba(103, 232, 249, 0.3);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(103, 232, 249, 0.1);
+    overflow: hidden;
+}
+
+.knowledge-graph-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(103, 232, 249, 0.2);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+.knowledge-graph-title {
+    color: #67e8f9;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.knowledge-graph-subtitle {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0 0;
+    opacity: 0.8;
+}
+
+.knowledge-graph-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.graph-control-btn {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(103, 232, 249, 0.3);
+    color: #67e8f9;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.graph-control-btn:hover {
+    background: rgba(103, 232, 249, 0.1);
+    border-color: #67e8f9;
+    transform: translateY(-1px);
+}
+
+.knowledge-graph-legend {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(103, 232, 249, 0.2);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    max-width: 250px;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+.legend-title {
+    color: #67e8f9;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .network-node {
     display: inline-block;
     padding: 0.5rem 1rem;
@@ -767,12 +1138,85 @@
     margin: 0.5rem;
     color: #93c5fd;
     font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.network-node:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .network-arrow {
-    color: #67e8f9;
+    color: #ffffff;
     margin: 0 0.5rem;
     font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.network-arrow:hover {
+    color: #67e8f9;
+    text-shadow: 0 0 12px rgba(103, 232, 249, 0.8);
+}
+
+/* Knowledge Graph responsive enhancements */
+@media (max-width: 768px) {
+    .knowledge-graph-container {
+        margin: 1rem 0;
+    }
+
+    .knowledge-graph-header {
+        padding: 1rem;
+    }
+
+    .knowledge-graph-controls {
+        position: relative;
+        top: auto;
+        right: auto;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .knowledge-graph-legend {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 1rem;
+        max-width: none;
+    }
+}
+
+/* Enhanced animations for knowledge graph elements */
+@keyframes nodeGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(103, 232, 249, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(103, 232, 249, 0.6);
+    }
+}
+
+@keyframes arrowFlow {
+    0% {
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 16px rgba(103, 232, 249, 0.8);
+    }
+    100% {
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+}
+
+.network-node.animated {
+    animation: nodeGlow 2s ease-in-out infinite;
+}
+
+.network-arrow.animated {
+    animation: arrowFlow 1.5s ease-in-out infinite;
 }
 
 /* Responsive Design */
@@ -975,5 +1419,18 @@
     .network-node {
         font-size: 0.85rem;
         padding: 0.4rem 0.8rem;
+    }
+
+    .knowledge-graph-container {
+        height: 400px;
+    }
+
+    .graph-control-btn {
+        padding: 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    .legend-item {
+        font-size: 0.75rem;
     }
 }
