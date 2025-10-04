@@ -107,11 +107,7 @@ const MissionCard = ({
           </ul>
         )}
 
-        <div className="card-action">
-          <Link to="/search" className="card-link">
-            Explore <span className="arrow">→</span>
-          </Link>
-        </div>
+        
       </div>
 
       <div className="card-glow"></div>
@@ -364,7 +360,7 @@ const CTASection = () => {
         <div className="cta-actions">
           <Link to="/search" className="btn btn-primary btn-lg">
             <span className="btn-icon">🚀</span>
-            Begin Your Journey
+            EXPLORE NOW
           </Link>
           <Link to="/signup" className="btn btn-secondary btn-lg">
             Create Account
