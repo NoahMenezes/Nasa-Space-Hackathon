@@ -55,7 +55,7 @@ const Navbar = () => {
           <div className="navbar-content">
             {/* Logo/Home Link */}
             <Link to="/" className="logo">
-              <div className="logo-icon">🌌</div>
+              <div className="logo-icon">🔭</div>
               <span className="logo-text">BioSpace Archive</span>
             </Link>
 
