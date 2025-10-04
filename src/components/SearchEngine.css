@@ -9,9 +9,13 @@
     width: 100%;
     min-height: 100vh;
     overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
     padding-top: 4rem; /* Account for navbar */
     opacity: 0;
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .search-engine-page.loaded {
@@ -26,6 +30,7 @@
     color: var(--text-primary);
     position: relative;
     z-index: 10;
+    will-change: auto;
 }
 
 /* Enhanced Cosmic Particles for Search Page */
@@ -52,20 +57,22 @@
             rgba(236, 72, 153, 0.04) 0%,
             transparent 50%
         );
-    animation: cosmic-drift 20s ease-in-out infinite;
+    animation: cosmic-drift 40s linear infinite;
     z-index: -1;
     pointer-events: none;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 
 @keyframes cosmic-drift {
     0%,
     100% {
         transform: scale(1) rotate(0deg);
-        opacity: 0.8;
+        opacity: 0.6;
     }
     50% {
-        transform: scale(1.1) rotate(180deg);
-        opacity: 1;
+        transform: scale(1.02) rotate(180deg);
+        opacity: 0.8;
     }
 }
 
@@ -94,9 +101,7 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     background-size: 200% 200%;
-    animation:
-        gradient-shift 3s ease infinite,
-        title-float 6s ease-in-out infinite;
+    animation: gradient-shift 6s ease infinite;
     text-shadow: 0 10px 30px rgba(103, 232, 249, 0.3);
     letter-spacing: -0.02em;
     line-height: 1.2;
@@ -365,9 +370,10 @@
 /* Search Result Cards */
 .search-results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: var(--space-xl);
     margin-bottom: var(--space-3xl);
+    will-change: auto;
 }
 
 .search-result-card {
@@ -380,35 +386,9 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: card-entrance 0.6s ease-out forwards;
-}
-
-.search-result-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-.search-result-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-.search-result-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-.search-result-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-.search-result-card:nth-child(5) {
-    animation-delay: 0.5s;
-}
-.search-result-card:nth-child(6) {
-    animation-delay: 0.6s;
-}
-
-@keyframes card-entrance {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    opacity: 1;
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
 }
 
 .search-result-card::before {
@@ -429,7 +409,7 @@
 }
 
 .search-result-card:hover {
-    transform: translateY(-4px);
+    transform: translate3d(0, -4px, 0);
     border-color: var(--border-glow);
     box-shadow: var(--shadow-large), var(--shadow-glow);
 }

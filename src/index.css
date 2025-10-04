@@ -84,6 +84,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 *::before,
@@ -94,6 +95,8 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -103,8 +106,11 @@ body {
     color: var(--text-primary);
     background: var(--bg-primary);
     overflow-x: hidden;
+    overflow-y: auto;
     min-height: 100vh;
     position: relative;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 
     /* Enhanced cosmic background */
     background:
@@ -125,10 +131,13 @@ body {
         ),
         linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 
-    /* Smooth font rendering */
+    /* Smooth font rendering and scrolling optimization */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: auto;
 }
 
 /* Scrollbar Styling */
