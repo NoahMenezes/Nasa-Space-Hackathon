@@ -83,7 +83,7 @@ const Bookmarks = () => {
       <div className={`bookmarks-page ${pageLoaded ? "loaded" : ""}`}>
         <div className="bookmarks-wrapper">
           <div className="loading-container">
-            <div className="loading-spinner"></div>
+            {/* <div className="loading-spinner"></div> */}
             <p>Loading your bookmarks...</p>
           </div>
         </div>

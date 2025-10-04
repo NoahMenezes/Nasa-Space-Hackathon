@@ -252,10 +252,9 @@ const HeroSection = () => {
         </div>
 
         <div className="hero-stats">
-          <StatCounter value="15000" label="Research Papers" suffix="+" />
-          <StatCounter value="500" label="Experiments" suffix="+" />
+          <StatCounter value="608" label="Experiments"  />
           <StatCounter value="50" label="Years of Data" suffix="+" />
-          <StatCounter value="99" label="Success Rate" suffix="%" />
+          <StatCounter value="99.99" label="Success Rate" suffix="%" />
         </div>
       </div>
     </section>
