@@ -250,7 +250,7 @@ const ExperimentDetails = () => {
 
         <button
           onClick={handleBookmarkToggle}
-          className={`bookmark-button ${bookmarked ? "bookmarked" : ""}`}
+          className={`details-bookmark-button ${bookmarked ? "bookmarked" : ""}`}
           title={bookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
         >
           <svg

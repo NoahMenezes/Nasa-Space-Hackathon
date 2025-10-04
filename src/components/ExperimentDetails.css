@@ -10,13 +10,15 @@
 .details-header-controls {
     position: fixed;
     top: 5rem;
-    left: 2rem;
-    right: 2rem;
+    left: 1.5rem;
+    right: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 100;
     pointer-events: none;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .details-header-controls > * {
@@ -38,6 +40,8 @@
     backdrop-filter: blur(20px);
     font-family: var(--font-primary);
     font-size: var(--text-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .back-button:hover {
@@ -47,7 +51,7 @@
     box-shadow: var(--shadow-glow);
 }
 
-.bookmark-button {
+.details-bookmark-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -62,16 +66,18 @@
     backdrop-filter: blur(20px);
     font-family: var(--font-primary);
     font-size: var(--text-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.bookmark-button:hover {
+.details-bookmark-button:hover {
     background: var(--bg-glass-light);
     border-color: var(--primary-cyan);
     transform: translateY(-2px);
     box-shadow: var(--shadow-glow);
 }
 
-.bookmark-button.bookmarked {
+.details-bookmark-button.bookmarked {
     background: linear-gradient(
         135deg,
         var(--primary-cyan),
@@ -81,7 +87,7 @@
     color: var(--text-primary);
 }
 
-.bookmark-button.bookmarked:hover {
+.details-bookmark-button.bookmarked:hover {
     background: linear-gradient(
         135deg,
         var(--primary-blue),
@@ -473,17 +479,44 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .details-header-controls {
         left: 1rem;
         right: 1rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .details-header-controls {
+        left: 0.75rem;
+        right: 0.75rem;
         top: 4.5rem;
     }
 
     .back-button,
-    .bookmark-button {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
+    .details-bookmark-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .details-header-controls {
+        left: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .back-button,
+    .details-bookmark-button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        gap: 0.3rem;
+    }
+
+    .back-button svg,
+    .details-bookmark-button svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -504,7 +537,7 @@
     }
 
     .back-button,
-    .bookmark-button {
+    .details-bookmark-button {
         width: 100%;
         justify-content: center;
     }
