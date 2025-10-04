@@ -1,12 +1,3 @@
-don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
-
-fix the knowledge graph and all the extra options -> display proper graph, should display the data properly (in a user readable format)
-
-remove the "Powered by Gemini 2.0" from the ai generated analysis section
-basically remove mention of gemini from the ui 👍
-
-<upload the screenshot of the tables created in the database and ask> which tables can be safely deleted.
-
 //big task
 modify the website so that the user has to authenticate via google sign in or normal sign up / sign in before accessing any parts of the website (except the landing page).
 also add a option to sign out after the user is authenticated and entered the main website
@@ -14,7 +5,17 @@ completely deploy project using supabase and vercel and authenticate user using 
 
 
 
-//----- old prompts, ignore unless needed -----
+//-----tasks already completed-----
+
+
+<upload the screenshot of the tables created in the database and ask> which tables can be safely deleted.
+
+fix the knowledge graph and all the extra options -> display proper graph, should display the data properly (in a user readable format)
+
+don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
+
+remove the "Powered by Gemini 2.0" from the ai generated analysis section
+basically remove mention of gemini from the ui 👍
 
 //handle with care
 remove the code from our project which is not being used in the current version of the project
