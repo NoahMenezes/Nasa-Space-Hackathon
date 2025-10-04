@@ -1,3 +1,4 @@
+
 /* SearchEngine.css - Modern Cosmic Design System - Fixed Scrolling */
 
 /* Import Google Fonts */
@@ -49,20 +50,6 @@
   --shadow-large: 0 10px 40px rgba(0, 0, 0, 0.2);
   --shadow-glow: 0 0 30px rgba(103, 232, 249, 0.2);
 }
-/* SearchEngine Page Container */
-.search-engine-page {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    padding-top: 4rem; /* Account for navbar */
-    opacity: 0;
-    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    backface-visibility: hidden;
-    -webkit-overflow-scrolling: touch;
-}
 
 /* Search Engine Page Container - FIXED */
 .search-engine-page {
@@ -93,13 +80,6 @@
   margin: 0 auto;
   padding: 0 var(--space-xl);
   position: relative;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: var(--space-3xl) var(--space-md);
-    color: var(--text-primary);
-    position: relative;
-    z-index: 10;
-    will-change: auto;
 }
 
 /* Subtle background effect - FIXED positioning */
@@ -122,45 +102,6 @@
     );
   z-index: -1;
   pointer-events: none;
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        radial-gradient(
-            circle at 20% 30%,
-            rgba(103, 232, 249, 0.08) 0%,
-            transparent 50%
-        ),
-        radial-gradient(
-            circle at 80% 70%,
-            rgba(139, 92, 246, 0.06) 0%,
-            transparent 50%
-        ),
-        radial-gradient(
-            circle at 40% 80%,
-            rgba(236, 72, 153, 0.04) 0%,
-            transparent 50%
-        );
-    animation: cosmic-drift 40s linear infinite;
-    z-index: -1;
-    pointer-events: none;
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-}
-
-@keyframes cosmic-drift {
-    0%,
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 0.6;
-    }
-    50% {
-        transform: scale(1.02) rotate(180deg);
-        opacity: 0.8;
-    }
 }
 
 /* Search Header Section */
@@ -189,26 +130,6 @@
   animation: gradientShift 4s ease infinite;
   letter-spacing: -0.02em;
   line-height: 1.2;
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4.5rem);
-    font-weight: 900;
-    color: var(--text-accent);
-    margin-bottom: var(--space-lg);
-    background: linear-gradient(
-        135deg,
-        #67e8f9 0%,
-        #3b82f6 30%,
-        #a855f7 70%,
-        #ec4899 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    background-size: 200% 200%;
-    animation: gradient-shift 6s ease infinite;
-    text-shadow: 0 10px 30px rgba(103, 232, 249, 0.3);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
 }
 
 @keyframes gradientShift {
@@ -457,26 +378,6 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: var(--space-xl);
-    margin-bottom: var(--space-3xl);
-    will-change: auto;
-}
-
-.search-result-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-primary);
-    border-radius: var(--radius-xl);
-    padding: var(--space-xl);
-    box-shadow: var(--shadow-medium);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    opacity: 1;
-    will-change: transform, box-shadow;
-    backface-visibility: hidden;
 }
 
 .search-result-card::before {
@@ -493,9 +394,9 @@
 }
 
 .search-result-card:hover {
-    transform: translate3d(0, -4px, 0);
-    border-color: var(--border-glow);
-    box-shadow: var(--shadow-large), var(--shadow-glow);
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-large), var(--shadow-glow);
 }
 
 .search-result-card:hover::before {
@@ -979,14 +880,3 @@ mark {
   }
 }
 
-/* Focus Management */
-.search-input:focus,
-.search-button:focus,
-.bookmark-button:focus,
-.view-details-button:focus,
-.filter-button:focus,
-.pagination-button:focus,
-.suggestion-chip:focus {
-  outline: 2px solid var(--primary-cyan);
-  outline-offset: 2px;
-}
