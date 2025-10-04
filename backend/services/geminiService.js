@@ -1,9 +1,10 @@
 import fetch from "node-fetch";
 
+// --- Configuration Change: Using standard Google AI URL and latest production model ---
 const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY || "AIzaSyDjxUzJ6sod7d9QvOoJ8WcQn4r9YF5Iyws";
-const GEMINI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
+  process.env.GEMINI_API_KEY ;
+// Updated URL for the standard Gemini API endpoint
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 /**
  * Analyze a NASA experiment publication using Gemini API
@@ -26,7 +27,7 @@ export const analyzeExperiment = async (
 
 **Publication Link:** ${experimentLink}
 
-Please provide a detailed analysis in the following structured format using markdown with tables, bullet points, and clear organization:
+Please provide a detailed analysis in the following structured format using markdown with tables, bullet points, and clear organization. **You MUST include all the main section headings exactly as listed below, even if you leave the content of a section blank.**
 
 ## EXECUTIVE SUMMARY
 Provide 2-3 comprehensive paragraphs covering:
@@ -66,11 +67,14 @@ Create a table format:
 ---
 
 ## KEY FINDINGS
-Present as numbered list with detailed explanations:
+Present as a numbered list with detailed explanations for 5-7 major findings. Each entry must start with a descriptive title in bold.
 
-1. **[Finding Title]**: Description of the finding with specific data points where applicable
-2. **[Finding Title]**: Include statistical significance (p-values, confidence levels)
-3. Continue for 5-7 major findings...
+1. **[Descriptive Finding Title]**: Description of the finding with specific data points where applicable, including statistical significance (p-values, confidence levels) if known.
+2. **[Descriptive Finding Title]**: Description of the finding.
+3. **[Descriptive Finding Title]**: Description of the finding.
+4. **[Descriptive Finding Title]**: Description of the finding.
+5. **[Descriptive Finding Title]**: Description of the finding.
+(Continue up to 7, if applicable)
 
 Highlight novel discoveries or unexpected results with blockquotes:
 > Notable Discovery: [Description]
@@ -103,28 +107,22 @@ Present in table format:
 ---
 
 ## KNOWLEDGE GRAPH
-Create a structured visual representation using indentation and arrows:
+**You must output the content for this section as a single JSON code block.** Do NOT use markdown outside of the JSON block. This data will be used to generate a graph.
 
-**Primary Research Areas**
-- Space Biology
-  → Microgravity Effects
-    → Cellular Adaptation
-    → Physiological Changes
-  → Radiation Biology
-    → DNA Damage
-    → Repair Mechanisms
-
-**Biological Systems Affected**
-- [System 1] → [Specific Effect 1] → [Outcome]
-- [System 2] → [Specific Effect 2] → [Outcome]
-
-**Experimental Conditions → Outcomes**
-- Microgravity → [Key Observation] → [Resulting Change]
-- Radiation Exposure → [Key Observation] → [Resulting Change]
-
-**Related Research Connections**
-- Connection to: [Related Field 1]
-- Connection to: [Related Field 2]
+\`\`\`json
+{
+  "nodes": [
+    {"id": "gene_x", "label": "Gene X (FOXP2)", "type": "Gene"},
+    {"id": "microg", "label": "Microgravity", "type": "Condition"},
+    {"id": "iss", "label": "ISS (Habitat)", "type": "Location"}
+  ],
+  "edges": [
+    {"source": "microg", "target": "gene_x", "relationship": "CAUSES_UPREGULATION"},
+    {"source": "gene_x", "target": "iss", "relationship": "OBSERVED_IN"}
+  ],
+  "summary": "Brief textual summary of the relationships extracted."
+}
+\`\`\`
 
 ---
 
@@ -173,30 +171,32 @@ Create a structured visual representation using indentation and arrows:
 
 ## VISUAL INSIGHTS
 
-Suggest specific visualizations with details:
+Suggest **5 specific, different visualizations** (Graphs & Charts) with details. Each entry must be uniquely numbered 1 through 5.
 
-### Recommended Graphs & Charts
-
-1. **[Chart Type]** - [What it shows]
+1. **Chart 1 Name** - Description of what this chart shows.
    - X-axis: [Variable]
    - Y-axis: [Variable]
    - Key comparison: [What to highlight]
 
-2. **Heat Map** - [Specific data to visualize]
-   - Shows: [Relationships/patterns]
-   - Useful for: [Understanding what]
+2. **Chart 2 Name** - Description of what this chart shows.
+   - X-axis: [Variable]
+   - Y-axis: [Variable]
+   - Key comparison: [What to highlight]
 
-3. **Timeline/Gantt Chart** - Experiment progression
-   - Phases and key events
-   - Data collection points
+3. **Chart 3 Name** - Description of what this chart shows.
+   - X-axis: [Variable]
+   - Y-axis: [Variable]
+   - Key comparison: [What to highlight]
 
-4. **Network Diagram** - Biological pathway connections
-   - Shows: [Relationships]
-   - Highlights: [Key interactions]
+4. **Chart 4 Name** - Description of what this chart shows.
+   - X-axis: [Variable]
+   - Y-axis: [Variable]
+   - Key comparison: [What to highlight]
 
-5. **Comparison Bar/Line Chart** - [Specific comparison]
-   - Control vs. experimental groups
-   - Key metrics tracked
+5. **Chart 5 Name** - Description of what this chart shows.
+   - X-axis: [Variable]
+   - Y-axis: [Variable]
+   - Key comparison: [What to highlight]
 
 ---
 
@@ -228,9 +228,9 @@ Suggest specific visualizations with details:
 - Use markdown tables where data comparison is needed
 - Use bold (**) for emphasis on critical points
 - Use bullet points and numbered lists for clarity
-- Include specific data points and measurements where applicable
 - Structure information hierarchically for easy scanning
-- Add horizontal rules (---) between major sections for visual separation`;
+- Add horizontal rules (---) between major sections for visual scanning **BUT DO NOT USE horizontal rules within the section content.**
+- **You MUST use the exact main section headings provided (e.g., '## EXECUTIVE SUMMARY') and you MUST ensure some content or a placeholder is present for every section.**`;
 
     const requestBody = {
       contents: [
@@ -243,7 +243,8 @@ Suggest specific visualizations with details:
         },
       ],
       generationConfig: {
-        temperature: 0.7,
+        // Increased temperature slightly to encourage creative content for all sections
+        temperature: 0.8,
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 8192,
@@ -268,10 +269,11 @@ Suggest specific visualizations with details:
       ],
     };
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(`${GEMINI_API_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Goog-Api-Key": GEMINI_API_KEY,
       },
       body: JSON.stringify(requestBody),
     });
@@ -298,7 +300,7 @@ Suggest specific visualizations with details:
       analysis: analysisText,
       sections: parseAnalysisSections(analysisText),
       generatedAt: new Date().toISOString(),
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash", 
     };
 
     return result;
@@ -320,39 +322,39 @@ Suggest specific visualizations with details:
 const parseAnalysisSections = (analysisText) => {
   const sections = {};
 
-  // Define section patterns
+  // Define section patterns - NOTE: Using lookahead assertions for reliable splitting
   const sectionPatterns = [
     {
       key: "executiveSummary",
-      pattern: /#{1,3}\s*EXECUTIVE SUMMARY[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*EXECUTIVE SUMMARY[\s\S]*?(?=#{1,3}\s*EXPERIMENT DETAILS|$)/i,
     },
     {
       key: "experimentDetails",
-      pattern: /#{1,3}\s*EXPERIMENT DETAILS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*EXPERIMENT DETAILS[\s\S]*?(?=#{1,3}\s*KEY FINDINGS|$)/i,
     },
     {
       key: "keyFindings",
-      pattern: /#{1,3}\s*KEY FINDINGS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*KEY FINDINGS[\s\S]*?(?=#{1,3}\s*BIOLOGICAL IMPACTS|$)/i,
     },
     {
       key: "biologicalImpacts",
-      pattern: /#{1,3}\s*BIOLOGICAL IMPACTS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*BIOLOGICAL IMPACTS[\s\S]*?(?=#{1,3}\s*KNOWLEDGE GRAPH|$)/i,
     },
     {
       key: "knowledgeGraph",
-      pattern: /#{1,3}\s*KNOWLEDGE GRAPH[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*KNOWLEDGE GRAPH[\s\S]*?(?=#{1,3}\s*PRACTICAL APPLICATIONS|$)/i,
     },
     {
       key: "practicalApplications",
-      pattern: /#{1,3}\s*PRACTICAL APPLICATIONS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*PRACTICAL APPLICATIONS[\s\S]*?(?=#{1,3}\s*RESEARCH CONNECTIONS|$)/i,
     },
     {
       key: "researchConnections",
-      pattern: /#{1,3}\s*RESEARCH CONNECTIONS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*RESEARCH CONNECTIONS[\s\S]*?(?=#{1,3}\s*VISUAL INSIGHTS|$)/i,
     },
     {
       key: "visualInsights",
-      pattern: /#{1,3}\s*VISUAL INSIGHTS[\s\S]*?(?=#{1,3}|$)/i,
+      pattern: /#{1,3}\s*VISUAL INSIGHTS[\s\S]*?(?=#{1,3}\s*FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?|$)/i,
     },
     {
       key: "futureResearch",
@@ -364,12 +366,40 @@ const parseAnalysisSections = (analysisText) => {
   sectionPatterns.forEach(({ key, pattern }) => {
     const match = analysisText.match(pattern);
     if (match) {
-      sections[key] = match[0].trim();
+      // Regex to remove the main header and optional trailing '---'
+      let content = match[0]
+        .replace(
+          /#{1,3}\s*(EXECUTIVE SUMMARY|EXPERIMENT DETAILS|KEY FINDINGS|BIOLOGICAL IMPACTS|KNOWLEDGE GRAPH|PRACTICAL APPLICATIONS|RESEARCH CONNECTIONS|VISUAL INSIGHTS|FUTURE RESEARCH(?:\s+RECOMMENDATIONS)?)/i,
+          "",
+        )
+        .trim();
+      
+      content = content.replace(/---\s*$/, "").trim();
+      
+      // *** NEW LOGIC FOR KNOWLEDGE GRAPH JSON EXTRACTION ***
+      if (key === 'knowledgeGraph') {
+          const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/i);
+          if (jsonMatch && jsonMatch[1]) {
+              try {
+                  // If we successfully extract and parse JSON, store the parsed object
+                  sections[key] = JSON.parse(jsonMatch[1]);
+              } catch (e) {
+                  // If parsing fails, fall back to storing the raw JSON/content block
+                  sections[key] = content;
+                  console.warn("Failed to parse Knowledge Graph JSON:", e.message);
+              }
+          } else {
+              // If JSON block is not found, store the raw content (which is expected to be empty or markdown)
+              sections[key] = content;
+          }
+      } else {
+          sections[key] = content;
+      }
     }
   });
 
-  // If no sections found, return the full text as summary
-  if (Object.keys(sections).length === 0) {
+  // Fallback for full analysis if splitting fails completely
+  if (Object.keys(sections).length < 2) {
     sections.fullAnalysis = analysisText;
   }
 
@@ -410,13 +440,18 @@ Focus on: What was studied, why it matters for space exploration, and the genera
       },
     };
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    // Use the standard URL for the quick summary as well
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": GEMINI_API_KEY,
+        },
+        body: JSON.stringify(requestBody),
       },
-      body: JSON.stringify(requestBody),
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Gemini API error: ${response.status}`);

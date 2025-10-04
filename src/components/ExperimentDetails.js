@@ -7,6 +7,119 @@ import {
   isBookmarked,
 } from "../utils/bookmarksUtils";
 
+// --- START: KnowledgeGraph Component (Self-Contained for integration) ---
+// 💡 IMPORTANT: You must install the dependency: npm install react-force-graph-2d
+import ForceGraph2D from 'react-force-graph-2d';
+
+const KnowledgeGraph = ({ graphData }) => {
+  const isEmpty = !graphData || !graphData.nodes || graphData.nodes.length === 0;
+
+  // Use a fixed height/width for the graph container to ensure it renders properly
+  const containerStyle = {
+    height: '500px', 
+    width: '100%', 
+    background: '#1a202c', // Use a dark background to match the theme
+    borderRadius: '1rem',
+    overflow: 'hidden',
+    border: '1px solid rgba(103, 232, 249, 0.2)',
+  };
+
+  const placeholderStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    color: '#94a3b8',
+    fontSize: '1.2rem',
+    textAlign: 'center',
+    padding: '2rem'
+  };
+
+  return (
+    <div style={containerStyle}>
+      {isEmpty ? (
+        <div style={placeholderStyle}>
+          No structured data available to generate a graph.
+        </div>
+      ) : (
+        <ForceGraph2D
+          graphData={{
+            nodes: graphData.nodes,
+            links: graphData.edges.map(e => ({ 
+              source: e.source, 
+              target: e.target, 
+              label: e.relationship || '' // Use relationship as link label
+            })),
+          }}
+          // Set to match the overall dark theme and prevent graph overlap
+          backgroundColor="#1a202c" 
+          nodeLabel="label"
+          // Link particle to indicate direction
+          linkDirectionalParticles={1} 
+          linkDirectionalParticleColor={() => '#67e8f9'}
+          linkDirectionalParticleWidth={1.5}
+          linkDirectionalArrowLength={8}
+          linkDirectionalArrowRelPos={1}
+          linkHoverDuringDrag={false}
+          
+          nodeCanvasObject={(node, ctx, globalScale) => {
+            const label = node.label;
+            // Scale font based on zoom level for readability
+            const fontSize = 12 / globalScale; 
+            ctx.font = `${fontSize}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Define color based on type (assuming the backend provides a 'type' property)
+            const color = node.type === 'Condition' || node.type === 'Gene' ? '#3b82f6' : '#10b981'; 
+
+            // Draw node with custom glow
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, 8, 0, 2 * Math.PI, false);
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset shadow for text
+
+            // Draw label
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(label, node.x, node.y - 14);
+          }}
+          // Render the link label 
+          linkCanvasObject={(link, ctx, globalScale) => {
+            const label = link.label;
+            const start = link.source;
+            const end = link.target;
+
+            if (typeof start !== 'object' || typeof end !== 'object' || !label) return;
+
+            const textPos = {
+              x: (start.x + end.x) / 2,
+              y: (start.y + end.y) / 2,
+            };
+            
+            const fontSize = 8 / globalScale;
+            ctx.font = `${fontSize}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#94a3b8'; // Muted link color
+
+            ctx.fillText(label, textPos.x, textPos.y - 2);
+          }}
+          // Enable dragging nodes
+          onNodeDragEnd={node => {
+            node.fx = node.x;
+            node.fy = node.y;
+          }}
+        />
+      )}
+    </div>
+  );
+};
+// --- END: KnowledgeGraph Component ---
+
+
 const ExperimentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,6 +131,19 @@ const ExperimentDetails = () => {
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("all");
   const [bookmarked, setBookmarked] = useState(false);
+  // Initial list of all potential sections for navigation, regardless of content
+  const initialSections = [
+    "executiveSummary",
+    "experimentDetails",
+    "keyFindings",
+    "biologicalImpacts",
+    "knowledgeGraph",
+    "practicalApplications",
+    "researchConnections",
+    "visualInsights",
+    "futureResearch",
+  ];
+  const [availableSections, setAvailableSections] = useState(initialSections);
 
   useEffect(() => {
     const fetchExperiment = async () => {
@@ -66,10 +192,27 @@ const ExperimentDetails = () => {
       }
 
       const data = await response.json();
+      console.log("Analysis received:", data.analysis);
+      
       setAnalysis(data.analysis);
+      
+      // *** MODIFICATION 1: SIMPLY ENSURE ALL SECTIONS ARE 'AVAILABLE' IF THE ANALYSIS OBJECT EXISTS ***
+      // This forces the navigation buttons to appear for all sections.
+      if (data.analysis.sections) {
+        // Set available sections to the keys present in the response
+        // Even if the content is empty, we want the nav button to appear
+        setAvailableSections(Object.keys(data.analysis.sections));
+        console.log("Available sections:", Object.keys(data.analysis.sections));
+      } else {
+        // If no sections object, ensure the default list is used
+        setAvailableSections(initialSections);
+      }
+      
     } catch (err) {
       console.error("Error analyzing experiment:", err);
       setError(err.message);
+      // On error, revert to initial sections list
+      setAvailableSections(initialSections);
     } finally {
       setIsAnalyzing(false);
     }
@@ -81,6 +224,7 @@ const ExperimentDetails = () => {
     }
   }, [experiment]);
 
+  // Duplicated analyzeExperiment function, applying the same logic for consistency
   const analyzeExperiment = async () => {
     setIsAnalyzing(true);
     setError(null);
@@ -98,10 +242,21 @@ const ExperimentDetails = () => {
       }
 
       const data = await response.json();
+      console.log("Analysis received:", data.analysis);
+      
       setAnalysis(data.analysis);
+      
+      // *** MODIFICATION 1 APPLIED HERE TOO ***
+      if (data.analysis.sections) {
+        setAvailableSections(Object.keys(data.analysis.sections));
+        console.log("Available sections:", Object.keys(data.analysis.sections));
+      } else {
+        setAvailableSections(initialSections);
+      }
     } catch (err) {
       console.error("Error analyzing experiment:", err);
       setError(err.message);
+      setAvailableSections(initialSections);
     } finally {
       setIsAnalyzing(false);
     }
@@ -148,6 +303,7 @@ const ExperimentDetails = () => {
     if (text.includes("follow-up") || text.includes("suggested")) return "🔄";
     if (text.includes("gap")) return "🕳️";
     if (text.includes("roadmap") || text.includes("next step")) return "🗺️";
+    if (text.includes("recommended")) return "📋";
 
     // Generic icons by level
     if (level === 1) return "📄";
@@ -410,15 +566,130 @@ const ExperimentDetails = () => {
   };
 
   const renderSection = (sectionKey, sectionTitle) => {
-    if (!analysis?.sections?.[sectionKey]) return null;
+    const sectionContent = analysis?.sections?.[sectionKey];
 
-    return (
-      <div className="analysis-section" id={sectionKey}>
-        <div className="section-content">
-          {renderMarkdown(analysis.sections[sectionKey])}
+    // *** MODIFICATION FOR KNOWLEDGE GRAPH RENDERING ***
+    if (sectionKey === "knowledgeGraph") {
+        // Check if the content is a structured object (successfully parsed JSON)
+        if (typeof sectionContent === 'object' && sectionContent !== null && sectionContent.nodes) {
+            return (
+                <div className="analysis-section" id={sectionKey}>
+                    <h2 className="md-h2">
+                        <span className="header-icon">🕸️</span>
+                        Knowledge Graph
+                    </h2>
+                    <div className="section-content">
+                        {/* 💡 RENDER THE KnowledgeGraph COMPONENT (using react-force-graph-2d) 💡 */}
+                        <KnowledgeGraph graphData={sectionContent} />
+                        
+                        {/* Render the summary text using standard markdown renderer */}
+                        {sectionContent.summary && renderMarkdown(sectionContent.summary)}
+                    </div>
+                </div>
+            );
+        }
+        
+        // Fall through to standard markdown rendering for the textual schematic (fallback)
+        // If content is a string (failed JSON parse) or empty.
+    }
+    
+    // *** END KNOWLEDGE GRAPH MODIFICATION ***
+
+    if (sectionContent && sectionContent.length > 0) {
+      // Content exists and is a string, render it as markdown
+      return (
+        <div className="analysis-section" id={sectionKey}>
+          <div className="section-content">
+            {renderMarkdown(sectionContent)}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      // Content is missing or empty, render a fallback/placeholder
+      let placeholderText = `The AI did not generate content for the ${sectionTitle} section. This may be due to limitations in the source data or the analysis model's response.`;
+      let specialTitle = sectionTitle;
+      
+      if (sectionKey === "knowledgeGraph") {
+        specialTitle = "Knowledge Graph (Textual Representation)";
+        placeholderText = `The Gemini API did not provide the necessary data structure for a graphical Knowledge Graph visualization. Instead, here is a detailed textual description of the experiment's core entities and their relationships.
+
+**If the AI had provided data for the Knowledge Graph, we would render an interactive network diagram here.**
+
+***
+### **Knowledge Graph Entity & Relation Blueprint**
+
+**Core Entity:** [Experiment Title] (ID: ${id})
+**Key Subjects:** e.g., *Arabidopsis thaliana*, Astronauts, *E. coli*
+**Primary Relation:** **[Subject]** -*SHOWS\_RESPONSE\_TO*-> **[Condition]** -*IMPACTS*-> **[Biological_Pathway]**
+
+#### **Placeholder Example Nodes:**
+* **Node: Microgravity** (Type: Condition)
+* **Node: Gene Expression** (Type: Biological Pathway)
+* **Node: Bone Density** (Type: Health Metric)
+
+#### **Placeholder Example Relations (Textual Schematic):**
+1.  **Microgravity** --*CAUSES*--> **Up-regulation of Gene 'X'**
+2.  **Astronauts** --*EXHIBITED*--> **Reduced Bone Density** (after 6 months)
+3.  **Reduced Bone Density** --*MITIGATED\_BY*--> **Exercise Protocol 'Y'**
+***
+Please run the analysis again or check the raw API response for structured data.`;
+      } else if (sectionKey === "visualInsights") {
+        specialTitle = "Visual Insights (Descriptive Placeholder)";
+        placeholderText = `The Gemini API did not provide the image or data necessary to render interactive charts or a visualization.
+
+**If the AI had provided data for Visual Insights, we would render key charts here.**
+
+***
+### **Recommended Visualizations (Textual Description):**
+
+Based on this experiment, the following visualizations would be highly beneficial:
+
+1.  **Type:** **Timeline Chart**
+    * **Data:** Key experimental events (launch, data collection points, return) vs. Time.
+    * **Insight:** A clear roadmap of the experiment's duration and phase changes.
+2.  **Type:** **Bar Chart or Heatmap**
+    * **Data:** Differential Gene Expression (Fold Change) for the top 10 affected genes.
+    * **Insight:** Clearly highlight which biological pathways were most significantly activated or suppressed by the space environment.
+3.  **Type:** **Scatter Plot**
+    * **Data:** Radiation Exposure (x-axis) vs. Observed Mutation Rate (y-axis).
+    * **Insight:** Quantify the linear or non-linear relationship between deep-space radiation and biological damage.
+***
+Please attempt to re-analyze the data or seek the raw analysis output for visualization data recommendations.`;
+      } else if (!availableSections.includes(sectionKey)) {
+          // If a section key is in the navigation list but wasn't even returned in the analysis.sections object, 
+          // we treat it as truly unavailable, even with the relaxed check.
+          return null; 
+      }
+
+      // Default title if not provided by sectionNavigation
+      const defaultTitle = sectionNavigation.find(s => s.key === sectionKey)?.title || sectionKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+
+      return (
+        <div className="analysis-section" id={sectionKey}>
+          <h2 className="md-h2">
+              <span className="header-icon">{getHeaderIcon(defaultTitle, 2) || '📌'}</span>
+              {specialTitle}
+          </h2>
+          <div className="section-content">
+            <div className="info-box">
+              <p>
+                <strong>⚠️ Analysis Data Missing:</strong> {placeholderText}
+              </p>
+            </div>
+            {/* If the original content was an empty string but the key was present, this is a more accurate message */}
+            {sectionKey !== "knowledgeGraph" && sectionKey !== "visualInsights" && (
+                <div className="md-p">
+                    <p>
+                        *Note: If this section consistently remains empty, the underlying AI model may not be producing output for it, 
+                        or the content did not pass minimum length/quality thresholds.*
+                    </p>
+                </div>
+            )}
+          </div>
+        </div>
+      );
+    }
   };
 
   const sectionNavigation = [
@@ -460,7 +731,6 @@ const ExperimentDetails = () => {
   };
 
   const handleBackToSearch = () => {
-    // Check if we came from the search page with state
     if (location.state && location.state.fromSearch) {
       navigate("/search", {
         state: {
@@ -470,7 +740,6 @@ const ExperimentDetails = () => {
         },
       });
     } else {
-      // Default fallback to search page
       navigate("/search");
     }
   };
@@ -580,8 +849,12 @@ const ExperimentDetails = () => {
             <div className="loading-spinner-large"></div>
             <h3>Analyzing Experiment with AI...</h3>
             <p>
-              This may take a minute as we generate a comprehensive analysis of
-              the publication.
+              Generating comprehensive analysis including all 9 sections...
+            </p>
+            <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: '1rem' }}>
+              This includes: Executive Summary, Experiment Details, Key Findings, 
+              Biological Impacts, Knowledge Graph, Applications, Research Connections, 
+              Visual Insights, and Future Research
             </p>
           </div>
         )}
@@ -606,6 +879,22 @@ const ExperimentDetails = () => {
             <button onClick={analyzeExperiment} className="retry-btn">
               Try Again
             </button>
+          </div>
+        )}
+
+        {/* Debug Info - Remove in production */}
+        {analysis && availableSections.length > 0 && (
+          <div style={{ 
+            padding: '1rem', 
+            background: 'rgba(103, 232, 249, 0.1)', 
+            borderRadius: '8px', 
+            marginBottom: '1rem',
+            fontSize: '0.875rem',
+            color: '#67e8f9'
+          }}>
+            <strong>Debug: Sections Available ({availableSections.length}):</strong>
+            <br />
+            {availableSections.join(", ")}
           </div>
         )}
 
@@ -634,16 +923,24 @@ const ExperimentDetails = () => {
 
             {/* Section Navigation */}
             <div className="section-navigation">
-              {sectionNavigation.map((section) => (
-                <button
-                  key={section.key}
-                  className={`nav-btn ${activeSection === section.key ? "active" : ""}`}
-                  onClick={() => setActiveSection(section.key)}
-                >
-                  <span className="nav-icon">{section.icon}</span>
-                  {section.title}
-                </button>
-              ))}
+              {sectionNavigation.map((section) => {
+                const isAvailable = section.key === 'all' || 
+                  availableSections.includes(section.key);
+                
+                return (
+                  <button
+                    key={section.key}
+                    className={`nav-btn ${activeSection === section.key ? "active" : ""}`}
+                    onClick={() => isAvailable && setActiveSection(section.key)}
+                    disabled={!isAvailable}
+                    // Removed the "disabled" class logic as we want all to show
+                    title={!isAvailable ? "Section not available in analysis" : ""}
+                  >
+                    <span className="nav-icon">{section.icon}</span>
+                    {section.title}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Analysis Content */}
@@ -656,6 +953,7 @@ const ExperimentDetails = () => {
                     </div>
                   ) : (
                     <>
+                      {/* Render ALL sections here, which will now use the renderSection fallback if content is missing */}
                       {renderSection("executiveSummary", "Executive Summary")}
                       {renderSection("experimentDetails", "Experiment Details")}
                       {renderSection("keyFindings", "Key Findings")}
@@ -675,7 +973,7 @@ const ExperimentDetails = () => {
                   )}
                 </div>
               ) : (
-                renderSection(activeSection, "")
+                renderSection(activeSection, sectionNavigation.find(s => s.key === activeSection)?.title)
               )}
             </div>
           </div>
