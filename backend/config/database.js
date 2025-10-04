@@ -4,21 +4,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Database connection configuration
-const dbConfig = {
-  user: process.env.DB_USER || "postgres",
-  host: process.env.DB_HOST || "localhost",
-  database: process.env.DB_NAME || "nasa_hackathon",
-  password: process.env.DB_PASSWORD || "password",
-  port: process.env.DB_PORT || 5432,
-  // Connection pool settings
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-};
-
-// Create connection pool
-const pool = new Pool(dbConfig);
+// The Pool constructor can take the connection string directly!
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 // Test the connection
 pool.on("connect", () => {
