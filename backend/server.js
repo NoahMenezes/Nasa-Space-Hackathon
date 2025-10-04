@@ -86,8 +86,6 @@ app.use("/future-research", futureResearchRoute);
 // Default route
 app.get("/", (req, res) => res.send("NASA Experiment Analysis API running 🚀"));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({
@@ -174,22 +172,34 @@ app.use((err, req, res, next) => {
   if (err.name === "JsonWebTokenError") {
     return res
       .status(401)
-      .json({ error: "Invalid token", message: "The provided token is malformed or invalid" });
+      .json({
+        error: "Invalid token",
+        message: "The provided token is malformed or invalid",
+      });
   }
   if (err.name === "TokenExpiredError") {
     return res
       .status(401)
-      .json({ error: "Token expired", message: "The provided token has expired" });
+      .json({
+        error: "Token expired",
+        message: "The provided token has expired",
+      });
   }
   if (err.code === "23505") {
     return res
       .status(400)
-      .json({ error: "Duplicate entry", message: "The requested resource already exists" });
+      .json({
+        error: "Duplicate entry",
+        message: "The requested resource already exists",
+      });
   }
   if (err.code === "23503") {
     return res
       .status(400)
-      .json({ error: "Foreign key violation", message: "Referenced resource does not exist" });
+      .json({
+        error: "Foreign key violation",
+        message: "Referenced resource does not exist",
+      });
   }
 
   res.status(500).json({
@@ -216,10 +226,10 @@ process.on("SIGINT", () => {
 app.listen(PORT, () => {
   console.log(`🚀 NASA Space Hackathon Backend running on port ${PORT}`);
   console.log(
-    `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`
+    `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`,
   );
   console.log(
-    `🤖 ML API URL: ${process.env.ML_API_BASE_URL || "http://localhost:8000"}`
+    `🤖 ML API URL: ${process.env.ML_API_BASE_URL || "http://localhost:8000"}`,
   );
   console.log(`📊 Database: PostgreSQL`);
   console.log(`🔒 Security: Helmet + CORS + Rate Limiting`);

@@ -79,7 +79,6 @@
 /* Search Header Section */
 .search-header {
     text-align: center;
-    margin-bottom: var(--space-3xl);
     padding: var(--space-3xl) 0;
     position: relative;
 }
