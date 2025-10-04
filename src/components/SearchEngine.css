@@ -143,6 +143,7 @@
 
 .search-subtitle {
   font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--text-secondary);
   max-width: 700px;
   margin: 0 auto;
