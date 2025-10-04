@@ -1,19 +1,11 @@
 don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
 
-fix the knowledge graph -> display proper graph, should display the data properly (in a user readable format)
+fix the knowledge graph and all the extra options -> display proper graph, should display the data properly (in a user readable format)
 
 remove the "Powered by Gemini 2.0" from the ai generated analysis section
 basically remove mention of gemini from the ui 👍
 
 <upload the screenshot of the tables created in the database and ask> which tables can be safely deleted.
-
-//handle with care
-modify the project so that we can lauch both our react frontend and node backend using single command (without breaking any code)
-
-//handle with care
-remove the code from our project which is not being used in the current version of the project
-(e.g. the code for the old landing page, the code for the old experiments page etc.)
-pls make sure the entire working of the project is not affected
 
 //big task
 modify the website so that the user has to authenticate via google sign in or normal sign up / sign in before accessing any parts of the website (except the landing page).
@@ -22,8 +14,12 @@ completely deploy project using supabase and vercel and authenticate user using 
 
 
 
-
 //----- old prompts, ignore unless needed -----
+
+//handle with care
+remove the code from our project which is not being used in the current version of the project
+(e.g. the code for the old landing page, the code for the old experiments page etc.)
+pls make sure the entire working of the project is not affected
 
 implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
 
