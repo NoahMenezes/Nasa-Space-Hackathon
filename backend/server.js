@@ -3,11 +3,24 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
+import bodyParser from "body-parser";
 
 import authRoutes from "./routes/auth.js";
 import mlRoutes from "./routes/nasa.js";
 import userRoutes from "./routes/users.js";
 import experimentsRoutes from "./routes/experiments.js";
+
+// Analysis routes
+import executiveSummaryRoute from "./routes/executiveSummary.js";
+import experimentDetailsRoute from "./routes/experimentDetails.js";
+import keyFindingsRoute from "./routes/keyFindings.js";
+import biologicalImpactsRoute from "./routes/biologicalImpacts.js";
+import knowledgeGraphRoute from "./routes/knowledgeGraph.js";
+import practicalApplicationsRoute from "./routes/practicalApplications.js";
+import researchConnectionsRoute from "./routes/researchConnections.js";
+import visualInsightsRoute from "./routes/visualInsights.js";
+import futureResearchRoute from "./routes/futureResearch.js";
+
 import { initializeDatabase } from "./config/database.js";
 
 dotenv.config();
@@ -20,11 +33,11 @@ app.use(helmet());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { error: "Too many requests, please try again later." },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use(limiter);
 
@@ -53,9 +66,27 @@ try {
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/ml", mlRoutes); // Changed from /api/nasa to /api/ml
+app.use("/api/ml", mlRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/experiments", experimentsRoutes);
+
+app.use(bodyParser.json());
+
+// 🚀 Analysis section routes
+app.use("/executive-summary", executiveSummaryRoute);
+app.use("/experiment-details", experimentDetailsRoute);
+app.use("/key-findings", keyFindingsRoute);
+app.use("/biological-impacts", biologicalImpactsRoute);
+app.use("/knowledge-graph", knowledgeGraphRoute);
+app.use("/practical-applications", practicalApplicationsRoute);
+app.use("/research-connections", researchConnectionsRoute);
+app.use("/visual-insights", visualInsightsRoute);
+app.use("/future-research", futureResearchRoute);
+
+// Default route
+app.get("/", (req, res) => res.send("NASA Experiment Analysis API running 🚀"));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -99,6 +130,17 @@ app.get("/api/info", (req, res) => {
         "/api/users/ml-history",
         "/api/users/stats",
       ],
+      analysis: [
+        "/executive-summary",
+        "/experiment-details",
+        "/key-findings",
+        "/biological-impacts",
+        "/knowledge-graph",
+        "/practical-applications",
+        "/research-connections",
+        "/visual-insights",
+        "/future-research",
+      ],
     },
     ml_api: {
       base_url: process.env.ML_API_BASE_URL || "http://localhost:8000",
@@ -112,14 +154,6 @@ app.use("*", (req, res) => {
   res.status(404).json({
     error: "Endpoint not found",
     message: `The endpoint ${req.method} ${req.originalUrl} does not exist`,
-    available_endpoints: [
-      "GET /api/health",
-      "GET /api/info",
-      "POST /api/auth/register",
-      "POST /api/auth/login",
-      "GET /api/ml/models",
-      "POST /api/ml/classify",
-    ],
   });
 });
 
@@ -127,52 +161,37 @@ app.use("*", (req, res) => {
 app.use((err, req, res, next) => {
   console.error("Global error handler:", err.stack);
 
-  // Multer errors (file upload)
   if (err.code === "LIMIT_FILE_SIZE") {
-    return res.status(400).json({
-      error: "File too large",
-      message: "Maximum file size is 50MB",
-    });
+    return res
+      .status(400)
+      .json({ error: "File too large", message: "Maximum file size is 50MB" });
   }
-
   if (err.code === "LIMIT_UNEXPECTED_FILE") {
-    return res.status(400).json({
-      error: "Unexpected field",
-      message: err.message,
-    });
+    return res
+      .status(400)
+      .json({ error: "Unexpected field", message: err.message });
   }
-
-  // JWT errors
   if (err.name === "JsonWebTokenError") {
-    return res.status(401).json({
-      error: "Invalid token",
-      message: "The provided token is malformed or invalid",
-    });
+    return res
+      .status(401)
+      .json({ error: "Invalid token", message: "The provided token is malformed or invalid" });
   }
-
   if (err.name === "TokenExpiredError") {
-    return res.status(401).json({
-      error: "Token expired",
-      message: "The provided token has expired",
-    });
+    return res
+      .status(401)
+      .json({ error: "Token expired", message: "The provided token has expired" });
   }
-
-  // Database errors
   if (err.code === "23505") {
-    return res.status(400).json({
-      error: "Duplicate entry",
-      message: "The requested resource already exists",
-    });
+    return res
+      .status(400)
+      .json({ error: "Duplicate entry", message: "The requested resource already exists" });
   }
-
   if (err.code === "23503") {
-    return res.status(400).json({
-      error: "Foreign key violation",
-      message: "Referenced resource does not exist",
-    });
+    return res
+      .status(400)
+      .json({ error: "Foreign key violation", message: "Referenced resource does not exist" });
   }
 
-  // Default error
   res.status(500).json({
     error: "Internal server error",
     message:
@@ -188,7 +207,6 @@ process.on("SIGTERM", () => {
   console.log("🔄 SIGTERM received, shutting down gracefully");
   process.exit(0);
 });
-
 process.on("SIGINT", () => {
   console.log("🔄 SIGINT received, shutting down gracefully");
   process.exit(0);
@@ -198,10 +216,10 @@ process.on("SIGINT", () => {
 app.listen(PORT, () => {
   console.log(`🚀 NASA Space Hackathon Backend running on port ${PORT}`);
   console.log(
-    `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`,
+    `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`
   );
   console.log(
-    `🤖 ML API URL: ${process.env.ML_API_BASE_URL || "http://localhost:8000"}`,
+    `🤖 ML API URL: ${process.env.ML_API_BASE_URL || "http://localhost:8000"}`
   );
   console.log(`📊 Database: PostgreSQL`);
   console.log(`🔒 Security: Helmet + CORS + Rate Limiting`);
