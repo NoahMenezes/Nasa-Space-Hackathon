@@ -1,10 +1,10 @@
-also implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
+implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
 
 in the bookmarks page, user should be able to remove any bookmarked experiment
 
 don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
 
-also theme of the experiments page doesn't match the rest of the app (use neon dark mode instead of the purple)
+theme of the experiments page doesn't match the rest of the app (use neon dark mode instead of the purple)
 
 fix the knowledge graph -> display proper graph, should display the data properly (in a user readable format)
 
@@ -13,10 +13,24 @@ basically remove mention of gemini from the ui 👍
 
 also update the readme.md, it should better reflect the features and the tech stack used
 
-upload the screenshot of the tables created in the database and ask which tables can be safely deleted.
+<upload the screenshot of the tables created in the database and ask> which tables can be safely deleted.
 
-//old prompts
+//handle with care
+modify the project so that we can lauch both our react frontend and node backend using single command (without breaking any code)
 
+//handle with care
+remove the code from our project which is not being used in the current version of the project
+(e.g. the code for the old landing page, the code for the old experiments page etc.)
+pls make sure the entire working of the project is not affected
+
+//big task
+modify the website so that the user has to authenticate via google sign in or normal sign up / sign in before accessing any parts of the website (except the landing page).
+also add a option to sign out after the user is authenticated and entered the main website
+completely deploy project using supabase and vercel and authenticate user using supabase auth
+
+
+
+//----- old prompts, ignore unless needed -----
 ok a major chunk of the project is left
 <csv file here>
 all the experiments, its authors and links are mentioned in this csv file
