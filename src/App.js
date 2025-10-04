@@ -9,7 +9,7 @@ import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import PlaceholderPage from "./components/PlaceholderPage";
-import Team from "./components/Team";
+
 import SearchEngine from "./components/SearchEngine"; // Add this import
 import Bookmarks from "./components/Bookmarks"; // Add this import
 import ExperimentDetails from "./components/ExperimentDetails";
@@ -37,9 +37,6 @@ const App = () => {
             <Route path="/search" element={<SearchEngine />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/experiment/:id" element={<ExperimentDetails />} />
-
-            {/* Team component */}
-            <Route path="/team" element={<Team />} />
 
             {/* 404/Catch-all Route */}
             <Route

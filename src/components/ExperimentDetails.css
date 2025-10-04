@@ -7,10 +7,18 @@
     z-index: 10;
 }
 
-.back-button {
+.details-header-controls {
     position: fixed;
     top: 6rem;
     left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.back-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -23,7 +31,6 @@
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    z-index: 100;
 }
 
 .back-button:hover {
@@ -31,6 +38,40 @@
     border-color: #67e8f9;
     transform: translateX(-5px);
     box-shadow: 0 10px 30px rgba(67, 232, 249, 0.3);
+}
+
+.bookmark-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(103, 232, 249, 0.3);
+    border-radius: 25px;
+    color: #67e8f9;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.bookmark-button:hover {
+    background: rgba(15, 23, 42, 1);
+    border-color: #67e8f9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(67, 232, 249, 0.3);
+}
+
+.bookmark-button.bookmarked {
+    background: rgba(67, 232, 249, 0.2);
+    border-color: #67e8f9;
+    color: #67e8f9;
+}
+
+.bookmark-button.bookmarked:hover {
+    background: rgba(67, 232, 249, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(67, 232, 249, 0.4);
 }
 
 .experiment-details-wrapper {
@@ -336,7 +377,11 @@
 }
 
 .nav-btn.active {
-    background: linear-gradient(135deg, rgba(103, 232, 249, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(103, 232, 249, 0.3) 0%,
+        rgba(59, 130, 246, 0.3) 100%
+    );
     border-color: #67e8f9;
     box-shadow: 0 5px 15px rgba(67, 232, 249, 0.3);
 }

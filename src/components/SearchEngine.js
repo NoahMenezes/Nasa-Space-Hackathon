@@ -1,6 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./SearchEngine.css";
+import {
+  addBookmark,
+  removeBookmark,
+  isBookmarked,
+} from "../utils/bookmarksUtils";
 
 const SearchEngine = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -8,7 +13,27 @@ const SearchEngine = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [bookmarkedItems, setBookmarkedItems] = useState(new Set());
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Restore search state when navigating back from experiment details
+  useEffect(() => {
+    if (location.state && location.state.preserveResults) {
+      setSearchQuery(location.state.searchQuery || "");
+      setSearchResults(location.state.searchResults || []);
+      setHasSearched(true);
+
+      // Update bookmarked status for results
+      const bookmarked = new Set();
+      (location.state.searchResults || []).forEach((result) => {
+        if (isBookmarked(result.id)) {
+          bookmarked.add(result.id);
+        }
+      });
+      setBookmarkedItems(bookmarked);
+    }
+  }, [location.state]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -42,6 +67,15 @@ const SearchEngine = () => {
 
       setSearchResults(data.results || []);
 
+      // Update bookmarked status for results
+      const bookmarked = new Set();
+      data.results.forEach((result) => {
+        if (isBookmarked(result.id)) {
+          bookmarked.add(result.id);
+        }
+      });
+      setBookmarkedItems(bookmarked);
+
       if (data.results.length === 0) {
         setError(
           "No experiments found. Try different keywords or scientist names.",
@@ -57,7 +91,34 @@ const SearchEngine = () => {
   };
 
   const handleExperimentClick = (experimentId) => {
-    navigate(`/experiment/${experimentId}`);
+    navigate(`/experiment/${experimentId}`, {
+      state: {
+        fromSearch: true,
+        searchQuery: searchQuery,
+        searchResults: searchResults,
+      },
+    });
+  };
+
+  const handleBookmarkToggle = (experiment, e) => {
+    e.stopPropagation(); // Prevent card click
+
+    const experimentId = experiment.id;
+    const isCurrentlyBookmarked = bookmarkedItems.has(experimentId);
+
+    if (isCurrentlyBookmarked) {
+      if (removeBookmark(experimentId)) {
+        setBookmarkedItems((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(experimentId);
+          return newSet;
+        });
+      }
+    } else {
+      if (addBookmark(experiment)) {
+        setBookmarkedItems((prev) => new Set([...prev, experimentId]));
+      }
+    }
   };
 
   const highlightMatch = (text, query) => {
@@ -163,46 +224,6 @@ const SearchEngine = () => {
             </div>
           )}
 
-          {!isLoading && !error && !hasSearched && (
-            <div className="results-placeholder">
-              <svg
-                width="64"
-                height="64"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </svg>
-              <p>
-                Enter an experiment name or scientist name to start searching
-              </p>
-              <div className="example-searches">
-                <p className="example-title">Example searches:</p>
-                <button
-                  onClick={() => setSearchQuery("microgravity")}
-                  className="example-btn"
-                >
-                  microgravity
-                </button>
-                <button
-                  onClick={() => setSearchQuery("bone")}
-                  className="example-btn"
-                >
-                  bone
-                </button>
-                <button
-                  onClick={() => setSearchQuery("Ruth K Globus")}
-                  className="example-btn"
-                >
-                  Ruth K Globus
-                </button>
-              </div>
-            </div>
-          )}
-
           {!isLoading && !error && hasSearched && searchResults.length > 0 && (
             <div className="results-list">
               <div className="results-header">
@@ -267,25 +288,55 @@ const SearchEngine = () => {
                     </div>
 
                     <div className="experiment-footer">
-                      <button
-                        className="analyze-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleExperimentClick(experiment.id);
-                        }}
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
+                      <div className="experiment-actions">
+                        <button
+                          className={`bookmark-btn ${bookmarkedItems.has(experiment.id) ? "bookmarked" : ""}`}
+                          onClick={(e) => handleBookmarkToggle(experiment, e)}
+                          title={
+                            bookmarkedItems.has(experiment.id)
+                              ? "Remove from bookmarks"
+                              : "Add to bookmarks"
+                          }
                         >
-                          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                        </svg>
-                        Analyze with AI
-                      </button>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill={
+                              bookmarkedItems.has(experiment.id)
+                                ? "currentColor"
+                                : "none"
+                            }
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
+                          </svg>
+                          {bookmarkedItems.has(experiment.id)
+                            ? "Bookmarked"
+                            : "Bookmark"}
+                        </button>
+
+                        <button
+                          className="analyze-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExperimentClick(experiment.id);
+                          }}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                          </svg>
+                          Analyze with AI
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

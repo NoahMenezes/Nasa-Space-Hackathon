@@ -1,43 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./ExperimentDetails.css";
+import {
+  addBookmark,
+  removeBookmark,
+  isBookmarked,
+} from "../utils/bookmarksUtils";
 
 const ExperimentDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [experiment, setExperiment] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("all");
+  const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
+    const fetchExperiment = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/experiments/${id}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch experiment");
+        }
+
+        const data = await response.json();
+        setExperiment(data.experiment);
+      } catch (err) {
+        console.error("Error fetching experiment:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchExperiment();
   }, [id]);
 
-  const fetchExperiment = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/experiments/${id}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch experiment");
-      }
-
-      const data = await response.json();
-      setExperiment(data.experiment);
-    } catch (err) {
-      console.error("Error fetching experiment:", err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (experiment) {
+      setBookmarked(isBookmarked(experiment.id));
     }
-  };
+  }, [experiment]);
 
   const analyzeExperiment = async () => {
     setIsAnalyzing(true);
@@ -48,7 +61,7 @@ const ExperimentDetails = () => {
         `http://localhost:5000/api/experiments/${id}/analyze`,
         {
           method: "POST",
-        }
+        },
       );
 
       if (!response.ok) {
@@ -99,7 +112,9 @@ const ExperimentDetails = () => {
         const parts = line.split("**");
         return (
           <p key={index} className="md-p">
-            {parts.map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
+            {parts.map((part, i) =>
+              i % 2 === 1 ? <strong key={i}>{part}</strong> : part,
+            )}
           </p>
         );
       }
@@ -172,6 +187,36 @@ const ExperimentDetails = () => {
     );
   }
 
+  const handleBookmarkToggle = () => {
+    if (!experiment) return;
+
+    if (bookmarked) {
+      if (removeBookmark(experiment.id)) {
+        setBookmarked(false);
+      }
+    } else {
+      if (addBookmark(experiment)) {
+        setBookmarked(true);
+      }
+    }
+  };
+
+  const handleBackToSearch = () => {
+    // Check if we came from the search page with state
+    if (location.state && location.state.fromSearch) {
+      navigate("/search", {
+        state: {
+          preserveResults: true,
+          searchQuery: location.state.searchQuery,
+          searchResults: location.state.searchResults,
+        },
+      });
+    } else {
+      // Default fallback to search page
+      navigate("/search");
+    }
+  };
+
   if (error && !experiment) {
     return (
       <div className="experiment-details-page">
@@ -188,19 +233,39 @@ const ExperimentDetails = () => {
 
   return (
     <div className="experiment-details-page">
-      <button onClick={() => navigate(-1)} className="back-button">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
+      <div className="details-header-controls">
+        <button onClick={handleBackToSearch} className="back-button">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Back to Search
+        </button>
+
+        <button
+          onClick={handleBookmarkToggle}
+          className={`bookmark-button ${bookmarked ? "bookmarked" : ""}`}
+          title={bookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
         >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Back to Search
-      </button>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill={bookmarked ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
+          {bookmarked ? "Bookmarked" : "Bookmark"}
+        </button>
+      </div>
 
       <div className="experiment-details-wrapper">
         {/* Experiment Header */}
@@ -251,10 +316,7 @@ const ExperimentDetails = () => {
           </div>
 
           {!analysis && !isAnalyzing && (
-            <button
-              onClick={analyzeExperiment}
-              className="analyze-main-btn"
-            >
+            <button onClick={analyzeExperiment} className="analyze-main-btn">
               <svg
                 width="24"
                 height="24"
@@ -359,8 +421,14 @@ const ExperimentDetails = () => {
                       {renderSection("keyFindings", "Key Findings")}
                       {renderSection("biologicalImpacts", "Biological Impacts")}
                       {renderSection("knowledgeGraph", "Knowledge Graph")}
-                      {renderSection("practicalApplications", "Practical Applications")}
-                      {renderSection("researchConnections", "Research Connections")}
+                      {renderSection(
+                        "practicalApplications",
+                        "Practical Applications",
+                      )}
+                      {renderSection(
+                        "researchConnections",
+                        "Research Connections",
+                      )}
                       {renderSection("visualInsights", "Visual Insights")}
                       {renderSection("futureResearch", "Future Research")}
                     </>

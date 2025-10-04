@@ -2,16 +2,16 @@ implement bookmarks functionality -> user should be able to bookmark an experime
 
 in the bookmarks page, user should be able to remove any bookmarked experiment
 
-don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
+theme of the search engine page doesn't match the rest of the app (use neon dark mode instead of the purple). keep the theme consistent across the website
 
-theme of the experiments page doesn't match the rest of the app (use neon dark mode instead of the purple)
+also update the readme.md, it should better reflect the features and the tech stack used
+
+don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
 
 fix the knowledge graph -> display proper graph, should display the data properly (in a user readable format)
 
 remove the "Powered by Gemini 2.0" from the ai generated analysis section
 basically remove mention of gemini from the ui 👍
-
-also update the readme.md, it should better reflect the features and the tech stack used
 
 <upload the screenshot of the tables created in the database and ask> which tables can be safely deleted.
 
