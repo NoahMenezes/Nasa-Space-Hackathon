@@ -35,6 +35,9 @@ const ExperimentDetails = () => {
 
         const data = await response.json();
         setExperiment(data.experiment);
+
+        // Automatically trigger analysis after experiment is loaded
+        await analyzeExperimentAuto(data.experiment);
       } catch (err) {
         console.error("Error fetching experiment:", err);
         setError(err.message);
@@ -45,6 +48,32 @@ const ExperimentDetails = () => {
 
     fetchExperiment();
   }, [id]);
+
+  const analyzeExperimentAuto = async (experimentData) => {
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/experiments/${experimentData.id}/analyze`,
+        {
+          method: "POST",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to analyze experiment");
+      }
+
+      const data = await response.json();
+      setAnalysis(data.analysis);
+    } catch (err) {
+      console.error("Error analyzing experiment:", err);
+      setError(err.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   useEffect(() => {
     if (experiment) {
@@ -78,77 +107,306 @@ const ExperimentDetails = () => {
     }
   };
 
+  const getHeaderIcon = (headerText, level) => {
+    const text = headerText.toLowerCase();
+
+    // Main section icons
+    if (text.includes("executive") || text.includes("summary")) return "📋";
+    if (text.includes("experiment") && text.includes("detail")) return "🔬";
+    if (text.includes("key finding")) return "🔑";
+    if (text.includes("biological") && text.includes("impact")) return "🧬";
+    if (text.includes("knowledge") && text.includes("graph")) return "🕸️";
+    if (text.includes("application")) return "🚀";
+    if (text.includes("research") && text.includes("connection")) return "🔗";
+    if (text.includes("visual") && text.includes("insight")) return "📊";
+    if (text.includes("future") && text.includes("research")) return "🔮";
+
+    // Sub-section icons
+    if (text.includes("research question") || text.includes("hypothesis"))
+      return "❓";
+    if (text.includes("methodology") || text.includes("method")) return "⚙️";
+    if (text.includes("subject") || text.includes("condition")) return "🧪";
+    if (text.includes("timeline")) return "📅";
+    if (text.includes("cellular")) return "🦠";
+    if (text.includes("physiological")) return "💪";
+    if (text.includes("molecular") || text.includes("genetic")) return "🧬";
+    if (text.includes("health") || text.includes("medical")) return "⚕️";
+    if (text.includes("space") && text.includes("exploration")) return "🛸";
+    if (text.includes("mars")) return "🔴";
+    if (text.includes("earth") || text.includes("clinical")) return "🌍";
+    if (text.includes("technology") || text.includes("development"))
+      return "⚡";
+    if (text.includes("mission")) return "🛰️";
+    if (text.includes("interdisciplinary")) return "🔬";
+    if (
+      text.includes("chart") ||
+      text.includes("graph") ||
+      text.includes("visualization")
+    )
+      return "📈";
+    if (text.includes("open question")) return "❔";
+    if (text.includes("follow-up") || text.includes("suggested")) return "🔄";
+    if (text.includes("gap")) return "🕳️";
+    if (text.includes("roadmap") || text.includes("next step")) return "🗺️";
+
+    // Generic icons by level
+    if (level === 1) return "📄";
+    if (level === 2) return "📌";
+    if (level === 3) return "▪️";
+
+    return null;
+  };
+
   const renderMarkdown = (text) => {
     if (!text) return null;
 
-    // Simple markdown parsing
     const lines = text.split("\n");
-    return lines.map((line, index) => {
+    const elements = [];
+    let currentList = [];
+    let currentListType = null;
+    let inCodeBlock = false;
+    let codeBlockLines = [];
+    let tableLines = [];
+    let inTable = false;
+
+    const flushList = () => {
+      if (currentList.length > 0) {
+        const ListTag = currentListType === "ordered" ? "ol" : "ul";
+        elements.push(
+          <ListTag key={`list-${elements.length}`} className="md-list">
+            {currentList}
+          </ListTag>,
+        );
+        currentList = [];
+        currentListType = null;
+      }
+    };
+
+    const flushCodeBlock = () => {
+      if (codeBlockLines.length > 0) {
+        elements.push(
+          <pre key={`code-${elements.length}`} className="md-code-block">
+            <code>{codeBlockLines.join("\n")}</code>
+          </pre>,
+        );
+        codeBlockLines = [];
+      }
+    };
+
+    const flushTable = () => {
+      if (tableLines.length > 0) {
+        const headers = tableLines[0].split("|").filter((cell) => cell.trim());
+        const rows = tableLines
+          .slice(2)
+          .map((row) => row.split("|").filter((cell) => cell.trim()));
+
+        elements.push(
+          <div key={`table-${elements.length}`} className="md-table-wrapper">
+            <table className="md-table">
+              <thead>
+                <tr>
+                  {headers.map((header, i) => (
+                    <th key={i}>{header.trim()}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j}>{cell.trim()}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>,
+        );
+        tableLines = [];
+      }
+    };
+
+    const processBoldAndItalic = (text) => {
+      const parts = [];
+      let current = "";
+      let i = 0;
+
+      while (i < text.length) {
+        if (text.substr(i, 2) === "**") {
+          if (current) parts.push(current);
+          current = "";
+          const endIndex = text.indexOf("**", i + 2);
+          if (endIndex !== -1) {
+            parts.push(
+              <strong key={`b-${i}`}>{text.substring(i + 2, endIndex)}</strong>,
+            );
+            i = endIndex + 2;
+            continue;
+          }
+        } else if (
+          text[i] === "*" &&
+          text[i - 1] !== "*" &&
+          text[i + 1] !== "*"
+        ) {
+          if (current) parts.push(current);
+          current = "";
+          const endIndex = text.indexOf("*", i + 1);
+          if (endIndex !== -1 && text[endIndex + 1] !== "*") {
+            parts.push(
+              <em key={`i-${i}`}>{text.substring(i + 1, endIndex)}</em>,
+            );
+            i = endIndex + 1;
+            continue;
+          }
+        }
+        current += text[i];
+        i++;
+      }
+
+      if (current) parts.push(current);
+      return parts.length > 1 ? parts : text;
+    };
+
+    lines.forEach((line, index) => {
+      // Code blocks
+      if (line.trim().startsWith("```")) {
+        if (inCodeBlock) {
+          flushCodeBlock();
+          inCodeBlock = false;
+        } else {
+          flushList();
+          inCodeBlock = true;
+        }
+        return;
+      }
+
+      if (inCodeBlock) {
+        codeBlockLines.push(line);
+        return;
+      }
+
+      // Tables
+      if (line.trim().startsWith("|") && line.trim().endsWith("|")) {
+        if (!inTable) {
+          flushList();
+          inTable = true;
+        }
+        tableLines.push(line);
+        return;
+      } else if (inTable) {
+        flushTable();
+        inTable = false;
+      }
+
       // Headers
       if (line.startsWith("### ")) {
-        return (
+        flushList();
+        const headerText = line.replace("### ", "");
+        const icon = getHeaderIcon(headerText, 3);
+        elements.push(
           <h3 key={index} className="md-h3">
-            {line.replace("### ", "")}
-          </h3>
+            {icon && <span className="header-icon">{icon}</span>}
+            {headerText}
+          </h3>,
         );
+        return;
       }
       if (line.startsWith("## ")) {
-        return (
+        flushList();
+        const headerText = line.replace("## ", "");
+        const icon = getHeaderIcon(headerText, 2);
+        elements.push(
           <h2 key={index} className="md-h2">
-            {line.replace("## ", "")}
-          </h2>
+            {icon && <span className="header-icon">{icon}</span>}
+            {headerText}
+          </h2>,
         );
+        return;
       }
       if (line.startsWith("# ")) {
-        return (
+        flushList();
+        const headerText = line.replace("# ", "");
+        const icon = getHeaderIcon(headerText, 1);
+        elements.push(
           <h1 key={index} className="md-h1">
-            {line.replace("# ", "")}
-          </h1>
+            {icon && <span className="header-icon">{icon}</span>}
+            {headerText}
+          </h1>,
         );
+        return;
       }
 
-      // Bold
-      if (line.includes("**")) {
-        const parts = line.split("**");
-        return (
-          <p key={index} className="md-p">
-            {parts.map((part, i) =>
-              i % 2 === 1 ? <strong key={i}>{part}</strong> : part,
-            )}
-          </p>
+      // Blockquotes
+      if (line.trim().startsWith("> ")) {
+        flushList();
+        elements.push(
+          <blockquote key={index} className="md-blockquote">
+            {processBoldAndItalic(line.trim().substring(2))}
+          </blockquote>,
         );
+        return;
       }
 
-      // Lists
-      if (line.trim().startsWith("- ") || line.trim().startsWith("* ")) {
-        return (
-          <li key={index} className="md-li">
-            {line.trim().substring(2)}
-          </li>
-        );
+      // Horizontal rule
+      if (line.trim() === "---" || line.trim() === "***") {
+        flushList();
+        elements.push(<hr key={index} className="md-hr" />);
+        return;
       }
 
-      // Numbers lists
+      // Ordered Lists
       if (/^\d+\./.test(line.trim())) {
-        return (
+        if (currentListType !== "ordered") {
+          flushList();
+          currentListType = "ordered";
+        }
+        const content = line.trim().replace(/^\d+\.\s*/, "");
+        currentList.push(
           <li key={index} className="md-li">
-            {line.trim().replace(/^\d+\.\s*/, "")}
-          </li>
+            {processBoldAndItalic(content)}
+          </li>,
         );
+        return;
+      }
+
+      // Unordered Lists
+      if (line.trim().startsWith("- ") || line.trim().startsWith("* ")) {
+        if (currentListType !== "unordered") {
+          flushList();
+          currentListType = "unordered";
+        }
+        const content = line.trim().substring(2);
+        currentList.push(
+          <li key={index} className="md-li">
+            {processBoldAndItalic(content)}
+          </li>,
+        );
+        return;
       }
 
       // Empty line
       if (line.trim() === "") {
-        return <br key={index} />;
+        flushList();
+        elements.push(<div key={index} className="md-spacer" />);
+        return;
       }
 
       // Regular paragraph
-      return (
+      flushList();
+      const content = processBoldAndItalic(line);
+      elements.push(
         <p key={index} className="md-p">
-          {line}
-        </p>
+          {content}
+        </p>,
       );
     });
+
+    // Flush any remaining elements
+    flushList();
+    flushCodeBlock();
+    flushTable();
+
+    return <div className="markdown-content">{elements}</div>;
   };
 
   const renderSection = (sectionKey, sectionTitle) => {
@@ -314,30 +572,13 @@ const ExperimentDetails = () => {
               View Original Publication
             </a>
           </div>
-
-          {!analysis && !isAnalyzing && (
-            <button onClick={analyzeExperiment} className="analyze-main-btn">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M12 6v6l4 2"></path>
-              </svg>
-              Analyze with Gemini AI
-            </button>
-          )}
         </div>
 
         {/* Analysis Loading */}
         {isAnalyzing && (
           <div className="analysis-loading">
             <div className="loading-spinner-large"></div>
-            <h3>Analyzing Experiment with Gemini AI...</h3>
+            <h3>Analyzing Experiment with AI...</h3>
             <p>
               This may take a minute as we generate a comprehensive analysis of
               the publication.
@@ -389,7 +630,6 @@ const ExperimentDetails = () => {
                 </svg>
                 AI-Generated Analysis
               </h2>
-              <span className="ai-badge">Powered by Gemini 2.0</span>
             </div>
 
             {/* Section Navigation */}

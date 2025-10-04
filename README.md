@@ -10,6 +10,14 @@ A full-stack web application for the NASA Space Apps Hackathon, featuring a Reac
 - **Detailed Information** - View experiment titles, authors, and publication links
 - **Smart Suggestions** - Example search terms to help users get started
 
+### 🤖 **AI-Powered Analysis** ✨ NEW
+- **Automatic Analysis** - Click any experiment to instantly trigger comprehensive AI analysis
+- **9 Structured Sections** - Executive Summary, Experiment Details, Key Findings, Biological Impacts, Knowledge Graph, Applications, Research Connections, Visual Insights, and Future Research
+- **Rich Formatting** - Tables, charts, code blocks, blockquotes, and hierarchical lists
+- **Smart Icons** - Contextual icons automatically added to headers for quick navigation
+- **Visual Data Presentation** - Timeline visualizations, network diagrams, and data cards
+- **No Button Required** - Analysis starts automatically when you open an experiment
+
 ### 📚 **Bookmarks System**
 - **Save Experiments** - Bookmark interesting experiments from search results
 - **Persistent Storage** - Bookmarks saved locally in browser storage
@@ -170,6 +178,15 @@ npm run dev
 - Clear all bookmarks with confirmation
 - Quick access to experiment details
 
+### 🔬 **Experiment Details** (`/experiment/:id`)
+- Automatic AI analysis on page load
+- 9 comprehensive analysis sections
+- Interactive section navigation
+- Enhanced markdown rendering with tables, code blocks, and visual elements
+- Smart contextual icons for all headers
+- Responsive design for all devices
+- Bookmark integration
+
 ### 👥 **Team** (`/team`)
 - Meet the development team
 - Project contributors and roles
@@ -195,6 +212,18 @@ Built with localStorage for immediate persistence:
 - Remove individual bookmarks or clear all with confirmation dialog
 - Bookmarks persist across browser sessions
 - Visual indicators show bookmarked status
+
+### AI Analysis Engine
+Comprehensive experiment analysis powered by advanced AI:
+- **Automatic Trigger**: Analysis starts immediately when opening an experiment
+- **Structured Sections**: 9 distinct analysis categories with rich content
+- **Enhanced Markdown**: Full support for tables, code blocks, lists, blockquotes, and more
+- **Visual Elements**: Timeline visualizations, network diagrams, progress bars, data cards
+- **Smart Icons**: Contextually relevant icons (🔬🧬🚀📊 etc.) added to all headers
+- **Responsive**: Optimized for desktop, tablet, and mobile viewing
+- **Professional UI**: Clean, model-agnostic branding without vendor references
+- **Section Navigation**: Quick jump to any analysis section
+- **Data Visualization Recommendations**: Specific chart and graph suggestions for findings
 
 ### Responsive Design
 The application adapts to all screen sizes:
@@ -267,8 +296,10 @@ FRONTEND_URL=http://localhost:3000
 This project addresses NASA's need for accessible scientific data by:
 - **Making Research Discoverable**: Easy search through NASA bioscience experiments
 - **Enabling Knowledge Sharing**: Bookmark and organize experiments of interest
-- **Improving User Experience**: Modern, responsive web interface
+- **Improving User Experience**: Modern, responsive web interface with AI-powered insights
 - **Supporting Scientists**: Quick access to experimental data and publications
+- **AI-Powered Analysis**: Comprehensive, structured analysis of experiments with visual data presentation
+- **Accelerating Research**: Instant insights and connections between experiments
 
 ### Target Users
 - **Researchers**: Find relevant experiments and publications
@@ -340,7 +371,14 @@ MIT License - see LICENSE file for details
 - **React Team** - For the excellent frontend framework
 - **Three.js Community** - For amazing 3D visualization capabilities
 - **PostgreSQL** - For robust database functionality
+- **AI Technology** - For enabling comprehensive experiment analysis
 - **Open Source Community** - For the tools and libraries that make this possible
+
+## 📖 Additional Documentation
+
+- **AI_ANALYSIS_IMPROVEMENTS.md** - Detailed technical documentation of AI features
+- **USER_GUIDE_AI_ANALYSIS.md** - Comprehensive user guide for AI analysis features
+- **TESTING_CHECKLIST_AI_FEATURES.md** - Complete testing checklist for QA
 
 ---
 
