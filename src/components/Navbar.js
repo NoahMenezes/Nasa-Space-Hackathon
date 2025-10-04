@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="navbar-content">
           {/* Logo/Home Link */}
           <Link to="/" className="logo">
-            🌐 The BioSpace Archive
+            📚 The BioSpace Archive
           </Link>
 
           {/* Main Nav Links */}

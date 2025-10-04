@@ -1,11 +1,3 @@
-implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
-
-in the bookmarks page, user should be able to remove any bookmarked experiment
-
-theme of the search engine page doesn't match the rest of the app (use neon dark mode instead of the purple). keep the theme consistent across the website
-
-also update the readme.md, it should better reflect the features and the tech stack used
-
 don't require analyse with ai button -> clicking on experiment from the search results should directly trigger that action.
 
 fix the knowledge graph -> display proper graph, should display the data properly (in a user readable format)
@@ -30,7 +22,17 @@ completely deploy project using supabase and vercel and authenticate user using 
 
 
 
+
 //----- old prompts, ignore unless needed -----
+
+implement bookmarks functionality -> user should be able to bookmark an experiment from the search results page and view all the bookmarked experiments in a separate bookmarks page (from the navbar)
+
+in the bookmarks page, user should be able to remove any bookmarked experiment
+
+theme of the search engine page doesn't match the rest of the app (use neon dark mode instead of the purple). keep the theme consistent across the website
+
+also update the readme.md, it should better reflect the features and the tech stack used
+
 ok a major chunk of the project is left
 <csv file here>
 all the experiments, its authors and links are mentioned in this csv file
