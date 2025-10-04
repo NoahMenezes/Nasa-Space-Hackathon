@@ -85,9 +85,6 @@ const initSolarSystem = (containerRef) => {
   };
 
   // --- DEFINE startThreeJS FIRST (FIXES THE REFERENCE ERROR) ---
-  // We use a function declaration here for safe hoisting within this scope,
-  // though using 'const' before the dynamic loading sequence would also work.
-
   function startThreeJS(containerElement) {
     let scene, camera, renderer, controls, starField;
     const planets = [];
@@ -160,6 +157,7 @@ const initSolarSystem = (containerRef) => {
         transparent: true,
       });
       const sprite = new window.THREE.Sprite(spriteMaterial);
+      // Set initial scale to keep it constant
       sprite.scale.set(30, 30, 1.0);
       sprite.name = "SunGlow";
       scene.add(sprite);
@@ -282,16 +280,18 @@ const initSolarSystem = (containerRef) => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = performance.now() * 0.001;
 
-      const sunMesh = scene.getObjectByName("Sun");
-      if (sunMesh) {
-        const scaleFactor = 1.0 + Math.sin(elapsedTime * 2.0) * 0.02;
-        sunMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
-      }
-      const sunGlow = scene.getObjectByName("SunGlow");
-      if (sunGlow) {
-        const glowScaleFactor = 30 + Math.sin(elapsedTime * 2.0) * 1.0;
-        sunGlow.scale.set(glowScaleFactor, glowScaleFactor, 1.0);
-      }
+      // 🛑 REMOVED SUN SCALING LOGIC 🛑
+      // const sunMesh = scene.getObjectByName("Sun");
+      // if (sunMesh) {
+      //   const scaleFactor = 1.0 + Math.sin(elapsedTime * 2.0) * 0.02;
+      //   sunMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+      // }
+      // const sunGlow = scene.getObjectByName("SunGlow");
+      // if (sunGlow) {
+      //   const glowScaleFactor = 30 + Math.sin(elapsedTime * 2.0) * 1.0;
+      //   sunGlow.scale.set(glowScaleFactor, glowScaleFactor, 1.0);
+      // }
+      // 🛑 END REMOVAL 🛑
 
       planets.forEach((p, index) => {
         p.mesh.rotation.y += p.rotationSpeed;
