@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./SearchEngine.css";
+// NOTE: Assuming you have this utility file available
 import {
   addBookmark,
   removeBookmark,
@@ -62,6 +63,7 @@ const SearchEngine = () => {
     setCurrentPage(1);
 
     try {
+      // NOTE: This URL needs to be accessible for the search to work
       const response = await fetch(
         "http://localhost:5000/api/experiments/search",
         {
@@ -91,9 +93,13 @@ const SearchEngine = () => {
       setBookmarkedItems(bookmarked);
 
       if ((data.results || []).length === 0) {
+        // Re-set error for the no-results state
         setError(
           "No experiments found. Try different keywords or scientist names.",
         );
+        setSearchResults([]); // Ensure results array is empty
+      } else {
+        setError(null); // Clear error if results are found
       }
     } catch (err) {
       console.error("Search error:", err);
@@ -179,14 +185,56 @@ const SearchEngine = () => {
 
   const handleSuggestionClick = (keyword) => {
     setSearchQuery(keyword);
-    // Trigger search automatically
+    // Trigger search automatically after state update
     const fakeEvent = { preventDefault: () => {} };
-    setSearchQuery(keyword);
+    // A small timeout ensures the state update (setSearchQuery) is processed
+    // before handleSearch reads the new value, though modern React batching
+    // might make this optional. It's safer for simulation.
     setTimeout(() => {
       handleSearch(fakeEvent);
-    }, 100);
+    }, 50); 
   };
 
+  // Logic to determine which page numbers to display
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      pageNumbers.push(1);
+      if (currentPage > 4) {
+        pageNumbers.push('...');
+      }
+
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 4) {
+        start = 2;
+        end = 5;
+      }
+      if (currentPage >= totalPages - 3) {
+        start = totalPages - 4;
+        end = totalPages - 1;
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+      
+      if (currentPage < totalPages - 3) {
+        pageNumbers.push('...');
+      }
+      pageNumbers.push(totalPages);
+    }
+    // Filter out duplicate page numbers before rendering
+    return pageNumbers.filter((value, index, self) => self.indexOf(value) === index);
+  };
+
+
+  // --- JSX Rendering ---
   return (
     <div className={`search-engine-page ${pageLoaded ? "loaded" : ""}`}>
       <div className="search-engine-wrapper">
@@ -217,7 +265,7 @@ const SearchEngine = () => {
             >
               {isLoading ? (
                 <>
-                  <div className="loading-spinner"></div>
+                  <div className="button-loading-spinner"></div>
                   Searching...
                 </>
               ) : (
@@ -242,18 +290,38 @@ const SearchEngine = () => {
             </div>
           )}
 
-          {/* Error State */}
+          {/* Error State / No Results State */}
           {error && !isLoading && (
-            <div className="error-container">
-              <div className="error-icon">⚠️</div>
-              <h3 className="error-title">Search Error</h3>
+            <div className={`error-container ${searchResults.length === 0 ? 'no-results' : ''}`}>
+              <div className="error-icon">{searchResults.length === 0 ? '🚀' : '⚠️'}</div>
+              <h3 className="error-title">{searchResults.length === 0 ? 'No Results Found' : 'Search Error'}</h3>
               <p className="error-message">{error}</p>
-              <button
-                className="retry-button"
-                onClick={() => handleSearch({ preventDefault: () => {} })}
-              >
-                Try Again
-              </button>
+              
+              {/* Only show suggestions if no results were found */}
+              {searchResults.length === 0 && (
+                <div className="no-results-suggestions">
+                  <p>Try one of these popular keywords:</p>
+                  {suggestionKeywords.map((keyword) => (
+                    <span 
+                      key={keyword}
+                      className="suggestion-chip"
+                      onClick={() => handleSuggestionClick(keyword)}
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              )}
+              
+              {/* Show retry only if it was a technical error (not just no results) */}
+              {error !== "No experiments found. Try different keywords or scientist names." && (
+                <button
+                  className="retry-button"
+                  onClick={() => handleSearch({ preventDefault: () => {} })}
+                >
+                  Try Again
+                </button>
+              )}
             </div>
           )}
 
@@ -387,22 +455,19 @@ const SearchEngine = () => {
                     ← Previous
                   </button>
 
-                  <span className="pagination-info">
-                    Page {currentPage} of {totalPages}
-                  </span>
-
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum = i + 1;
-                    return (
+                  {getPageNumbers().map((page, index) => (
+                    page === '...' ? (
+                      <span key={index} className="pagination-info">...</span>
+                    ) : (
                       <button
-                        key={pageNum}
-                        className={`pagination-button ${currentPage === pageNum ? "active" : ""}`}
-                        onClick={() => handlePageChange(pageNum)}
+                        key={index}
+                        className={`pagination-button ${currentPage === page ? "active" : ""}`}
+                        onClick={() => handlePageChange(page)}
                       >
-                        {pageNum}
+                        {page}
                       </button>
-                    );
-                  })}
+                    )
+                  ))}
 
                   <button
                     className="pagination-button"
@@ -415,34 +480,6 @@ const SearchEngine = () => {
               )}
             </>
           )}
-
-          {/* No Results State */}
-          {!isLoading &&
-            !error &&
-            hasSearched &&
-            searchResults.length === 0 && (
-              <div className="no-results">
-                <div className="no-results-icon">🔍</div>
-                <h3 className="no-results-title">No Experiments Found</h3>
-                <p className="no-results-message">
-                  We couldn't find any experiments matching your search
-                  criteria. Try different keywords or browse our suggestions
-                  below.
-                </p>
-                <div className="no-results-suggestions">
-                  <p>Try searching for:</p>
-                  {suggestionKeywords.map((keyword) => (
-                    <button
-                      key={keyword}
-                      className="suggestion-chip"
-                      onClick={() => handleSuggestionClick(keyword)}
-                    >
-                      {keyword}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
         </div>
       </div>
     </div>
