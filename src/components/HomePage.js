@@ -428,7 +428,12 @@ const HomePage = () => {
       {/* Floating Action Button */}
       <button
         className="fab"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onClick={() => {
+          const appContainer = document.querySelector('.App');
+          if (appContainer) {
+            appContainer.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
         aria-label="Scroll to top"
       >
         ↑
