@@ -522,10 +522,199 @@
     margin: 0 auto;
 }
 
-.cta-icon {
-    font-size: var(--text-6xl);
-    margin-bottom: var(--space-lg);
-    animation: pulse 3s ease-in-out infinite;
+/* Beautiful BioSpace Archive Logo */
+.cta-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-2xl);
+    perspective: 1000px;
+}
+
+.logo-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    animation: floatLogo 6s ease-in-out infinite;
+}
+
+.logo-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(103, 232, 249, 0.3);
+    border-radius: 50%;
+    animation: rotateOrbit 20s linear infinite;
+}
+
+.logo-orbit::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 50%;
+    animation: rotateOrbit 15s linear infinite reverse;
+}
+
+.logo-planet {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #67e8f9, #8b5cf6);
+    border-radius: 50%;
+    box-shadow:
+        0 0 20px rgba(103, 232, 249, 0.5),
+        0 0 40px rgba(139, 92, 246, 0.3),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: pulsePlanet 4s ease-in-out infinite;
+}
+
+.logo-ring {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    border: 3px solid transparent;
+    border-top: 3px solid rgba(103, 232, 249, 0.6);
+    border-right: 3px solid rgba(139, 92, 246, 0.4);
+    border-radius: 50%;
+    animation: rotateRing 8s linear infinite;
+}
+
+.logo-dna {
+    position: absolute;
+    top: 10%;
+    right: -20%;
+    width: 30px;
+    height: 80px;
+    animation: rotateDNA 12s ease-in-out infinite;
+}
+
+.dna-strand {
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(103, 232, 249, 0.8),
+        rgba(139, 92, 246, 0.8)
+    );
+    border-radius: 1px;
+}
+
+.strand-1 {
+    left: 0;
+    animation: wave1 3s ease-in-out infinite;
+}
+
+.strand-2 {
+    right: 0;
+    animation: wave2 3s ease-in-out infinite;
+}
+
+.dna-strand::before,
+.dna-strand::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+}
+
+.dna-strand::before {
+    top: 20%;
+    left: -3px;
+}
+
+.dna-strand::after {
+    top: 60%;
+    left: -3px;
+}
+
+@keyframes floatLogo {
+    0%,
+    100% {
+        transform: translateY(0px) rotateY(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotateY(5deg);
+    }
+}
+
+@keyframes rotateOrbit {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes pulsePlanet {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow:
+            0 0 20px rgba(103, 232, 249, 0.5),
+            0 0 40px rgba(139, 92, 246, 0.3),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        box-shadow:
+            0 0 30px rgba(103, 232, 249, 0.7),
+            0 0 60px rgba(139, 92, 246, 0.5),
+            inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+}
+
+@keyframes rotateRing {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotateDNA {
+    0%,
+    100% {
+        transform: rotateZ(0deg);
+    }
+    50% {
+        transform: rotateZ(15deg);
+    }
+}
+
+@keyframes wave1 {
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes wave2 {
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(-3px);
+    }
 }
 
 .cta-title {
@@ -546,9 +735,147 @@
 .cta-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-lg);
+    gap: var(--space-xl);
     justify-content: center;
     margin-bottom: var(--space-2xl);
+}
+
+/* Enhanced CTA Buttons */
+.btn-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: 1rem 2rem;
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: var(--text-lg);
+    border: none;
+    border-radius: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    transform-style: preserve-3d;
+    min-width: 200px;
+    user-select: none;
+}
+
+.btn-cta-primary {
+    background: rgba(15, 23, 42, 0.7);
+    color: var(--text-primary);
+    border: 1px solid rgba(103, 232, 249, 0.4);
+    box-shadow:
+        0 8px 32px rgba(103, 232, 249, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 0 20px rgba(103, 232, 249, 0.1);
+}
+
+.btn-cta-secondary {
+    background: rgba(15, 23, 42, 0.7);
+    color: var(--text-primary);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    box-shadow:
+        0 8px 32px rgba(139, 92, 246, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+.btn-cta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+}
+
+.btn-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.btn-cta-primary .btn-shimmer {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(103, 232, 249, 0.3),
+        transparent
+    );
+}
+
+.btn-cta-secondary .btn-shimmer {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(139, 92, 246, 0.3),
+        transparent
+    );
+}
+
+.btn-cta:hover {
+    transform: translateY(-4px) scale(1.02);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+}
+
+.btn-cta-primary:hover {
+    border-color: rgba(103, 232, 249, 0.6);
+    box-shadow:
+        0 12px 40px rgba(103, 232, 249, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 0 30px rgba(103, 232, 249, 0.2);
+}
+
+.btn-cta-secondary:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow:
+        0 12px 40px rgba(139, 92, 246, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 0 30px rgba(139, 92, 246, 0.2);
+}
+
+.btn-cta:hover::before {
+    opacity: 1;
+}
+
+.btn-cta:hover .btn-shimmer {
+    left: 100%;
+}
+
+.btn-cta:active {
+    transform: translateY(-2px) scale(1.01);
+}
+
+.btn-cta .btn-icon {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+.btn-cta:hover .btn-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.btn-cta .btn-text {
+    font-weight: 600;
+    letter-spacing: 0.025em;
 }
 
 .cta-features {
@@ -610,11 +937,37 @@
     .cta-actions {
         flex-direction: column;
         align-items: center;
+        gap: var(--space-lg);
     }
 
     .cta-features {
         flex-direction: column;
         align-items: center;
+    }
+
+    /* Mobile CTA Buttons */
+    .btn-cta {
+        width: 100%;
+        max-width: 300px;
+        padding: 1rem 1.5rem;
+        font-size: var(--text-base);
+    }
+
+    /* Mobile Logo */
+    .logo-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .logo-planet {
+        width: 35px;
+        height: 35px;
+    }
+
+    .logo-dna {
+        width: 25px;
+        height: 70px;
+        right: -15%;
     }
 }
 
@@ -629,6 +982,37 @@
 
     .stat-counter {
         padding: var(--space-md);
+    }
+
+    /* Small Mobile CTA Buttons */
+    .btn-cta {
+        padding: 0.875rem 1.25rem;
+        font-size: var(--text-sm);
+        min-width: 250px;
+    }
+
+    .btn-cta .btn-icon {
+        font-size: 1.1em;
+    }
+
+    /* Small Mobile Logo */
+    .logo-container {
+        width: 80px;
+        height: 80px;
+    }
+
+    .logo-planet {
+        width: 30px;
+        height: 30px;
+    }
+
+    .logo-dna {
+        width: 20px;
+        height: 60px;
+    }
+
+    .cta-actions {
+        gap: var(--space-md);
     }
 }
 
