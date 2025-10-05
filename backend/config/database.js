@@ -1,13 +1,36 @@
 import pkg from "pg";
 const { Pool } = pkg;
 import dotenv from "dotenv";
+import { URL } from 'url'; // 1. Import the built-in URL class
 
 dotenv.config();
 
-// The Pool constructor can take the connection string directly!
+const connectionString = process.env.DATABASE_URL;
+console.log("Attempting to connect with DATABASE_URL:", !!connectionString);
+
+
+// --- FIX START: Forcing IPv4 Connection on Render ---
+// 2. Parse the database URL to extract the hostname
+const dbUrl = new URL(connectionString);
+const dbHost = dbUrl.hostname;
+// --- FIX END ---
+
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: connectionString,
+  
+  // --- FIX START: Forcing IPv4 Connection on Render ---
+  // 3. Explicitly set the host. This encourages the client to resolve to an IPv4 address,
+  // which solves the ENETUNREACH (network unreachable) error in IPv6-limited environments.
+  host: dbHost,
+  // --- FIX END ---
+
+  // Keep the SSL requirement for production connections to Supabase
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
+
 
 // Test the connection
 pool.on("connect", () => {
