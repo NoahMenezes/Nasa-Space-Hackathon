@@ -6,7 +6,7 @@ import { URL } from 'url'; // 1. Import the built-in URL class
 dotenv.config();
 
 const connectionString = process.env.DATABASE_URL;
-console.log("Attempting to connect with DATABASE_URL:", !!connectionString);
+console.log("DATABASE_URL found:", !!connectionString);
 
 
 // --- FIX START: Forcing IPv4 Connection on Render ---
@@ -21,16 +21,15 @@ const pool = new Pool({
   
   // --- FIX START: Forcing IPv4 Connection on Render ---
   // 3. Explicitly set the host. This encourages the client to resolve to an IPv4 address,
-  // which solves the ENETUNREACH (network unreachable) error in IPv6-limited environments.
+  // which solves the ENETUNREACH (network unreachable) error.
   host: dbHost,
   // --- FIX END ---
 
-  // Keep the SSL requirement for production connections to Supabase
+  // Keep the SSL requirement for secure connection to Supabase
   ssl: {
     rejectUnauthorized: false
   }
 });
-
 
 // Test the connection
 pool.on("connect", () => {
