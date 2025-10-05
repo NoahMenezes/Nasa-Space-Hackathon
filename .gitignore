@@ -23,3 +23,5 @@ yarn-error.log*
 node_modules
 /backend/.env
 backend/.env
+.env.example
+.env

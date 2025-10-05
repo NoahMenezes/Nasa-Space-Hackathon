@@ -8,12 +8,12 @@ This document describes all environment variables required for the NASA Space Ha
 
 ```env
 # Supabase URL - Get this from your Supabase project settings
-SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_URL=https://rhzptezfquwredoyeyox.supabase.co
 
 # Supabase Service Role Key - KEEP THIS SECRET!
 # This key bypasses Row Level Security and should NEVER be exposed in frontend
 # Get this from: Supabase Dashboard → Settings → API → service_role key
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoenB0ZXpmcXV3cmVkb3lleW94Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTQxMjkxNSwiZXhwIjoyMDc0OTg4OTE1fQ.OkerImFA-fOVavL-FuOTWt-AluFkJbgIzh20e_TXPp4
 ```
 
 ### Database Configuration
@@ -71,8 +71,8 @@ Create a `.env` file in the `backend` directory with the following structure:
 # ============================================
 # SUPABASE AUTHENTICATION
 # ============================================
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+SUPABASE_URL=https://rhzptezfquwredoyeyox.supabase.co
+SUPABASE_SERVICE_ROLE_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJoenB0ZXpmcXV3cmVkb3lleW94Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTQxMjkxNSwiZXhwIjoyMDc0OTg4OTE1fQ.OkerImFA-fOVavL-FuOTWt-AluFkJbgIzh20e_TXPp4
 
 # ============================================
 # DATABASE CONFIGURATION
