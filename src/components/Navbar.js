@@ -114,7 +114,16 @@ const Navbar = () => {
           <div className="navbar-content">
             {/* Logo/Home Link */}
             <Link to="/" className="logo" onClick={handleLogoClick}>
-              <div className="logo-icon">🔭</div>
+              <div className="logo-icon">
+                <div className="navbar-logo-container">
+                  <div className="navbar-logo-orbit">
+                    <div className="navbar-logo-planet"></div>
+                  </div>
+                  <div className="navbar-logo-dna">
+                    <div className="navbar-dna-strand"></div>
+                  </div>
+                </div>
+              </div>
               <span className="logo-text">BioSpace Archive</span>
             </Link>
 

@@ -345,7 +345,18 @@ const CTASection = () => {
   return (
     <section className="cta-section">
       <div className="cta-content">
-        <div className="cta-icon">🌌</div>
+        <div className="cta-logo">
+          <div className="logo-container">
+            <div className="logo-orbit">
+              <div className="logo-planet"></div>
+              <div className="logo-ring"></div>
+            </div>
+            <div className="logo-dna">
+              <div className="dna-strand strand-1"></div>
+              <div className="dna-strand strand-2"></div>
+            </div>
+          </div>
+        </div>
         <h2 className="cta-title">Ready to Explore Space Biology?</h2>
         <p className="cta-description">
           Join thousands of researchers, scientists, and mission planners who
@@ -354,12 +365,15 @@ const CTASection = () => {
 
         {!user && (
           <div className="cta-actions">
-            <Link to="/login" className="btn btn-primary btn-lg hero-cta">
-              <span className="btn-icon">🔑</span>
-              Login to Explore
+            <Link to="/login" className="btn-cta btn-cta-primary">
+              <span className="btn-icon">🔓</span>
+              <span className="btn-text">Login to Explore</span>
+              <div className="btn-shimmer"></div>
             </Link>
-            <Link to="/signup" className="btn btn-secondary btn-lg">
-              Create Account
+            <Link to="/signup" className="btn-cta btn-cta-secondary">
+              <span className="btn-icon">✨</span>
+              <span className="btn-text">Create Account</span>
+              <div className="btn-shimmer"></div>
             </Link>
           </div>
         )}
