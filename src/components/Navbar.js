@@ -13,9 +13,13 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const navLinks = [
-    { name: "Home", path: "/", icon: "🏠" },
-    { name: "Search Engine", path: "/search", icon: "🔍" },
-    { name: "Bookmarks", path: "/bookmarks", icon: "📖" },
+    ...(user
+      ? [
+          { name: "Home", path: "/", icon: "🏠" },
+          { name: "Search Engine", path: "/search", icon: "🔍" },
+          { name: "Bookmarks", path: "/bookmarks", icon: "📖" },
+        ]
+      : []),
   ];
 
   const location = useLocation();
@@ -83,6 +87,15 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleLogoClick = (e) => {
+    // If we're already on the homepage, reload the page
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.location.reload();
+    }
+    // Otherwise, let the Link component handle the navigation normally
+  };
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -100,14 +113,14 @@ const Navbar = () => {
         <div className="navbar-container">
           <div className="navbar-content">
             {/* Logo/Home Link */}
-            <Link to="/" className="logo">
+            <Link to="/" className="logo" onClick={handleLogoClick}>
               <div className="logo-icon">🔭</div>
               <span className="logo-text">BioSpace Archive</span>
             </Link>
 
             {/* Main Nav Links */}
             <div className="nav-links">
-              <div className="nav-pill" style={pillStyle} />
+              {user && <div className="nav-pill" style={pillStyle} />}
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
