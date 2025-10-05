@@ -5,10 +5,10 @@ import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 
-import authRoutes from "./routes/auth.js";
 import mlRoutes from "./routes/nasa.js";
 import userRoutes from "./routes/users.js";
 import experimentsRoutes from "./routes/experiments.js";
+import { authenticateUser } from "./middleware/auth.js";
 
 // Analysis routes
 import executiveSummaryRoute from "./routes/executiveSummary.js";
@@ -64,22 +64,28 @@ try {
 }
 
 // Routes
-app.use("/api/auth", authRoutes);
+// Note: /api/auth routes are now handled by Supabase directly on the frontend
+// The old auth routes (register, login, logout) have been removed
+// All authentication is managed through Supabase Auth
 app.use("/api/ml", mlRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/experiments", experimentsRoutes);
 
 app.use(bodyParser.json());
 
-// 🚀 Analysis section routes
-app.use("/executive-summary", executiveSummaryRoute);
-app.use("/experiment-details", experimentDetailsRoute);
-app.use("/key-findings", keyFindingsRoute);
-app.use("/biological-impacts", biologicalImpactsRoute);
-app.use("/knowledge-graph", knowledgeGraphRoute);
-app.use("/practical-applications", practicalApplicationsRoute);
-app.use("/research-connections", researchConnectionsRoute);
-app.use("/future-research", futureResearchRoute);
+// 🚀 Analysis section routes (Protected with Supabase JWT authentication)
+app.use("/executive-summary", authenticateUser, executiveSummaryRoute);
+app.use("/experiment-details", authenticateUser, experimentDetailsRoute);
+app.use("/key-findings", authenticateUser, keyFindingsRoute);
+app.use("/biological-impacts", authenticateUser, biologicalImpactsRoute);
+app.use("/knowledge-graph", authenticateUser, knowledgeGraphRoute);
+app.use(
+  "/practical-applications",
+  authenticateUser,
+  practicalApplicationsRoute,
+);
+app.use("/research-connections", authenticateUser, researchConnectionsRoute);
+app.use("/future-research", authenticateUser, futureResearchRoute);
 
 // Default route
 app.get("/", (req, res) => res.send("NASA Experiment Analysis API running 🚀"));

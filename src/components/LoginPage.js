@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { authAPI, setAuthToken } from "../utils/api";
-import "./auth-forms.css"; // Updated import
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import "./auth-forms.css";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +9,11 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn } = useAuth();
+
+  // Get the redirect location from state, or default to home
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,23 +21,32 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await authAPI.login({ email, password });
-      const { token, user } = response.data;
+      const { data, error: signInError } = await signIn(email, password);
 
-      // Store token and user data
-      setAuthToken(token);
-      localStorage.setItem("user", JSON.stringify(user));
+      if (signInError) {
+        throw signInError;
+      }
 
-      console.log("Login successful:", user);
-
-      // Redirect to home page
-      navigate("/");
+      if (data?.user) {
+        console.log("Login successful:", data.user.email);
+        // Redirect to the page they tried to visit or home
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       console.error("Login error:", error);
-      setError(
-        error.response?.data?.error ||
-          "Login failed. Please check your credentials.",
-      );
+
+      // Handle specific Supabase error messages
+      let errorMessage = "Login failed. Please check your credentials.";
+
+      if (error.message === "Invalid login credentials") {
+        errorMessage = "Invalid email or password.";
+      } else if (error.message === "Email not confirmed") {
+        errorMessage = "Please verify your email before logging in.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -57,6 +71,7 @@ const LoginPage = () => {
               className="form-input"
               disabled={loading}
               placeholder="Enter your email"
+              autoComplete="email"
             />
           </div>
           <div className="form-group">
@@ -71,6 +86,7 @@ const LoginPage = () => {
               disabled={loading}
               placeholder="Enter your password"
               minLength="6"
+              autoComplete="current-password"
             />
           </div>
           <button type="submit" className="auth-button" disabled={loading}>

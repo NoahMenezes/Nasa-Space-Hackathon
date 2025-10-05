@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authAPI, setAuthToken } from "../utils/api";
-import "./auth-forms.css"; // Updated import
+import { useAuth } from "../contexts/AuthContext";
+import "./auth-forms.css";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const SignupPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const { signUp } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,40 +37,68 @@ const SignupPage = () => {
       return;
     }
 
+    // Validate password length
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      setLoading(false);
+      return;
+    }
+
+    // Validate username length
+    if (formData.username.length < 3) {
+      setError("Username must be at least 3 characters long.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await authAPI.register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      });
+      const { data, error: signUpError } = await signUp(
+        formData.email,
+        formData.password,
+        {
+          username: formData.username,
+        },
+      );
 
-      const { token, user } = response.data;
+      if (signUpError) {
+        throw signUpError;
+      }
 
-      // Store token and user data
-      setAuthToken(token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      setSuccess("Account created successfully! Redirecting...");
-
-      // Redirect to home page after a short delay
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      if (data?.user) {
+        // Check if email confirmation is required
+        if (data.user.identities && data.user.identities.length === 0) {
+          setSuccess(
+            "Account created! Please check your email to verify your account before logging in.",
+          );
+          // Redirect to login page after a delay
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+        } else {
+          setSuccess("Account created successfully! Redirecting...");
+          // Redirect to home page after a short delay
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
+        }
+      }
     } catch (error) {
       console.error("Signup error:", error);
 
-      if (error.response?.data?.errors) {
-        // Handle validation errors
-        const errors = error.response.data.errors
-          .map((err) => err.msg)
-          .join(", ");
-        setError(errors);
-      } else {
-        setError(
-          error.response?.data?.error ||
-            "Account creation failed. Please try again.",
-        );
+      // Handle specific Supabase error messages
+      let errorMessage = "Account creation failed. Please try again.";
+
+      if (error.message === "User already registered") {
+        errorMessage = "An account with this email already exists.";
+      } else if (error.message.includes("Password")) {
+        errorMessage = error.message;
+      } else if (error.message.includes("Email")) {
+        errorMessage = "Please provide a valid email address.";
+      } else if (error.message) {
+        errorMessage = error.message;
       }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -98,6 +127,7 @@ const SignupPage = () => {
               className="form-input"
               disabled={loading}
               placeholder="Choose a username (min 3 characters)"
+              autoComplete="username"
             />
           </div>
           <div className="form-group">
@@ -112,6 +142,7 @@ const SignupPage = () => {
               className="form-input"
               disabled={loading}
               placeholder="Enter your email address"
+              autoComplete="email"
             />
           </div>
           <div className="form-group">
@@ -127,6 +158,7 @@ const SignupPage = () => {
               className="form-input"
               disabled={loading}
               placeholder="Create a password (min 6 characters)"
+              autoComplete="new-password"
             />
           </div>
           <div className="form-group">
@@ -141,6 +173,7 @@ const SignupPage = () => {
               className="form-input"
               disabled={loading}
               placeholder="Confirm your password"
+              autoComplete="new-password"
             />
           </div>
           <button type="submit" className="auth-button" disabled={loading}>

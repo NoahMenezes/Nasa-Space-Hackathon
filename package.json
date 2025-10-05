@@ -5,6 +5,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.3.0",
+    "@supabase/supabase-js": "^2.58.0",
     "@types/three": "^0.180.0",
     "axios": "^1.6.0",
     "prop-types": "^15.8.1",

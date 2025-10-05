@@ -1,4 +1,5 @@
 import axios from "axios";
+import { supabase } from "../lib/supabase";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:5000/api";
@@ -12,22 +13,45 @@ const api = axios.create({
   timeout: 30000,
 });
 
-// Add auth token to requests if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("authToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Add Supabase auth token to requests automatically
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      // Get the current session from Supabase
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      // If we have a session, add the access token to the Authorization header
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`;
+      }
+    } catch (error) {
+      console.error("Error fetching session token:", error);
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 // Handle token expiration and errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
+      // Token is invalid or expired
+      console.log("Authentication error, signing out...");
+
+      // Sign out the user
+      await supabase.auth.signOut();
+
+      // Clear any legacy local storage items
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
+
       // Only redirect if not already on login page
       if (window.location.pathname !== "/login") {
         window.location.href = "/#/login";
@@ -37,33 +61,59 @@ api.interceptors.response.use(
   },
 );
 
-// Auth API calls
-export const authAPI = {
-  register: (userData) => api.post("/auth/register", userData),
-  login: (credentials) => api.post("/auth/login", credentials),
-  logout: () => api.post("/auth/logout"),
-  verifyToken: () => api.get("/auth/verify"),
+// Helper function to check if user is authenticated
+export const isAuthenticated = async () => {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return !!session;
+  } catch (error) {
+    console.error("Error checking authentication:", error);
+    return false;
+  }
 };
 
-// Helper functions
+// Helper function to get current user
+export const getCurrentUser = async () => {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error("Error getting current user:", error);
+    return null;
+  }
+};
+
+// Helper function to get current session
+export const getCurrentSession = async () => {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  } catch (error) {
+    console.error("Error getting current session:", error);
+    return null;
+  }
+};
+
+// Legacy functions (kept for backward compatibility, but they now use Supabase)
 export const setAuthToken = (token) => {
-  localStorage.setItem("authToken", token);
+  console.warn(
+    "setAuthToken is deprecated. Token management is now handled by Supabase automatically.",
+  );
 };
 
-export const removeAuthToken = () => {
+export const removeAuthToken = async () => {
+  await supabase.auth.signOut();
   localStorage.removeItem("authToken");
   localStorage.removeItem("user");
 };
 
-export const getCurrentUser = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
-};
-
-export const isAuthenticated = () => {
-  const token = localStorage.getItem("authToken");
-  const user = localStorage.getItem("user");
-  return !!(token && user);
-};
+// Note: Old authAPI endpoints are removed as Supabase handles authentication directly
+// All auth operations should now use the useAuth hook from AuthContext
 
 export default api;
