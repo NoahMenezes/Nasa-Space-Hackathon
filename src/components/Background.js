@@ -319,27 +319,9 @@ const initSolarSystem = (containerRef) => {
       renderer.render(scene, camera);
     }
 
-    let onMouseMove;
-
     function setupMouseInteraction() {
-      const mouse = new window.THREE.Vector2();
-
-      onMouseMove = function (event) {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        // Smooth camera movement based on mouse position
-        const targetX = mouse.x * 20;
-        const targetY = mouse.y * 10;
-
-        camera.position.x += (targetX - camera.position.x) * 0.02;
-        camera.position.y += (targetY - camera.position.y) * 0.02;
-
-        // Adjust auto-rotation speed based on mouse movement
-        controls.autoRotateSpeed = 0.2 + Math.abs(mouse.x) * 0.3;
-      };
-
-      window.addEventListener("mousemove", onMouseMove, false);
+      // Mouse interactions disabled to prevent background from reacting to mouse movements
+      // The solar system will maintain a constant auto-rotation
     }
 
     function onWindowResize() {
@@ -355,7 +337,6 @@ const initSolarSystem = (containerRef) => {
     // Return cleanup function
     return () => {
       window.removeEventListener("resize", onWindowResize);
-      window.removeEventListener("mousemove", onMouseMove);
       cancelAnimationFrame(animationFrameId);
       if (containerElement && renderer) {
         containerElement.removeChild(renderer.domElement);
@@ -405,8 +386,7 @@ const Background = () => {
         width: "100vw",
         height: "100vh",
         zIndex: 0,
-        pointerEvents: "auto", // Enable mouse interaction
-        cursor: "grab",
+        pointerEvents: "none", // Disable mouse interaction
       }}
     >
       {/* The canvas is injected into this div by the Three.js script */}

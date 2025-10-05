@@ -968,20 +968,6 @@ Please attempt to re-analyze the data or seek the raw analysis output for visual
               Fetching data from NASA archives...
             </p>
 
-            <div className="progress-bar-container">
-              <div className="progress-bar">
-                <div
-                  className="progress-fill"
-                  style={{ width: `${loadingProgress}%` }}
-                >
-                  <div className="progress-glow"></div>
-                </div>
-              </div>
-              <span className="progress-percentage">
-                {Math.round(loadingProgress)}%
-              </span>
-            </div>
-
             <div className="loading-dots">
               <span></span>
               <span></span>

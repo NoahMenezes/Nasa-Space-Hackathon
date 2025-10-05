@@ -104,32 +104,13 @@ body {
     font-size: var(--text-base);
     line-height: 1.6;
     color: var(--text-primary);
-    background: var(--bg-primary);
+    background: #000000; /* Solid black background to prevent white over-scroll areas */
     overflow-x: hidden;
     overflow-y: auto;
     min-height: 100vh;
     position: relative;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-
-    /* Enhanced cosmic background */
-    background:
-        radial-gradient(
-            ellipse at 20% 50%,
-            rgba(139, 92, 246, 0.15) 0%,
-            transparent 50%
-        ),
-        radial-gradient(
-            ellipse at 80% 20%,
-            rgba(103, 232, 249, 0.1) 0%,
-            transparent 50%
-        ),
-        radial-gradient(
-            ellipse at 40% 80%,
-            rgba(236, 72, 153, 0.1) 0%,
-            transparent 50%
-        ),
-        linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 
     /* Smooth font rendering and scrolling optimization */
     -webkit-font-smoothing: antialiased;

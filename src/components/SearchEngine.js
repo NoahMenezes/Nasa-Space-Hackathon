@@ -31,8 +31,33 @@ const SearchEngine = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Restore search state when navigating back from experiment details
+  // Load persisted search state on component mount
   useEffect(() => {
+    const loadPersistedState = () => {
+      try {
+        const persistedState = localStorage.getItem("searchEngineState");
+        if (persistedState) {
+          const { searchQuery, searchResults, hasSearched } =
+            JSON.parse(persistedState);
+          setSearchQuery(searchQuery || "");
+          setSearchResults(searchResults || []);
+          setHasSearched(hasSearched || false);
+
+          // Update bookmarked status for results
+          const bookmarked = new Set();
+          (searchResults || []).forEach((result) => {
+            if (isBookmarked(result.id)) {
+              bookmarked.add(result.id);
+            }
+          });
+          setBookmarkedItems(bookmarked);
+        }
+      } catch (error) {
+        console.error("Error loading persisted search state:", error);
+      }
+    };
+
+    // Check for navigation state first (higher priority)
     if (location.state && location.state.preserveResults) {
       setSearchQuery(location.state.searchQuery || "");
       setSearchResults(location.state.searchResults || []);
@@ -46,8 +71,35 @@ const SearchEngine = () => {
         }
       });
       setBookmarkedItems(bookmarked);
+    } else {
+      // Load from localStorage if no navigation state
+      loadPersistedState();
     }
   }, [location.state]);
+
+  // Persist search state to localStorage
+  const persistSearchState = (query, results, searched) => {
+    try {
+      const stateToSave = {
+        searchQuery: query,
+        searchResults: results,
+        hasSearched: searched,
+        timestamp: Date.now(),
+      };
+      localStorage.setItem("searchEngineState", JSON.stringify(stateToSave));
+    } catch (error) {
+      console.error("Error persisting search state:", error);
+    }
+  };
+
+  // Clear persisted search state
+  const clearPersistedState = () => {
+    try {
+      localStorage.removeItem("searchEngineState");
+    } catch (error) {
+      console.error("Error clearing persisted search state:", error);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -91,6 +143,9 @@ const SearchEngine = () => {
         }
       });
       setBookmarkedItems(bookmarked);
+
+      // Persist the search state
+      persistSearchState(searchQuery, data.results || [], true);
 
       if ((data.results || []).length === 0) {
         // Re-set error for the no-results state
@@ -192,7 +247,17 @@ const SearchEngine = () => {
     // might make this optional. It's safer for simulation.
     setTimeout(() => {
       handleSearch(fakeEvent);
-    }, 50); 
+    }, 50);
+  };
+
+  // Clear search state when starting fresh
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setHasSearched(false);
+    setError(null);
+    setCurrentPage(1);
+    clearPersistedState();
   };
 
   // Logic to determine which page numbers to display
@@ -205,7 +270,7 @@ const SearchEngine = () => {
     } else {
       pageNumbers.push(1);
       if (currentPage > 4) {
-        pageNumbers.push('...');
+        pageNumbers.push("...");
       }
 
       let start = Math.max(2, currentPage - 1);
@@ -223,16 +288,17 @@ const SearchEngine = () => {
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
-      
+
       if (currentPage < totalPages - 3) {
-        pageNumbers.push('...');
+        pageNumbers.push("...");
       }
       pageNumbers.push(totalPages);
     }
     // Filter out duplicate page numbers before rendering
-    return pageNumbers.filter((value, index, self) => self.indexOf(value) === index);
+    return pageNumbers.filter(
+      (value, index, self) => self.indexOf(value) === index,
+    );
   };
-
 
   // --- JSX Rendering ---
   return (
@@ -275,6 +341,16 @@ const SearchEngine = () => {
                 </>
               )}
             </button>
+            {(searchQuery || hasSearched) && (
+              <button
+                type="button"
+                className="clear-button"
+                onClick={handleClearSearch}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </form>
 
@@ -292,17 +368,25 @@ const SearchEngine = () => {
 
           {/* Error State / No Results State */}
           {error && !isLoading && (
-            <div className={`error-container ${searchResults.length === 0 ? 'no-results' : ''}`}>
-              <div className="error-icon">{searchResults.length === 0 ? '🚀' : '⚠️'}</div>
-              <h3 className="error-title">{searchResults.length === 0 ? 'No Results Found' : 'Search Error'}</h3>
+            <div
+              className={`error-container ${searchResults.length === 0 ? "no-results" : ""}`}
+            >
+              <div className="error-icon">
+                {searchResults.length === 0 ? "🚀" : "⚠️"}
+              </div>
+              <h3 className="error-title">
+                {searchResults.length === 0
+                  ? "No Results Found"
+                  : "Search Error"}
+              </h3>
               <p className="error-message">{error}</p>
-              
+
               {/* Only show suggestions if no results were found */}
               {searchResults.length === 0 && (
                 <div className="no-results-suggestions">
                   <p>Try one of these popular keywords:</p>
                   {suggestionKeywords.map((keyword) => (
-                    <span 
+                    <span
                       key={keyword}
                       className="suggestion-chip"
                       onClick={() => handleSuggestionClick(keyword)}
@@ -312,9 +396,10 @@ const SearchEngine = () => {
                   ))}
                 </div>
               )}
-              
+
               {/* Show retry only if it was a technical error (not just no results) */}
-              {error !== "No experiments found. Try different keywords or scientist names." && (
+              {error !==
+                "No experiments found. Try different keywords or scientist names." && (
                 <button
                   className="retry-button"
                   onClick={() => handleSearch({ preventDefault: () => {} })}
@@ -455,9 +540,11 @@ const SearchEngine = () => {
                     ← Previous
                   </button>
 
-                  {getPageNumbers().map((page, index) => (
-                    page === '...' ? (
-                      <span key={index} className="pagination-info">...</span>
+                  {getPageNumbers().map((page, index) =>
+                    page === "..." ? (
+                      <span key={index} className="pagination-info">
+                        ...
+                      </span>
                     ) : (
                       <button
                         key={index}
@@ -466,8 +553,8 @@ const SearchEngine = () => {
                       >
                         {page}
                       </button>
-                    )
-                  ))}
+                    ),
+                  )}
 
                   <button
                     className="pagination-button"

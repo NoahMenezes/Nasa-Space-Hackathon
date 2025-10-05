@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import "./HomePage.css";
 
 // Enhanced Cosmic Particle System
@@ -106,8 +107,6 @@ const MissionCard = ({
             ))}
           </ul>
         )}
-
-        
       </div>
 
       <div className="card-glow"></div>
@@ -237,20 +236,10 @@ const HeroSection = () => {
           deep space missions.
         </p>
 
-        <div className="hero-actions">
-          <Link to="/search" className="btn btn-primary btn-lg hero-cta">
-            <span className="btn-icon">🔍</span>
-            Start Exploring
-          </Link>
-          <Link to="/bookmarks" className="btn btn-outline btn-lg">
-            View Bookmarks
-          </Link>
-        </div>
-
         <div className="hero-stats">
-          <StatCounter value="608" label="Experiments"  />
+          <StatCounter value="608" label="Experiments" />
           <StatCounter value="50" label="Years of Data" suffix="+" />
-          <StatCounter value="99.99" label="Success Rate" suffix="%" />
+          <StatCounter value="100.100" label="Success Rate" suffix="%" />
         </div>
       </div>
     </section>
@@ -285,15 +274,15 @@ const FeaturesSection = () => {
       ],
     },
     {
-      icon: "📊",
-      title: "Interactive Visualizations",
+      icon: "✨",
+      title: "Futuristic UI Experience",
       description:
-        "Transform complex biological data into interactive charts showing patterns and adaptations in space.",
-      category: "Data Visualization",
+        "Immerse yourself in a beautifully crafted, space-themed interface with smooth animations and intuitive cosmic design elements.",
+      category: "User Interface",
       features: [
-        "3D Visualizations",
-        "Interactive Charts",
-        "Real-time Analytics",
+        "Cosmic Design Theme",
+        "Smooth Animations",
+        "Responsive Layout",
       ],
     },
     {
@@ -317,12 +306,16 @@ const FeaturesSection = () => {
       features: ["Mission Templates", "Risk Assessment", "Protocol Generation"],
     },
     {
-      icon: "🌱",
-      title: "Flora & Fauna Database",
+      icon: "🕸️",
+      title: "Interactive Knowledge Graphs",
       description:
-        "Comprehensive catalog of space-grown organisms with adaptation data and research findings.",
-      category: "Biological Database",
-      features: ["Species Catalog", "Growth Tracking", "Adaptation Studies"],
+        "Navigate complex relationships between experiments, organisms, and research findings through beautiful, interactive network visualizations.",
+      category: "User Experience",
+      features: [
+        "Network Visualization",
+        "Relationship Mapping",
+        "Intuitive Navigation",
+      ],
     },
   ];
 
@@ -347,6 +340,8 @@ const FeaturesSection = () => {
 
 // Call-to-Action Section
 const CTASection = () => {
+  const { user } = useAuth();
+
   return (
     <section className="cta-section">
       <div className="cta-content">
@@ -357,30 +352,17 @@ const CTASection = () => {
           rely on our comprehensive database for their space biology research.
         </p>
 
-        <div className="cta-actions">
-          <Link to="/search" className="btn btn-primary btn-lg">
-            <span className="btn-icon">🚀</span>
-            EXPLORE NOW
-          </Link>
-          <Link to="/signup" className="btn btn-secondary btn-lg">
-            Create Account
-          </Link>
-        </div>
-
-        <div className="cta-features">
-          <div className="cta-feature">
-            <span className="feature-icon">✅</span>
-            Free Access to Research Data
+        {!user && (
+          <div className="cta-actions">
+            <Link to="/login" className="btn btn-primary btn-lg hero-cta">
+              <span className="btn-icon">🔑</span>
+              Login to Explore
+            </Link>
+            <Link to="/signup" className="btn btn-secondary btn-lg">
+              Create Account
+            </Link>
           </div>
-          <div className="cta-feature">
-            <span className="feature-icon">✅</span>
-            Advanced Search Capabilities
-          </div>
-          <div className="cta-feature">
-            <span className="feature-icon">✅</span>
-            Collaborative Tools
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );
@@ -425,7 +407,7 @@ const HomePage = () => {
       <button
         className="fab"
         onClick={() => {
-          const appContainer = document.querySelector('.App');
+          const appContainer = document.querySelector(".App");
           if (appContainer) {
             appContainer.scrollTo({ top: 0, behavior: "smooth" });
           }
