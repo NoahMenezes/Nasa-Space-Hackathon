@@ -298,12 +298,16 @@ const FeaturesSection = () => {
       ],
     },
     {
-      icon: "🚀",
-      title: "Mission Planning Support",
+      icon: "📚",
+      title: "Research Management & Organization",
       description:
-        "Critical biological research data to inform mission design and astronaut health protocols.",
-      category: "Mission Planning",
-      features: ["Mission Templates", "Risk Assessment", "Protocol Generation"],
+        "Save, organize, and track your research discoveries with personal bookmarks, search history, and detailed experiment insights.",
+      category: "Research Tools",
+      features: [
+        "Personal Bookmarks",
+        "Research History",
+        "Research Connections",
+      ],
     },
     {
       icon: "🕸️",

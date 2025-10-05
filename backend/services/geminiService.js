@@ -160,11 +160,11 @@ Generate a comprehensive knowledge graph with 5-15 nodes representing key entiti
 ## PRACTICAL APPLICATIONS
 
 ### Space Exploration Applications
-1. **Long-Duration Spaceflight**
+1. Long-Duration Spaceflight
    - Specific implications
    - Risk mitigation strategies
 
-2. **Mars Mission Relevance**
+2. Mars Mission Relevance
    - How findings apply to Mars missions
    - Countermeasure development
 
@@ -188,10 +188,10 @@ Generate a comprehensive knowledge graph with 5-15 nodes representing key entiti
 | [Name] | [How it relates] | [Year] |
 
 ### Interdisciplinary Links
-- **Medicine**: [Specific connection]
-- **Engineering**: [Specific connection]
-- **Physics**: [Specific connection]
-- **Biology**: [Specific connection]
+- Medicine: [Specific connection]
+- Engineering: [Specific connection]
+- Physics: [Specific connection]
+- Biology: [Specific connection]
 
 ### Research Timeline
 - Previous studies that led here
