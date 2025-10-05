@@ -238,7 +238,7 @@ const HeroSection = () => {
 
         <div className="hero-stats">
           <StatCounter value="608" label="Experiments" />
-          <StatCounter value="50" label="Years of Data" suffix="+" />
+          <StatCounter value="30" label="Years of Data" suffix="+" />
           <StatCounter value="100.100" label="Success Rate" suffix="%" />
         </div>
       </div>
