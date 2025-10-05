@@ -26,6 +26,11 @@ const Navbar = () => {
 
   // Update pill position based on active link
   useEffect(() => {
+    // Only run if user is logged in and there are nav links
+    if (!user || navLinks.length === 0) {
+      return;
+    }
+
     const updatePillPosition = () => {
       const activeLink = document.querySelector(".nav-link.active");
       const navLinksContainer = document.querySelector(".nav-links");
@@ -55,7 +60,7 @@ const Navbar = () => {
       window.removeEventListener("resize", updatePillPosition);
       clearTimeout(timer);
     };
-  }, [location.pathname]);
+  }, [location.pathname, user, navLinks.length]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -128,21 +133,23 @@ const Navbar = () => {
             </Link>
 
             {/* Main Nav Links */}
-            <div className="nav-links">
-              {user && <div className="nav-pill" style={pillStyle} />}
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`nav-link ${
-                    location.pathname === link.path ? "active" : ""
-                  }`}
-                >
-                  <span className="nav-icon">{link.icon}</span>
-                  <span className="nav-text">{link.name}</span>
-                </Link>
-              ))}
-            </div>
+            {user && navLinks.length > 0 && (
+              <div className="nav-links">
+                <div className="nav-pill" style={pillStyle} />
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`nav-link ${
+                      location.pathname === link.path ? "active" : ""
+                    }`}
+                  >
+                    <span className="nav-icon">{link.icon}</span>
+                    <span className="nav-text">{link.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             {/* Auth Buttons */}
             <div className="auth-buttons">

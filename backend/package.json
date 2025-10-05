@@ -13,11 +13,7 @@
     "test-db": "node scripts/test-db-connection.js"
   },
   "dependencies": {
-<<<<<<< Updated upstream
-    "@supabase/supabase-js": "^2.39.0",
-=======
     "@supabase/supabase-js": "^2.58.0",
->>>>>>> Stashed changes
     "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
