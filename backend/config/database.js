@@ -1,34 +1,32 @@
 import pkg from "pg";
 const { Pool } = pkg;
 import dotenv from "dotenv";
-import { URL } from 'url'; // 1. Import the built-in URL class
+import dns from 'dns'; // 1. Import the built-in DNS module
+
+// --- FIX START: Forcing IPv4 Globally ---
+// 2. Set the default DNS lookup order to prefer IPv4 addresses.
+// This is a global setting for your Node.js application and is the strongest
+// way to resolve the ENETUNREACH IPv6 error on platforms like Render.
+dns.setDefaultResultOrder('ipv4first');
+console.log("DNS lookup order set to ipv4first to fix ENETUNREACH error.");
+// --- FIX END ---
+
 
 dotenv.config();
 
 const connectionString = process.env.DATABASE_URL;
-console.log("DATABASE_URL found:", !!connectionString);
-
-
-// --- FIX START: Forcing IPv4 Connection on Render ---
-// 2. Parse the database URL to extract the hostname
-const dbUrl = new URL(connectionString);
-const dbHost = dbUrl.hostname;
-// --- FIX END ---
-
 
 const pool = new Pool({
   connectionString: connectionString,
-  
-  // --- FIX START: Forcing IPv4 Connection on Render ---
-  // 3. Explicitly set the host. This encourages the client to resolve to an IPv4 address,
-  // which solves the ENETUNREACH (network unreachable) error.
-  host: dbHost,
-  // --- FIX END ---
-
-  // Keep the SSL requirement for secure connection to Supabase
+  // The SSL configuration is still required for Supabase
   ssl: {
     rejectUnauthorized: false
   }
+});
+
+// Test the connection
+pool.on("connect", () => {
+  console.log("🐘 Connected to PostgreSQL database");
 });
 
 // Test the connection
