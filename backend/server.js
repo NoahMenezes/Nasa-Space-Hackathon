@@ -1,3 +1,21 @@
+// =================================================================
+// START: GLOBAL ERROR HANDLERS (FOR DEBUGGING DEPLOYMENT)
+// =================================================================
+
+// This catches errors that happen in synchronous code
+process.on('uncaughtException', (err, origin) => {
+  console.error('!!!!!!!!!! UNCAUGHT EXCEPTION !!!!!!!!!!!');
+  console.error(`Caught exception: ${err}`);
+  console.error(`Exception origin: ${origin}`);
+});
+
+// This catches errors that happen in async code (Promises)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('!!!!!!!!!! UNHANDLED REJECTION !!!!!!!!!!!');
+  console.error('Unhandled Rejection at:', promise);
+  console.error('Reason:', reason);
+});
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
