@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../lib/supabase.js"; // 1. Import Supabase
+import axios from "axios"; // 2. Import Axios for API calls
 import "./SearchEngine.css";
 // NOTE: Assuming you have this utility file available
 import {
@@ -116,19 +118,27 @@ const SearchEngine = () => {
 
     try {
       // NOTE: This URL needs to be accessible for the search to work
-      const response = await fetch(
-        "http://localhost:5000/api/experiments/search",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query: searchQuery }),
-        },
-      );
+     // 🚨 WARNING: The backend URL is hardcoded here for deployment debugging.
+        const backendUrl = "https://biospace-archive-backend.onrender.com"; // <-- PASTE YOUR LIVE BACKEND URL HERE
 
-      const data = await response.json();
+      // 1. Get the current user's session from Supabase for the auth token
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
+if (sessionError || !session) {
+  throw new Error("Authentication error: Please log in again.");
+}
+
+// 2. Make the secure GET request to your new /api/query endpoint
+const response = await axios.get(
+  `${backendUrl}/api/query`, {
+    params: { query: searchQuery },
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  }
+);
+
+const data = response.data;
       if (!response.ok) {
         throw new Error(data.error || "Failed to search experiments");
       }
