@@ -74,6 +74,40 @@ app.use("/api/experiments", experimentsRoutes);
 
 app.use(bodyParser.json());
 
+// In your Backend/server.js file
+
+// ... (your existing imports and middleware setup) ...
+
+app.use(bodyParser.json());
+
+// --- THIS IS THE FIX ---
+// Add the main Gemini query route here, protected by authentication.
+app.get('/api/query', authenticateUser, async (req, res, next) => {
+  try {
+    const searchQuery = req.query.query;
+    if (!searchQuery) {
+      return res.status(400).json({ error: "A search query is required." });
+    }
+
+    // Here, you would add your logic to:
+    // 1. Find the best matching experiment in your database.
+    // 2. Call the Gemini API with the experiment's link.
+    // 3. Return the response.
+
+    // For now, let's return a success message to confirm it works.
+    // You will replace this with your actual Gemini logic.
+    res.json({
+      message: `Successfully received authenticated query for: "${searchQuery}"`,
+      user: req.user.email,
+      // ... your Gemini response will go here
+    });
+
+  } catch (error) {
+    next(error); // Pass errors to your global error handler
+  }
+});
+// --- END OF FIX ---
+
 // 🚀 Analysis section routes (Protected with Supabase JWT authentication)
 app.use("/executive-summary", authenticateUser, executiveSummaryRoute);
 app.use("/experiment-details", authenticateUser, experimentDetailsRoute);
