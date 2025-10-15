@@ -219,7 +219,8 @@ process.on("SIGINT", () => {
 });
 
 // Start server
-app.listen(PORT, () => {
+// You must specify the host "0.0.0.0" for Render to detect the open port.
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 NASA Space Hackathon Backend running on port ${PORT}`);
   console.log(
     `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`,
@@ -232,3 +233,4 @@ app.listen(PORT, () => {
   console.log(`📁 File uploads: Enabled (50MB limit)`);
   console.log(`🔗 API Documentation: http://localhost:${PORT}/api/info`);
 });
+// --- END OF FIX ---
