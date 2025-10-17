@@ -6,6 +6,7 @@ import {
   removeBookmark,
   isBookmarked,
 } from "../utils/bookmarksUtils";
+import { supabase } from "../lib/supabase.js";
 
 // --- START: KnowledgeGraph Component (Self-Contained for integration) ---
 // 💡 IMPORTANT: You must install the dependency: npm install react-force-graph-2d
@@ -365,92 +366,139 @@ const ExperimentDetails = () => {
   ];
   const [availableSections, setAvailableSections] = useState(initialSections);
 
+   const getBackendBase = () =>
+    (process.env.REACT_APP_API_URL || "http://localhost:5000").replace(/\/$/, "");
+
   useEffect(() => {
+    const controller = new AbortController();
+    let progressInterval = null;
+
     const fetchExperiment = async () => {
       setIsLoading(true);
       setLoadingProgress(0);
       setError(null);
 
       // Simulate loading progress
-      const progressInterval = setInterval(() => {
+     progressInterval = setInterval(() => {
         setLoadingProgress((prev) => {
           if (prev >= 90) {
             clearInterval(progressInterval);
             return 90;
           }
-          return prev + Math.random() * 15;
+          return Math.min(90, prev + Math.random() * 15);
         });
       }, 200);
 
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/experiments/${id}`,
-        );
+       const backend = getBackendBase();
+        const url = `${backend}/api/experiments/${encodeURIComponent(id)}`;
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch experiment");
+        // attach supabase token if available
+        const sessionResp = await supabase.auth.getSession().catch(() => ({}));
+        const token = sessionResp?.data?.session?.access_token;
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers.Authorization = `Bearer ${token}`;
+
+        const resp = await fetch(url, {
+          method: "GET",
+          headers,
+          signal: controller.signal,
+          // mode: "cors" // default is fine; add if needed
+        });
+
+        if (!resp.ok) {
+          // attempt to read message from body
+          let serverMessage = `Failed to fetch experiment (status ${resp.status})`;
+          try {
+            const body = await resp.json();
+            serverMessage = body?.message || body?.error || serverMessage;
+          } catch (e) {
+            // ignore JSON parse error
+          }
+          throw new Error(serverMessage);
         }
 
-        const data = await response.json();
-        setExperiment(data.experiment);
+        const data = await resp.json();
+        setExperiment(data.experiment || data || null);
         setLoadingProgress(100);
 
-        // Automatically trigger analysis after experiment is loaded
+       // trigger analysis (fire-and-await) with its own abort controller
         await analyzeExperimentAuto(data.experiment);
       } catch (err) {
-        console.error("Error fetching experiment:", err);
-        setError(err.message);
-        clearInterval(progressInterval);
+        if (err.name === "AbortError") {
+          console.info("Experiment fetch aborted");
+        } else {
+          console.error("Error fetching experiment:", err);
+          setError(err.message || "NetworkError when attempting to fetch resource.");
+        }
       } finally {
-        clearInterval(progressInterval);
+        if (progressInterval) clearInterval(progressInterval);
         setIsLoading(false);
       }
     };
 
-    fetchExperiment();
+   if (id) fetchExperiment();
+
+    return () => {
+      controller.abort();
+      if (progressInterval) clearInterval(progressInterval);
+    };
   }, [id]);
 
   const analyzeExperimentAuto = async (experimentData) => {
     setIsAnalyzing(true);
     setError(null);
+    const controller = new AbortController();
+
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/experiments/${experimentData.id}/analyze`,
-        {
-          method: "POST",
-        },
-      );
+      const backend = getBackendBase();
+      const url = `${backend}/api/experiments/${encodeURIComponent(
+        experimentData.id || experimentData?.experiment_id || id,
+      )}/analyze`;
 
-      if (!response.ok) {
-        throw new Error("Failed to analyze experiment");
+      // attach supabase token if available
+      const sessionResp = await supabase.auth.getSession().catch(() => ({}));
+      const token = sessionResp?.data?.session?.access_token;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const resp = await fetch(url, {
+        method: "POST",
+        headers,
+        signal: controller.signal,
+      });
+
+      if (!resp.ok) {
+        let serverMessage = `Failed to analyze experiment (status ${resp.status})`;
+        try {
+          const body = await resp.json();
+          serverMessage = body?.message || body?.error || serverMessage;
+        } catch (e) {}
+        throw new Error(serverMessage);
       }
 
-      const data = await response.json();
-      console.log("Analysis received:", data.analysis);
+      const data = await resp.json();
+      setAnalysis(data.analysis || data || null);
 
-      setAnalysis(data.analysis);
-
-      // *** MODIFICATION 1: SIMPLY ENSURE ALL SECTIONS ARE 'AVAILABLE' IF THE ANALYSIS OBJECT EXISTS ***
-      // This forces the navigation buttons to appear for all sections.
-      if (data.analysis.sections) {
-        // Set available sections to the keys present in the response
-        // Even if the content is empty, we want the nav button to appear
+      if (data.analysis?.sections) {
         setAvailableSections(Object.keys(data.analysis.sections));
-        console.log("Available sections:", Object.keys(data.analysis.sections));
       } else {
-        // If no sections object, ensure the default list is used
         setAvailableSections(initialSections);
       }
     } catch (err) {
-      console.error("Error analyzing experiment:", err);
-      setError(err.message);
-      // On error, revert to initial sections list
-      setAvailableSections(initialSections);
+     if (err.name === "AbortError") {
+        console.info("Analyze request aborted");
+      } else {
+        console.error("Error analyzing experiment:", err);
+        setError(err.message || "Failed to analyze experiment");
+        setAvailableSections(initialSections);
+      }
     } finally {
       setIsAnalyzing(false);
     }
   };
+
 
   useEffect(() => {
     if (experiment) {
@@ -460,37 +508,50 @@ const ExperimentDetails = () => {
 
   // Duplicated analyzeExperiment function, applying the same logic for consistency
   const analyzeExperiment = async () => {
-    setIsAnalyzing(true);
+     setIsAnalyzing(true);
     setError(null);
+    const controller = new AbortController();
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/experiments/${id}/analyze`,
-        {
-          method: "POST",
-        },
-      );
+      const backend = getBackendBase();
+      const url = `${backend}/api/experiments/${encodeURIComponent(id)}/analyze`;
 
-      if (!response.ok) {
-        throw new Error("Failed to analyze experiment");
+      const sessionResp = await supabase.auth.getSession().catch(() => ({}));
+      const token = sessionResp?.data?.session?.access_token;
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const resp = await fetch(url, {
+        method: "POST",
+        headers,
+        signal: controller.signal,
+      });
+
+      if (!resp.ok) {
+        let serverMessage = `Failed to analyze experiment (status ${resp.status})`;
+        try {
+          const body = await resp.json();
+          serverMessage = body?.message || body?.error || serverMessage;
+        } catch (e) {}
+        throw new Error(serverMessage);
       }
 
-      const data = await response.json();
-      console.log("Analysis received:", data.analysis);
+      const data = await resp.json();
+      setAnalysis(data.analysis || data || null);
 
-      setAnalysis(data.analysis);
-
-      // *** MODIFICATION 1 APPLIED HERE TOO ***
-      if (data.analysis.sections) {
+      if (data.analysis?.sections) {
         setAvailableSections(Object.keys(data.analysis.sections));
-        console.log("Available sections:", Object.keys(data.analysis.sections));
       } else {
         setAvailableSections(initialSections);
       }
     } catch (err) {
-      console.error("Error analyzing experiment:", err);
-      setError(err.message);
-      setAvailableSections(initialSections);
+      if (err.name === "AbortError") {
+        console.info("Analyze request aborted");
+      } else {
+        console.error("Error analyzing experiment:", err);
+        setError(err.message || "Failed to analyze experiment");
+        setAvailableSections(initialSections);
+      }
     } finally {
       setIsAnalyzing(false);
     }
