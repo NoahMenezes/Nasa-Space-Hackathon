@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "../lib/supabase.js"; // 1. Import Supabase
-import axios from "axios"; // 2. Import Axios for API calls
+import { supabase } from "../lib/supabase.js";
+import axios from "axios";
 import "./SearchEngine.css";
-// NOTE: Assuming you have this utility file available
 import {
   addBookmark,
   removeBookmark,
@@ -25,7 +24,6 @@ const SearchEngine = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Page loading effect
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoaded(true);
@@ -33,7 +31,6 @@ const SearchEngine = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Load persisted search state on component mount
   useEffect(() => {
     const loadPersistedState = () => {
       try {
@@ -45,7 +42,6 @@ const SearchEngine = () => {
           setSearchResults(searchResults || []);
           setHasSearched(hasSearched || false);
 
-          // Update bookmarked status for results
           const bookmarked = new Set();
           (searchResults || []).forEach((result) => {
             if (isBookmarked(result.id)) {
@@ -59,13 +55,11 @@ const SearchEngine = () => {
       }
     };
 
-    // Check for navigation state first (higher priority)
     if (location.state && location.state.preserveResults) {
       setSearchQuery(location.state.searchQuery || "");
       setSearchResults(location.state.searchResults || []);
       setHasSearched(true);
 
-      // Update bookmarked status for results
       const bookmarked = new Set();
       (location.state.searchResults || []).forEach((result) => {
         if (isBookmarked(result.id)) {
@@ -74,12 +68,10 @@ const SearchEngine = () => {
       });
       setBookmarkedItems(bookmarked);
     } else {
-      // Load from localStorage if no navigation state
       loadPersistedState();
     }
   }, [location.state]);
 
-  // Persist search state to localStorage
   const persistSearchState = (query, results, searched) => {
     try {
       const stateToSave = {
@@ -94,7 +86,6 @@ const SearchEngine = () => {
     }
   };
 
-  // Clear persisted search state
   const clearPersistedState = () => {
     try {
       localStorage.removeItem("searchEngineState");
@@ -117,58 +108,69 @@ const SearchEngine = () => {
     setCurrentPage(1);
 
     try {
-      // NOTE: This URL needs to be accessible for the search to work
-     // 🚨 WARNING: The backend URL is hardcoded here for deployment debugging.
-        const backendUrl = "https://biospace-archive-backend.onrender.com"; // <-- PASTE YOUR LIVE BACKEND URL HERE
+      // Use environment variable in production, fallback to hardcoded for dev
+      const backendUrl =
+        process.env.REACT_APP_API_URL ||
+        "https://biospace-archive-backend.onrender.com";
 
-      // 1. Get the current user's session from Supabase for the auth token
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-if (sessionError || !session) {
-  throw new Error("Authentication error: Please log in again.");
-}
-
-// 2. Make the secure GET request to your new /api/query endpoint
-const response = await axios.get(
-  `${backendUrl}/api/query`, {
-    params: { query: searchQuery },
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-    },
-  }
-);
-
-const data = response.data;
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to search experiments");
+      // Get session safely; if not logged in, proceed without auth header
+      const sessionResp = await supabase.auth.getSession();
+      const session = sessionResp?.data?.session;
+      const sessionError = sessionResp?.error;
+      if (sessionError) {
+        console.warn("Supabase session error:", sessionError);
       }
 
-      setSearchResults(data.results || []);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
 
-      // Update bookmarked status for results
+      // axios GET with query param
+      const response = await axios.get(`${backendUrl}/api/query`, {
+        params: { query: searchQuery },
+        headers,
+      });
+
+      // axios uses HTTP status; check status range instead of response.ok
+      if (response.status < 200 || response.status >= 300) {
+        const serverMessage =
+          response.data?.error || response.data?.message || "Failed to search experiments";
+        throw new Error(serverMessage);
+      }
+
+      const data = response.data || {};
+      const results = data.results || [];
+
+      setSearchResults(results);
+
       const bookmarked = new Set();
-      (data.results || []).forEach((result) => {
+      results.forEach((result) => {
         if (isBookmarked(result.id)) {
           bookmarked.add(result.id);
         }
       });
       setBookmarkedItems(bookmarked);
 
-      // Persist the search state
-      persistSearchState(searchQuery, data.results || [], true);
+      persistSearchState(searchQuery, results, true);
 
-      if ((data.results || []).length === 0) {
-        // Re-set error for the no-results state
-        setError(
-          "No experiments found. Try different keywords or scientist names.",
-        );
-        setSearchResults([]); // Ensure results array is empty
+      if (results.length === 0) {
+        setError("No experiments found. Try different keywords or scientist names.");
+        setSearchResults([]);
       } else {
-        setError(null); // Clear error if results are found
+        setError(null);
       }
     } catch (err) {
+      // axios errors may be nested (err.response)
       console.error("Search error:", err);
-      setError(err.message || "Failed to search. Please try again.");
+      const message =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to search. Please try again.";
+      setError(message);
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -186,7 +188,7 @@ const data = response.data;
   };
 
   const handleBookmarkToggle = (experiment, e) => {
-    e.stopPropagation(); // Prevent card click
+    e.stopPropagation();
 
     const experimentId = experiment.id;
     const isCurrentlyBookmarked = bookmarkedItems.has(experimentId);
@@ -222,11 +224,11 @@ const data = response.data;
   };
 
   const truncateAuthors = (authors, maxLength = 100) => {
+    if (!authors) return "";
     if (authors.length <= maxLength) return authors;
     return authors.substring(0, maxLength) + "...";
   };
 
-  // Pagination calculations
   const totalResults = searchResults.length;
   const totalPages = Math.ceil(totalResults / resultsPerPage);
   const startIndex = (currentPage - 1) * resultsPerPage;
@@ -250,17 +252,12 @@ const data = response.data;
 
   const handleSuggestionClick = (keyword) => {
     setSearchQuery(keyword);
-    // Trigger search automatically after state update
     const fakeEvent = { preventDefault: () => {} };
-    // A small timeout ensures the state update (setSearchQuery) is processed
-    // before handleSearch reads the new value, though modern React batching
-    // might make this optional. It's safer for simulation.
     setTimeout(() => {
       handleSearch(fakeEvent);
     }, 50);
   };
 
-  // Clear search state when starting fresh
   const handleClearSearch = () => {
     setSearchQuery("");
     setSearchResults([]);
@@ -270,7 +267,6 @@ const data = response.data;
     clearPersistedState();
   };
 
-  // Logic to determine which page numbers to display
   const getPageNumbers = () => {
     const pageNumbers = [];
     if (totalPages <= 7) {
@@ -304,17 +300,14 @@ const data = response.data;
       }
       pageNumbers.push(totalPages);
     }
-    // Filter out duplicate page numbers before rendering
     return pageNumbers.filter(
       (value, index, self) => self.indexOf(value) === index,
     );
   };
 
-  // --- JSX Rendering ---
   return (
     <div className={`search-engine-page ${pageLoaded ? "loaded" : ""}`}>
       <div className="search-engine-wrapper">
-        {/* Search Header */}
         <div className="search-header">
           <h1 className="search-title">NASA Bioscience Experiment Search</h1>
           <p className="search-subtitle">
@@ -323,7 +316,6 @@ const data = response.data;
           </p>
         </div>
 
-        {/* Enhanced Search Form */}
         <form onSubmit={handleSearch} className="search-form">
           <div className="search-input-container">
             <input
@@ -364,9 +356,7 @@ const data = response.data;
           </div>
         </form>
 
-        {/* Search Results */}
         <div className="search-results">
-          {/* Loading State */}
           {isLoading && (
             <div className="loading-container">
               <div className="loading-spinner"></div>
@@ -376,7 +366,6 @@ const data = response.data;
             </div>
           )}
 
-          {/* Error State / No Results State */}
           {error && !isLoading && (
             <div
               className={`error-container ${searchResults.length === 0 ? "no-results" : ""}`}
@@ -391,7 +380,6 @@ const data = response.data;
               </h3>
               <p className="error-message">{error}</p>
 
-              {/* Only show suggestions if no results were found */}
               {searchResults.length === 0 && (
                 <div className="no-results-suggestions">
                   <p>Try one of these popular keywords:</p>
@@ -407,7 +395,6 @@ const data = response.data;
                 </div>
               )}
 
-              {/* Show retry only if it was a technical error (not just no results) */}
               {error !==
                 "No experiments found. Try different keywords or scientist names." && (
                 <button
@@ -420,7 +407,6 @@ const data = response.data;
             </div>
           )}
 
-          {/* Results Header with Filters */}
           {!isLoading && !error && hasSearched && searchResults.length > 0 && (
             <>
               <div className="results-header">
@@ -452,7 +438,6 @@ const data = response.data;
                 </div>
               </div>
 
-              {/* Results Grid */}
               <div className="search-results-grid">
                 {currentResults.map((experiment, index) => (
                   <div
@@ -539,7 +524,6 @@ const data = response.data;
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="pagination">
                   <button
@@ -584,3 +568,4 @@ const data = response.data;
 };
 
 export default SearchEngine;
+
