@@ -1,5 +1,6 @@
 # NASA Space Apps Hackathon Project 🚀
 
+## The Biospace Archive
 A full-stack web application for the NASA Space Apps Hackathon, featuring a React frontend with Three.js visualizations, a comprehensive experiment search engine, and bookmarking functionality for NASA bioscience experiments.
 
 ## 🌟 Features
