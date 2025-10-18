@@ -1,3 +1,21 @@
+// =================================================================
+// START: GLOBAL ERROR HANDLERS (FOR DEBUGGING DEPLOYMENT)
+// =================================================================
+
+// This catches errors that happen in synchronous code
+process.on('uncaughtException', (err, origin) => {
+  console.error('!!!!!!!!!! UNCAUGHT EXCEPTION !!!!!!!!!!!');
+  console.error(`Caught exception: ${err}`);
+  console.error(`Exception origin: ${origin}`);
+});
+
+// This catches errors that happen in async code (Promises)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('!!!!!!!!!! UNHANDLED REJECTION !!!!!!!!!!!');
+  console.error('Unhandled Rejection at:', promise);
+  console.error('Reason:', reason);
+});
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -21,6 +39,7 @@ import researchConnectionsRoute from "./routes/researchConnections.js";
 import futureResearchRoute from "./routes/futureResearch.js";
 
 import { initializeDatabase } from "./config/database.js";
+import Backend from "three/src/renderers/common/Backend.js";
 
 dotenv.config();
 
@@ -43,7 +62,7 @@ app.use(limiter);
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: "https://nasa-space-hackathon-frontend.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -72,6 +91,40 @@ app.use("/api/users", userRoutes);
 app.use("/api/experiments", experimentsRoutes);
 
 app.use(bodyParser.json());
+
+// In your Backend/server.js file
+
+// ... (your existing imports and middleware setup) ...
+
+app.use(bodyParser.json());
+
+// --- THIS IS THE FIX ---
+// Add the main Gemini query route here, protected by authentication.
+app.get('/api/query', authenticateUser, async (req, res, next) => {
+  try {
+    const searchQuery = req.query.query;
+    if (!searchQuery) {
+      return res.status(400).json({ error: "A search query is required." });
+    }
+
+    // Here, you would add your logic to:
+    // 1. Find the best matching experiment in your database.
+    // 2. Call the Gemini API with the experiment's link.
+    // 3. Return the response.
+
+    // For now, let's return a success message to confirm it works.
+    // You will replace this with your actual Gemini logic.
+    res.json({
+      message: `Successfully received authenticated query for: "${searchQuery}"`,
+      user: req.user.email,
+      // ... your Gemini response will go here
+    });
+
+  } catch (error) {
+    next(error); // Pass errors to your global error handler
+  }
+});
+// --- END OF FIX ---
 
 // 🚀 Analysis section routes (Protected with Supabase JWT authentication)
 app.use("/executive-summary", authenticateUser, executiveSummaryRoute);
@@ -218,7 +271,8 @@ process.on("SIGINT", () => {
 });
 
 // Start server
-app.listen(PORT, () => {
+// You must specify the host "0.0.0.0" for Render to detect the open port.
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 NASA Space Hackathon Backend running on port ${PORT}`);
   console.log(
     `🌐 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:3000"}`,
@@ -231,3 +285,4 @@ app.listen(PORT, () => {
   console.log(`📁 File uploads: Enabled (50MB limit)`);
   console.log(`🔗 API Documentation: http://localhost:${PORT}/api/info`);
 });
+// --- END OF FIX ---
