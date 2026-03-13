@@ -1,7 +1,8 @@
 import pkg from "pg";
-const { Pool } = pkg;
 import dotenv from "dotenv";
 import dns from "dns"; // 1. Import the built-in DNS module
+
+const { Pool } = pkg;
 
 // --- FIX START: Forcing IPv4 Globally ---
 // 2. Set the default DNS lookup order to prefer IPv4 addresses.
