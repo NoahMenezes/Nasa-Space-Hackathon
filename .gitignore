@@ -22,6 +22,6 @@ yarn-debug.log*
 yarn-error.log*
 node_modules
 /backend/.env
-backend/.env
+/backend/.env
 .env.example
 .env
